@@ -53,14 +53,21 @@ note_stmt = {
     multiline_note | inline_note
 }
 
+// Position "left"/"right" may be followed by an `of` keyword. "over" goes
+// straight into the participant list (`note over A, B`), no `of`.
 inline_note = {
-    ^"note" ~ " "+ ~ note_pos ~ (" "* ~ ^"of" ~ " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*)? ~ " "* ~ ":" ~ " "* ~ rest_of_line
+    ^"note" ~ " "+ ~ note_pos ~ note_targets? ~ " "* ~ ":" ~ " "* ~ rest_of_line
 }
 
 multiline_note = {
-    ^"note" ~ " "+ ~ note_pos ~ (" "* ~ ^"of" ~ " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*)? ~ newline ~
+    ^"note" ~ " "+ ~ note_pos ~ note_targets? ~ " "* ~ NEWLINE ~
     note_body ~
     ^"end note"  ~ rest_of_line?
+}
+
+note_targets = _{
+    " "+ ~ ^"of" ~ " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*
+    | " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*
 }
 
 note_pos = { ^"left" | ^"right" | ^"over" }
@@ -71,11 +78,11 @@ note_line = { !^"end note" ~ rest_of_line }
 group_stmt = {
     group_kw ~ (" "+ ~ rest_of_line)? ~ (" "* ~ NEWLINE)? ~
     group_body ~
-    ^"end" ~ " "* ~ NEWLINE?
+    " "* ~ ^"end" ~ " "* ~ NEWLINE?
 }
 
 group_kw = { ^"loop" | ^"alt" | ^"opt" | ^"par" | ^"critical" | ^"break" | ^"group" | ^"ref" }
-group_body = { (else_clause | statement)* }
+group_body = { (" "* ~ else_clause | statement)* }
 else_clause = { (^"else" | ^"also") ~ (" "+ ~ rest_of_line)? ~ (" "* ~ NEWLINE)? ~ statement* }
 
 // ── Dividers ─────────────────────────────────────────────────────────────────

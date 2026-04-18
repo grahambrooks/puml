@@ -3,13 +3,15 @@
 diagram = { SOI ~ element* ~ EOI }
 
 element = _{
-    title_stmt
-    | state_block
-    | transition_stmt
-    | note_stmt
-    | hide_stmt
-    | skinparam_stmt
-    | newline
+    " "* ~ (
+        title_stmt
+        | state_block
+        | transition_stmt
+        | note_stmt
+        | hide_stmt
+        | skinparam_stmt
+        | newline
+    )
 }
 
 // ── Title ─────────────────────────────────────────────────────────────────────
@@ -47,11 +49,13 @@ skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
 
 // ── Inner elements (inside a composite state) ─────────────────────────────────
 inner_element = _{
-    transition_stmt
-    | note_stmt
-    | state_block
-    | divider_stmt
-    | newline
+    " "* ~ (
+        transition_stmt
+        | note_stmt
+        | state_block
+        | divider_stmt
+        | newline
+    )
 }
 
 divider_stmt = { " "* ~ "--" ~ (!NEWLINE ~ ANY)* ~ line_tail }

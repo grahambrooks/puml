@@ -1,0 +1,11 @@
+@startuml
+Alice -> Bob : connect
+loop until connected
+  Bob -> Bob : retry
+  alt success
+    Bob --> Alice : 200 OK
+  else timeout
+    Bob --> Alice : 504
+  end
+end
+@enduml

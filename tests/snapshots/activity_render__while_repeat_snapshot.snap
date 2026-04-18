@@ -1,0 +1,104 @@
+---
+source: tests/activity_render.rs
+assertion_line: 67
+expression: svg
+---
+<svg height="622" viewBox="0 0 320 622" width="320" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="act-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="58" y2="88"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="144" y2="174"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="210" y2="240"/>
+</g>
+<g>
+<path class="arrow-dashed" d="M140,276 C100,296 100,68 140,88" marker-end="url(#act-arrow)"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="144" y2="306"/>
+<text font-size="11" x="146" y="225">
+no
+</text>
+</g>
+<g>
+<path class="arrow" d="M140,310 C100,330 100,286 140,306" marker-end="url(#act-arrow)"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="342" y2="372"/>
+</g>
+<g>
+<path class="arrow-dashed" d="M140,428 C100,448 100,286 140,306" marker-end="url(#act-arrow)"/>
+<text font-size="11" x="146" y="367">
+drain
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="428" y2="458"/>
+<text font-size="11" x="146" y="443">
+no
+</text>
+</g>
+<g>
+<path class="arrow" d="M140,462 C100,482 100,438 140,458" marker-end="url(#act-arrow)"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="140" x2="140" y1="494" y2="524"/>
+</g>
+<g>
+<circle cx="140" cy="44" fill="#181818" r="14"/>
+</g>
+<g>
+<polygon fill="#fff2cc" points="140,88 168,116 140,144 112,116" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="140" y="120.33333333333333">
+more items?
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="174"/>
+<text text-anchor="middle" x="140" y="196.33333333333334">
+Take item
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="240"/>
+<text text-anchor="middle" x="140" y="262.3333333333333">
+Process
+</text>
+</g>
+<g/>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="306"/>
+<text text-anchor="middle" x="140" y="328.3333333333333">
+Poll queue
+</text>
+</g>
+<g>
+<polygon fill="#fff2cc" points="140,372 168,400 140,428 112,400" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="140" y="404.3333333333333">
+queue empty?
+</text>
+</g>
+<g/>
+<g/>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="458"/>
+<text text-anchor="middle" x="140" y="480.3333333333333">
+Shutdown
+</text>
+</g>
+<g>
+<circle cx="140" cy="538" fill="none" r="17" stroke="#181818" stroke-width="2"/>
+<circle cx="140" cy="538" fill="#181818" r="14"/>
+</g>
+</svg>

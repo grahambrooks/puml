@@ -1,2 +1,9 @@
 /target
 .idea/
+
+# Local render artifacts from ad-hoc `puml … -o out.svg` runs
+out.svg
+out-*.svg
+
+# Pending snapshots from `cargo insta` — accept or delete, never commit
+*.snap.new

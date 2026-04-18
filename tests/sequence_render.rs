@@ -73,3 +73,44 @@ fn reverse_arrows_snapshot() {
     let svg = render_fixture("sequence_return.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn self_message_renders() {
+    let svg = render_fixture("sequence_self_message.puml");
+    assert!(svg.contains("reflect"));
+    assert!(svg.contains("recompute"));
+}
+
+#[test]
+fn self_message_snapshot() {
+    let svg = render_fixture("sequence_self_message.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn nested_groups_renders() {
+    let svg = render_fixture("sequence_nested_groups.puml");
+    // Both outer loop and inner alt groups should render their kind labels.
+    assert!(svg.contains("loop"), "missing loop tab: {svg}");
+    assert!(svg.contains("alt"), "missing alt tab: {svg}");
+    // Inner else-section label should render too.
+    assert!(svg.contains("timeout"));
+}
+
+#[test]
+fn nested_groups_snapshot() {
+    let svg = render_fixture("sequence_nested_groups.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn note_over_renders() {
+    let svg = render_fixture("sequence_note_over.puml");
+    assert!(svg.contains("Shared state flows"));
+}
+
+#[test]
+fn note_over_snapshot() {
+    let svg = render_fixture("sequence_note_over.puml");
+    insta::assert_snapshot!(svg);
+}

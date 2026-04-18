@@ -1,0 +1,17 @@
+@startuml
+class Order {
+  +id: int
+  +total(): Money
+}
+class LineItem {
+  +qty: int
+  +price: Money
+}
+class Customer {
+  +name: String
+}
+
+Customer "1" -- "*" Order : places
+Order "1" *-- "*" LineItem : contains
+Order --> Customer : owner
+@enduml

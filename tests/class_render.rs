@@ -57,3 +57,32 @@ fn generics_and_notes_snapshot() {
     let svg = render_fixture("class_generics_notes.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn inheritance_chain_renders() {
+    let svg = render_fixture("class_inheritance_chain.puml");
+    assert!(svg.contains("Shape"));
+    assert!(svg.contains("Circle"));
+    assert!(svg.contains("Square"));
+    assert!(svg.contains("Printable"));
+}
+
+#[test]
+fn inheritance_chain_snapshot() {
+    let svg = render_fixture("class_inheritance_chain.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn associations_renders() {
+    let svg = render_fixture("class_associations.puml");
+    assert!(svg.contains("Order"));
+    assert!(svg.contains("LineItem"));
+    assert!(svg.contains("Customer"));
+}
+
+#[test]
+fn associations_snapshot() {
+    let svg = render_fixture("class_associations.puml");
+    insta::assert_snapshot!(svg);
+}

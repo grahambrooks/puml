@@ -302,6 +302,9 @@ fn collect_element(pair: Pair<Rule>, elements: &mut Vec<SequenceElement>) {
                 elements.push(SequenceElement::Note(note));
             }
         }
+        Rule::group_stmt => {
+            elements.push(SequenceElement::Group(parse_group(pair)));
+        }
         Rule::activate_stmt => {
             let name = pair.into_inner().as_str().trim().to_string();
             elements.push(SequenceElement::Activate(name));
@@ -309,6 +312,10 @@ fn collect_element(pair: Pair<Rule>, elements: &mut Vec<SequenceElement>) {
         Rule::deactivate_stmt => {
             let name = pair.into_inner().as_str().trim().to_string();
             elements.push(SequenceElement::Deactivate(name));
+        }
+        Rule::divider_stmt => {
+            let label = pair.into_inner().as_str().trim().to_string();
+            elements.push(SequenceElement::Divider(Divider { label }));
         }
         _ => {}
     }

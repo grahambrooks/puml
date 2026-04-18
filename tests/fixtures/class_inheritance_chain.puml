@@ -1,0 +1,24 @@
+@startuml
+abstract class Shape {
+  +area(): double
+  +{abstract} draw()
+}
+class Circle {
+  -radius: double
+  +area(): double
+  +draw()
+}
+class Square {
+  -side: double
+  +area(): double
+  +draw()
+}
+interface Printable {
+  +print()
+}
+
+Shape <|-- Circle
+Shape <|-- Square
+Circle ..|> Printable
+Square ..|> Printable
+@enduml

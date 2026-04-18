@@ -1,0 +1,93 @@
+---
+source: tests/sequence_render.rs
+assertion_line: 102
+expression: svg
+---
+<svg height="402" viewBox="0 0 310 402" width="310" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
+<text text-anchor="middle" x="80" y="44.5">
+Alice
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
+<text text-anchor="middle" x="230" y="44.5">
+Bob
+</text>
+</g>
+<line class="lifeline" x1="80" x2="80" y1="60" y2="332"/>
+<line class="lifeline" x1="230" x2="230" y1="60" y2="332"/>
+<g>
+<rect fill="none" height="136" stroke="#888" stroke-width="1.2" width="270" x="20" y="178"/>
+<polygon fill="#eeeeee" points="20,178 60,178 68,186 60,194 20,194" stroke="#888" stroke-width="1.2"/>
+<text font-size="11" font-weight="bold" x="28" y="190">
+alt
+</text>
+<text font-size="12" x="76" y="190">
+[success]
+</text>
+<line stroke="#888" stroke-dasharray="4,3" stroke-width="1" x1="20" x2="290" y1="246" y2="246"/>
+<text font-size="12" font-weight="bold" x="28" y="259">
+[timeout]
+</text>
+</g>
+<g>
+<rect fill="none" height="212" stroke="#888" stroke-width="1.2" width="270" x="20" y="110"/>
+<polygon fill="#eeeeee" points="20,110 68,110 76,118 68,126 20,126" stroke="#888" stroke-width="1.2"/>
+<text font-size="11" font-weight="bold" x="28" y="122">
+loop
+</text>
+<text font-size="12" x="84" y="122">
+[until connected]
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="70" y2="70"/>
+<text text-anchor="middle" x="155" y="65">
+connect
+</text>
+</g>
+<g>
+<path class="arrow" d="M 230 138 L 260 138 L 260 158 L 230 158" marker-end="url(#arrowhead)"/>
+<text x="264" y="148">
+retry
+</text>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="206" y2="206"/>
+<text text-anchor="middle" x="155" y="201">
+200 OK
+</text>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="266" y2="266"/>
+<text text-anchor="middle" x="155" y="261">
+504
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="332"/>
+<text text-anchor="middle" x="80" y="356.5">
+Alice
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="332"/>
+<text text-anchor="middle" x="230" y="356.5">
+Bob
+</text>
+</g>
+</svg>

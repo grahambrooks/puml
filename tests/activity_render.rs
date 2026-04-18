@@ -51,3 +51,33 @@ fn activity_no_negative_x() {
         svg
     );
 }
+
+#[test]
+fn while_repeat_renders() {
+    let svg = render_fixture("activity_while_repeat.puml");
+    assert!(svg.contains("more items?"));
+    assert!(svg.contains("Take item"));
+    assert!(svg.contains("Poll queue"));
+    assert!(svg.contains("Shutdown"));
+}
+
+#[test]
+fn while_repeat_snapshot() {
+    let svg = render_fixture("activity_while_repeat.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn fork_renders() {
+    let svg = render_fixture("activity_fork.puml");
+    assert!(svg.contains("Validate headers"));
+    assert!(svg.contains("Validate body"));
+    assert!(svg.contains("Log request"));
+    assert!(svg.contains("Dispatch handler"));
+}
+
+#[test]
+fn fork_snapshot() {
+    let svg = render_fixture("activity_fork.puml");
+    insta::assert_snapshot!(svg);
+}

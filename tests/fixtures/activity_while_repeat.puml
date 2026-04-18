@@ -1,0 +1,12 @@
+@startuml
+start
+while (more items?) is (yes)
+  :Take item;
+  :Process;
+endwhile (no)
+repeat
+  :Poll queue;
+repeat while (queue empty?) is (yes) not (drain)
+:Shutdown;
+stop
+@enduml

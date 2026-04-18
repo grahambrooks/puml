@@ -1,0 +1,13 @@
+@startuml
+start
+:Accept request;
+fork
+  :Validate headers;
+fork again
+  :Validate body;
+fork again
+  :Log request;
+end fork
+:Dispatch handler;
+stop
+@enduml

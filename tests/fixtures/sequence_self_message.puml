@@ -1,0 +1,7 @@
+@startuml
+title Internal Refresh
+Alice -> Alice : reflect
+Alice -> Bob : hello
+Bob -> Bob : recompute
+Bob --> Alice : done
+@enduml

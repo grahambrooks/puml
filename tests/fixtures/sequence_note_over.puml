@@ -1,0 +1,8 @@
+@startuml
+Alice -> Bob : begin
+note over Alice, Bob
+  Shared state flows
+  through this exchange
+end note
+Bob --> Alice : ack
+@enduml

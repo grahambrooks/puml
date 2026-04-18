@@ -1,0 +1,89 @@
+---
+source: tests/activity_render.rs
+assertion_line: 82
+expression: svg
+---
+<svg height="460" viewBox="0 0 865 460" width="865" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="act-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="58" y2="88"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="124" y2="154"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="145" y1="162" y2="192"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="355" y1="162" y2="192"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="565" y1="162" y2="192"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="145" x2="380" y1="228" y2="258"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="355" x2="380" y1="228" y2="258"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="565" x2="380" y1="228" y2="258"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="266" y2="296"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="332" y2="362"/>
+</g>
+<g>
+<circle cx="380" cy="44" fill="#181818" r="14"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="88"/>
+<text text-anchor="middle" x="380" y="110.33333333333333">
+Accept request
+</text>
+</g>
+<g>
+<rect fill="#181818" height="8" width="680" x="40" y="154"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="65" y="192"/>
+<text text-anchor="middle" x="145" y="214.33333333333334">
+Validate headers
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="275" y="192"/>
+<text text-anchor="middle" x="355" y="214.33333333333334">
+Validate body
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="485" y="192"/>
+<text text-anchor="middle" x="565" y="214.33333333333334">
+Log request
+</text>
+</g>
+<g>
+<rect fill="#181818" height="8" width="680" x="40" y="258"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="296"/>
+<text text-anchor="middle" x="380" y="318.3333333333333">
+Dispatch handler
+</text>
+</g>
+<g>
+<circle cx="380" cy="376" fill="none" r="17" stroke="#181818" stroke-width="2"/>
+<circle cx="380" cy="376" fill="#181818" r="14"/>
+</g>
+</svg>

@@ -45,6 +45,19 @@ pub fn parse(source: &str) -> Result<StateDiagram, PumlError> {
         }
     }
 
+    // Any transition endpoints declared only inside composite states were
+    // pushed to `diagram.transitions` but never registered as top-level
+    // states — back-fill them so the layout engine can see them.
+    let endpoints: Vec<(String, String)> = diagram
+        .transitions
+        .iter()
+        .map(|t| (t.from.clone(), t.to.clone()))
+        .collect();
+    for (from, to) in endpoints {
+        ensure_state_by_name(&mut diagram.states, &from);
+        ensure_state_by_name(&mut diagram.states, &to);
+    }
+
     Ok(diagram)
 }
 

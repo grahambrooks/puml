@@ -41,3 +41,18 @@ fn state_advanced_snapshot() {
     let svg = render_fixture("state_advanced.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn composite_renders() {
+    let svg = render_fixture("state_composite.puml");
+    assert!(svg.contains("Running"));
+    assert!(svg.contains("Idle"));
+    assert!(svg.contains("Working"));
+    assert!(svg.contains("Stopped"));
+}
+
+#[test]
+fn composite_snapshot() {
+    let svg = render_fixture("state_composite.puml");
+    insta::assert_snapshot!(svg);
+}

@@ -1,0 +1,10 @@
+@startuml
+[*] --> Running
+state Running {
+  [*] --> Idle
+  Idle --> Working : task
+  Working --> Idle : done
+}
+Running --> Stopped : shutdown
+Stopped --> [*]
+@enduml
