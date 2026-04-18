@@ -1,0 +1,102 @@
+// Sequence diagram grammar
+
+diagram = { SOI ~ statement* ~ EOI }
+
+statement = _{
+    title_stmt
+    | participant_stmt
+    | message_stmt
+    | note_stmt
+    | group_stmt
+    | divider_stmt
+    | activate_stmt
+    | deactivate_stmt
+    | delay_stmt
+    | space_stmt
+    | autonumber_stmt
+    | hide_footbox_stmt
+    | skinparam_stmt
+    | newline
+}
+
+// ── Title ────────────────────────────────────────────────────────────────────
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+// ── Participants ─────────────────────────────────────────────────────────────
+participant_stmt = {
+    participant_kw ~ " "+ ~ participant_name ~ (" "* ~ ^"as" ~ " "+ ~ alias)? ~ (" "* ~ color)?  ~ rest_of_line?
+}
+
+participant_kw = { ^"participant" | ^"actor" | ^"boundary" | ^"control" | ^"entity" | ^"database" | ^"collections" | ^"queue" }
+participant_name = { quoted_string | bare_name }
+alias = { bare_name }
+color = { "#" ~ ASCII_ALPHANUMERIC+ }
+
+// ── Messages ─────────────────────────────────────────────────────────────────
+message_stmt = { participant_ref ~ " "* ~ arrow ~ " "* ~ participant_ref ~ " "* ~ (":" ~ " "* ~ rest_of_line)? }
+
+participant_ref = { quoted_string | bare_name }
+
+arrow = { arrow_token }
+arrow_token = _{
+    "-->>" | "->>" | "-->" | "->" | "<->" | "<-->" |
+    "-\\" | "\\" | "//" | "-/" |
+    "->x" | "->o" | "x->" | "o->"
+}
+
+// ── Notes ────────────────────────────────────────────────────────────────────
+note_stmt = {
+    multiline_note | inline_note
+}
+
+inline_note = {
+    ^"note" ~ " "+ ~ note_pos ~ (" "* ~ ^"of" ~ " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*)? ~ " "* ~ ":" ~ " "* ~ rest_of_line
+}
+
+multiline_note = {
+    ^"note" ~ " "+ ~ note_pos ~ (" "* ~ ^"of" ~ " "+ ~ participant_ref ~ ("," ~ " "* ~ participant_ref)*)? ~ newline ~
+    note_body ~
+    ^"end note"  ~ rest_of_line?
+}
+
+note_pos = { ^"left" | ^"right" | ^"over" }
+note_body = { note_line* }
+note_line = { !^"end note" ~ rest_of_line }
+
+// ── Groups ───────────────────────────────────────────────────────────────────
+group_stmt = {
+    group_kw ~ (" " ~ rest_of_line)? ~ newline ~
+    group_body ~
+    ^"end"
+}
+
+group_kw = { ^"loop" | ^"alt" | ^"opt" | ^"par" | ^"critical" | ^"break" | ^"group" | ^"ref" }
+group_body = { (else_clause | statement)* }
+else_clause = { (^"else" | ^"also") ~ (" " ~ rest_of_line)? ~ newline ~ statement* }
+
+// ── Dividers ─────────────────────────────────────────────────────────────────
+divider_stmt = { "==" ~ rest_of_line }
+
+// ── Activate / Deactivate ────────────────────────────────────────────────────
+activate_stmt = { ^"activate" ~ " "+ ~ participant_ref }
+deactivate_stmt = { ^"deactivate" ~ " "+ ~ participant_ref }
+
+// ── Delays & Spacing ─────────────────────────────────────────────────────────
+delay_stmt = { "..." ~ (" " ~ rest_of_line)? }
+space_stmt = { "|||" ~ (ASCII_DIGIT+)? }
+
+// ── Autonumber ───────────────────────────────────────────────────────────────
+autonumber_stmt = { ^"autonumber" ~ (" " ~ ASCII_DIGIT+)? ~ rest_of_line? }
+
+// ── Misc ─────────────────────────────────────────────────────────────────────
+hide_footbox_stmt = { ^"hide" ~ " "+ ~ ^"footbox" }
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ skinparam_body }
+skinparam_body = { skinparam_block | skinparam_pair }
+skinparam_block = { bare_name ~ " "* ~ "{" ~ (!" }" ~ ANY)* ~ "}" }
+skinparam_pair  = { rest_of_line }
+
+// ── Primitives ───────────────────────────────────────────────────────────────
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+bare_name = { (ASCII_ALPHANUMERIC | "_" | "-" | ".")+ }
+rest_of_line = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+newline = _{ NEWLINE }

@@ -1,0 +1,24 @@
+[package]
+name = "puml"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "puml"
+path = "src/lib.rs"
+
+[[bin]]
+name = "puml"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+pest = "2"
+pest_derive = "2"
+logos = "0.14"
+svg = "0.13"
+anyhow = "1"
+thiserror = "1"
+
+[dev-dependencies]
+insta = "1"

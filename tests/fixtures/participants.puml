@@ -1,0 +1,17 @@
+@startuml
+title Participant Types
+
+actor User
+participant Server
+boundary Frontend
+control Controller
+entity UserRecord
+database PostgreSQL
+
+User -> Frontend : submit form
+Frontend -> Controller : POST /register
+Controller -> PostgreSQL : INSERT user
+PostgreSQL --> Controller : ok
+Controller --> Frontend : 201 Created
+Frontend --> User : Success page
+@enduml

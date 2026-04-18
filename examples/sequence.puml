@@ -1,0 +1,28 @@
+@startuml
+title Basic Sequence Example
+
+actor User
+participant "Web Server" as WS
+participant Database as DB
+
+User -> WS : GET /login
+activate WS
+WS -> DB : SELECT user WHERE email=?
+activate DB
+DB --> WS : user record
+deactivate DB
+WS --> User : 200 OK + token
+deactivate WS
+
+note right of User : User stores token
+
+User -> WS : GET /data
+activate WS
+WS -> DB : SELECT data WHERE user_id=?
+activate DB
+DB --> WS : rows
+deactivate DB
+WS --> User : 200 OK + JSON
+deactivate WS
+
+@enduml
