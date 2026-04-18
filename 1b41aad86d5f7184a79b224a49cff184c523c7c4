@@ -1,0 +1,92 @@
+docs/examples/class.svg
+  5a928d06b440090e 1-148
+docs/examples/sequence.svg
+  5a928d06b440090e 1-131
+examples/class.puml
+  5a928d06b440090e 1-37
+docs/examples/timing.svg
+  5a928d06b440090e 1-116
+examples/state.puml
+  5a928d06b440090e 1-20
+examples/mindmap.puml
+  5a928d06b440090e 1-20
+examples/activity.puml
+  5a928d06b440090e 1-24
+examples/timing.puml
+  5a928d06b440090e 1-37
+docs/examples/usecase.svg
+  5a928d06b440090e 1-107
+examples/object.puml
+  5a928d06b440090e 1-38
+examples/usecase.puml
+  5a928d06b440090e 1-26
+examples/component.puml
+  5a928d06b440090e 1-22
+docs/examples/mindmap.svg
+  5a928d06b440090e 1-150
+HomebrewFormula/puml.rb
+  5a928d06b440090e 1-30
+examples/deployment.puml
+  5a928d06b440090e 1-25
+docs/examples/object.svg
+  5a928d06b440090e 1-138
+docs/examples/deployment.svg
+  5a928d06b440090e 1-248
+docs/examples/state.svg
+  5a928d06b440090e 1-110
+README.md
+  5a928d06b440090e 56-100
+docs/examples/component.svg
+  5a928d06b440090e 1-186
+docs/examples/activity.svg
+  5a928d06b440090e 1-173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "1b41aad86d5f7184a79b224a49cff184c523c7c4",
+  "prompts": {
+    "5a928d06b440090e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9c7dcf1-bea0-4254-b58f-b1c980cb8f60",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 1551,
+      "total_deletions": 0,
+      "accepted_lines": 1831,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/68d8f895294e85eb6986429bac36531870aab20f71d67951b502b8ad392a1299"
+    },
+    "d6aea5936d2aef15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2a6ee1d-9534-4713-be22-dfed3b2329e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/429a5c6de0bf86d57888709266604733610478eaa312c8d54a4ef4f20d52d280"
+    },
+    "efb5cd870b515462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ac94be9-bf02-4f71-aaad-21af2a2745cb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 20,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/77caa4608029a2f3ca42d32a5c75f8491b433984f0dcb35784deef06be7a2701"
+    }
+  }
+}
