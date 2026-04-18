@@ -30,7 +30,7 @@ fmt-check: ## Verify formatting without writing
 
 .PHONY: clippy
 clippy: ## Lint with clippy (warnings as errors)
-	cargo clippy -- -D warnings
+	cargo clippy --all-targets -- -D warnings
 
 # ── Test ─────────────────────────────────────────────────────────────────────
 
