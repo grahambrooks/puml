@@ -1,0 +1,8 @@
+@startuml
+skinparam backgroundColor #f5f5dc
+skinparam participantBackgroundColor #ffe4b5
+skinparam participantBorderColor #8b4513
+
+Alice -> Bob : Hello
+Bob --> Alice : Hi back
+@enduml

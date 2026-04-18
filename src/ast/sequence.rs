@@ -91,6 +91,7 @@ pub struct SequenceDiagram {
     pub participants: Vec<Participant>,
     pub elements: Vec<SequenceElement>,
     pub hide_footbox: bool,
+    pub skinparams: Vec<(String, String)>,
 }
 
 impl SequenceDiagram {

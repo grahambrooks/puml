@@ -3,6 +3,7 @@ pub struct StateDiagram {
     pub title: Option<String>,
     pub states: Vec<StateNode>,
     pub transitions: Vec<Transition>,
+    pub skinparams: Vec<(String, String)>,
 }
 
 #[derive(Debug, Clone)]

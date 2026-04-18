@@ -39,7 +39,12 @@ pub fn parse(source: &str) -> Result<StateDiagram, PumlError> {
                     let node = parse_state_block(stmt, &mut diagram.transitions);
                     ensure_state_node(&mut diagram.states, node);
                 }
-                Rule::note_stmt | Rule::hide_stmt | Rule::skinparam_stmt | Rule::EOI => {}
+                Rule::skinparam_stmt => {
+                    if let Some((k, v)) = super::extract_skinparam(stmt.as_str()) {
+                        diagram.skinparams.push((k, v));
+                    }
+                }
+                Rule::note_stmt | Rule::hide_stmt | Rule::EOI => {}
                 _ => {}
             }
         }

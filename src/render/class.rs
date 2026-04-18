@@ -2,6 +2,7 @@ use svg::node::element::{Group, Line, Rectangle, Text};
 use svg::Document;
 
 use super::primitives::{style_block, text_node};
+use super::theme::Theme;
 use crate::ast::class::{ClassKind, RelationKind};
 use crate::layout::class::{ClassLayout, EdgeLayout, NodeLayout, NoteBox};
 
@@ -11,7 +12,7 @@ const MEMBER_Y_OFF: f64 = 14.0;
 const TOP_MARGIN: f64 = 30.0;
 const TITLE_HEIGHT: f64 = 30.0;
 
-pub fn render(layout: &ClassLayout) -> Document {
+pub fn render(layout: &ClassLayout, theme: &Theme) -> Document {
     let title_offset = if layout.title.is_some() {
         TITLE_HEIGHT
     } else {
@@ -31,7 +32,7 @@ pub fn render(layout: &ClassLayout) -> Document {
     let bg = Rectangle::new()
         .set("width", "100%")
         .set("height", "100%")
-        .set("fill", "#ffffff");
+        .set("fill", theme.background_color.as_str());
     doc = doc.add(bg);
 
     if let Some(ref t) = layout.title {

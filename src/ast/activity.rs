@@ -85,4 +85,5 @@ pub enum NotePos {
 pub struct ActivityDiagram {
     pub title: Option<String>,
     pub elements: Vec<ActivityElement>,
+    pub skinparams: Vec<(String, String)>,
 }

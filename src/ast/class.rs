@@ -85,4 +85,5 @@ pub struct ClassDiagram {
     pub relations: Vec<Relation>,
     pub notes: Vec<ClassNote>,
     pub hide_empty_members: bool,
+    pub skinparams: Vec<(String, String)>,
 }

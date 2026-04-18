@@ -3,28 +3,40 @@ pub mod class;
 pub mod primitives;
 pub mod sequence;
 pub mod state;
+pub mod theme;
 
 use crate::ast::DiagramAst;
 use crate::layout;
 use svg::Document;
+use theme::Theme;
 
 pub fn render(ast: &DiagramAst) -> Document {
     match ast {
         DiagramAst::Sequence(seq) => {
+            let theme = build_theme(&seq.skinparams);
             let layout = layout::sequence::layout(seq);
-            sequence::render(&layout)
+            sequence::render(&layout, &theme)
         }
         DiagramAst::Class(cls) => {
+            let theme = build_theme(&cls.skinparams);
             let layout = layout::class::layout(cls);
-            class::render(&layout)
+            class::render(&layout, &theme)
         }
         DiagramAst::Activity(act) => {
+            let theme = build_theme(&act.skinparams);
             let layout = layout::activity::layout(act);
-            activity::render(&layout)
+            activity::render(&layout, &theme)
         }
         DiagramAst::State(st) => {
+            let theme = build_theme(&st.skinparams);
             let layout = layout::state::layout(st);
-            state::render(&layout)
+            state::render(&layout, &theme)
         }
     }
+}
+
+fn build_theme(skinparams: &[(String, String)]) -> Theme {
+    let mut theme = Theme::default();
+    theme.apply_all(skinparams.iter().map(|(k, v)| (k.as_str(), v.as_str())));
+    theme
 }

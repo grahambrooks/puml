@@ -103,7 +103,12 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                 Rule::hide_footbox_stmt => {
                     diagram.hide_footbox = true;
                 }
-                Rule::skinparam_stmt | Rule::EOI => {}
+                Rule::skinparam_stmt => {
+                    if let Some((k, v)) = super::extract_skinparam(stmt.as_str()) {
+                        diagram.skinparams.push((k, v));
+                    }
+                }
+                Rule::EOI => {}
                 _ => {}
             }
         }

@@ -1,0 +1,5 @@
+@startuml
+!theme amiga
+Alice -> Bob : Retro hello
+Bob --> Alice : Retro reply
+@enduml

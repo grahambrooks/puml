@@ -25,6 +25,12 @@ pub fn parse(source: &str) -> Result<ActivityDiagram, PumlError> {
 
     for pair in pairs {
         for stmt in pair.into_inner() {
+            if stmt.as_rule() == Rule::skinparam_stmt {
+                if let Some((k, v)) = super::extract_skinparam(stmt.as_str()) {
+                    diagram.skinparams.push((k, v));
+                }
+                continue;
+            }
             if let Some(elem) = parse_element(stmt) {
                 match elem {
                     ActivityElement::Label(ref t) if diagram.title.is_none() => {
@@ -82,7 +88,8 @@ fn parse_element(pair: Pair<Rule>) -> Option<ActivityElement> {
         Rule::fork_stmt => Some(parse_fork(pair)),
         Rule::partition_stmt => Some(parse_partition(pair)),
         Rule::note_stmt => Some(parse_note(pair)),
-        Rule::skinparam_stmt | Rule::EOI => None,
+        Rule::skinparam_stmt => None, // collected separately in parse()
+        Rule::EOI => None,
         _ => None,
     }
 }

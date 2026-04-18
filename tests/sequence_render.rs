@@ -114,3 +114,39 @@ fn note_over_snapshot() {
     let svg = render_fixture("sequence_note_over.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn skinparam_changes_background() {
+    let svg = render_fixture("sequence_themed.puml");
+    // User-supplied background should land in the SVG
+    assert!(
+        svg.contains("fill=\"#f5f5dc\""),
+        "skinparam backgroundColor not applied: {}",
+        &svg[..svg.len().min(500)]
+    );
+    // Default white should no longer appear as the root background
+    assert!(!svg.contains("fill=\"#ffffff\""), "default bg still present");
+}
+
+#[test]
+fn themed_snapshot() {
+    let svg = render_fixture("sequence_themed.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn amiga_preset_applies() {
+    let svg = render_fixture("sequence_amiga_theme.puml");
+    // amiga preset sets background to deep blue
+    assert!(
+        svg.contains("fill=\"#000088\""),
+        "!theme amiga did not apply: {}",
+        &svg[..svg.len().min(500)]
+    );
+}
+
+#[test]
+fn amiga_preset_snapshot() {
+    let svg = render_fixture("sequence_amiga_theme.puml");
+    insta::assert_snapshot!(svg);
+}

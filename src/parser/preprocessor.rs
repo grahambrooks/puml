@@ -59,6 +59,10 @@ fn expand_defines(source: &str) -> String {
             let name = parts.next().unwrap_or("").to_string();
             let value = parts.next().unwrap_or("").to_string();
             defines.insert(name, value);
+        } else if let Some(theme_name) = trimmed.strip_prefix("!theme ") {
+            // PlantUML `!theme foo` selects a named preset. Translate to an
+            // internal skinparam so the theme layer can resolve it uniformly.
+            out.push_str(&format!("skinparam theme {}\n", theme_name.trim()));
         } else if trimmed.starts_with("!") {
             // Unknown directive — pass through with a warning
             eprintln!("puml: warning: unknown directive: {}", trimmed);

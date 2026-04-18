@@ -8,6 +8,7 @@ use crate::layout::sequence::{
 };
 
 use super::primitives::{arrowhead_defs, style_block, text_node};
+use super::theme::Theme;
 
 const PARTICIPANT_HEIGHT: f64 = 40.0;
 const PARTICIPANT_WIDTH: f64 = 120.0;
@@ -16,7 +17,7 @@ const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
 const TITLE_HEIGHT: f64 = 30.0;
 
-pub fn render(layout: &SequenceLayout) -> Document {
+pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     let title_offset = if layout.title.is_some() {
         TITLE_HEIGHT
     } else {
@@ -33,11 +34,10 @@ pub fn render(layout: &SequenceLayout) -> Document {
     doc = doc.add(arrowhead_defs());
     doc = doc.add(style_block());
 
-    // Background
     let bg = Rectangle::new()
         .set("width", "100%")
         .set("height", "100%")
-        .set("fill", "#ffffff");
+        .set("fill", theme.background_color.as_str());
     doc = doc.add(bg);
 
     // Title

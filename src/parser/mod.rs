@@ -4,6 +4,29 @@ pub mod preprocessor;
 pub mod sequence;
 pub mod state;
 
+/// Parse a `skinparam key value` line (trailing newline ok) into `(key, value)`.
+/// Returns None for empty pairs or block forms.
+pub(crate) fn extract_skinparam(line: &str) -> Option<(String, String)> {
+    let trimmed = line.trim();
+    let after_kw = trimmed
+        .strip_prefix("skinparam")
+        .or_else(|| trimmed.strip_prefix("Skinparam"))
+        .or_else(|| trimmed.strip_prefix("SKINPARAM"))
+        .map(str::trim_start)
+        .unwrap_or(trimmed);
+    // Skip block form: `skinparam Type { ... }`
+    if after_kw.contains('{') {
+        return None;
+    }
+    let (key, value) = after_kw.split_once(char::is_whitespace)?;
+    let key = key.trim();
+    let value = value.trim();
+    if key.is_empty() {
+        return None;
+    }
+    Some((key.to_string(), value.to_string()))
+}
+
 use crate::ast::DiagramAst;
 use crate::error::PumlError;
 use preprocessor::DiagramSource;
