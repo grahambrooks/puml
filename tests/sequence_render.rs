@@ -153,3 +153,60 @@ fn amiga_preset_snapshot() {
     let svg = render_fixture("sequence_amiga_theme.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn dark_preset_applies() {
+    let svg = render_fixture("sequence_dark_theme.puml");
+    // Dark palette: near-black background and near-white text.
+    assert!(
+        svg.contains("fill=\"#1e1e1e\""),
+        "dark background not applied"
+    );
+    assert!(
+        svg.contains("fill:#e8e8e8"),
+        "dark font colour not applied in style block"
+    );
+    // No `prefers-color-scheme` emitted — dark is a static palette, not auto.
+    assert!(
+        !svg.contains("prefers-color-scheme"),
+        "dark should bake the palette, not emit a media query"
+    );
+}
+
+#[test]
+fn dark_preset_snapshot() {
+    let svg = render_fixture("sequence_dark_theme.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn auto_preset_emits_media_query() {
+    let svg = render_fixture("sequence_auto_theme.puml");
+    // Light defaults still land (background, text colour) so the SVG is
+    // readable in viewers that ignore media queries.
+    assert!(
+        svg.contains("fill=\"#ffffff\""),
+        "auto mode should keep the light background as fallback"
+    );
+    // The root rectangle carries `class="bg"` so the media query can override.
+    assert!(
+        svg.contains("class=\"bg\""),
+        "auto mode should tag the background rect with class=\"bg\""
+    );
+    // The media query itself must be present.
+    assert!(
+        svg.contains("@media (prefers-color-scheme:dark)"),
+        "auto mode should emit a prefers-color-scheme CSS rule"
+    );
+    // And the dark fallback colour must appear inside that rule.
+    assert!(
+        svg.contains("#1e1e1e"),
+        "auto mode should reference a dark background colour"
+    );
+}
+
+#[test]
+fn auto_preset_snapshot() {
+    let svg = render_fixture("sequence_auto_theme.puml");
+    insta::assert_snapshot!(svg);
+}

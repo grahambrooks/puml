@@ -53,6 +53,23 @@ Options:
 
 Multiple diagrams in one file produce multiple output files (`out-1.svg`, `out-2.svg`, …).
 
+### Themes & dark mode
+
+Pick a palette with `--theme NAME` or `!theme NAME` inside the source:
+
+```bash
+puml examples/sequence.puml --theme dark -o out.svg     # baked dark palette
+puml examples/sequence.puml --theme auto -o out.svg     # adapts per viewer
+```
+
+| Preset   | Effect                                                                                                     |
+|----------|------------------------------------------------------------------------------------------------------------|
+| `light`  | Default — near-white background, dark text. No opt-in needed.                                              |
+| `dark`   | Near-black background, near-white text, muted cool shape fills. Static palette, renders identically everywhere. |
+| `auto`   | Base light palette plus a `@media (prefers-color-scheme: dark)` rule so a single SVG flips automatically in viewers that expose the user's OS preference (GitHub, mkdocs, any modern browser). Ignored by older SVG renderers, which just get the light version. |
+| `plain`  | Monochrome class/sequence palette (white fill, dark borders).                                              |
+| `amiga`  | Retro deep-blue background with orange accents. Mostly for fun.                                            |
+
 ## Examples
 
 Each gallery entry below is rendered by `puml` itself from the source file linked above it. Regenerate with `make run`

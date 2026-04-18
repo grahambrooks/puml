@@ -7,7 +7,7 @@ use crate::layout::sequence::{
     ParticipantLayout, SequenceLayout,
 };
 
-use super::primitives::{arrowhead_defs, style_block, text_node};
+use super::primitives::{arrowhead_defs, background_rect, style_block, text_node};
 use super::theme::Theme;
 
 const PARTICIPANT_HEIGHT: f64 = 40.0;
@@ -32,13 +32,9 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
         .set("viewBox", format!("0 0 {} {}", layout.total_width, height));
 
     doc = doc.add(arrowhead_defs());
-    doc = doc.add(style_block());
+    doc = doc.add(style_block(theme));
 
-    let bg = Rectangle::new()
-        .set("width", "100%")
-        .set("height", "100%")
-        .set("fill", theme.background_color.as_str());
-    doc = doc.add(bg);
+    doc = doc.add(background_rect(theme));
 
     // Title
     if let Some(ref t) = layout.title {

@@ -3,7 +3,7 @@ use svg::node::element::{
 };
 use svg::Document;
 
-use super::primitives::{style_block, text_node};
+use super::primitives::{background_rect, style_block, text_node};
 use super::theme::Theme;
 use crate::layout::activity::{ActivityLayout, LayoutEdge, LayoutNode, Shape};
 
@@ -26,13 +26,9 @@ pub fn render(layout: &ActivityLayout, theme: &Theme) -> Document {
         .set("viewBox", format!("0 0 {} {}", layout.total_width, height));
 
     doc = doc.add(activity_defs());
-    doc = doc.add(style_block());
+    doc = doc.add(style_block(theme));
 
-    let bg = Rectangle::new()
-        .set("width", "100%")
-        .set("height", "100%")
-        .set("fill", theme.background_color.as_str());
-    doc = doc.add(bg);
+    doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
         let title_el = Text::new()

@@ -40,6 +40,12 @@ fn main() -> anyhow::Result<()> {
         if let Some(ref t) = args.r#type {
             src.type_hint = Some(t.clone());
         }
+        // `--theme NAME` is implemented by prepending `skinparam theme NAME`
+        // to the diagram content, so the per-diagram renderer picks it up via
+        // the same path as `!theme NAME` in the source.
+        if let Some(ref t) = args.theme {
+            src.content = format!("skinparam theme {}\n{}", t, src.content);
+        }
 
         if args.verbose {
             eprintln!("--- diagram {} source ---\n{}", i + 1, src.content);

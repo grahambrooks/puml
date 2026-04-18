@@ -1,0 +1,5 @@
+@startuml
+!theme dark
+Alice -> Bob : hello in dark mode
+Bob --> Alice : ack
+@enduml

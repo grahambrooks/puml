@@ -1,0 +1,5 @@
+@startuml
+!theme auto
+Alice -> Bob : hello
+Bob --> Alice : ack
+@enduml

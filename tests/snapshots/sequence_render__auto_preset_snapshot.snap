@@ -1,6 +1,6 @@
 ---
 source: tests/sequence_render.rs
-assertion_line: 38
+assertion_line: 211
 expression: svg
 ---
 <svg height="230" viewBox="0 0 310 230" width="310" xmlns="http://www.w3.org/2000/svg">
@@ -13,9 +13,9 @@ expression: svg
 </marker>
 </defs>
 <style>
-text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}@media (prefers-color-scheme:dark){text{fill:#e8e8e8}.bg{fill:#1e1e1e}.arrow,.class-line{stroke:#e8e8e8}.arrow-dashed,.class-line-dashed{stroke:#e8e8e8}.divider-line{stroke:#aaaaaa}}
 </style>
-<rect fill="#ffffff" height="100%" width="100%"/>
+<rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
 <rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
 <text text-anchor="middle" x="80" y="44.5">
@@ -33,13 +33,13 @@ Bob
 <g>
 <line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="70" y2="70"/>
 <text text-anchor="middle" x="155" y="65">
-Hello
+hello
 </text>
 </g>
 <g>
 <line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="110" y2="110"/>
 <text text-anchor="middle" x="155" y="105">
-Hi there
+ack
 </text>
 </g>
 <g>

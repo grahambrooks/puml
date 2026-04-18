@@ -1,3 +1,14 @@
+/// Light vs. dark handling. `Auto` emits a single SVG whose palette follows
+/// the viewer's `prefers-color-scheme` via CSS media queries; `Light`/`Dark`
+/// bake a single palette into the output and don't adapt.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub enum ColorScheme {
+    #[default]
+    Light,
+    Dark,
+    Auto,
+}
+
 /// Resolved visual parameters for rendering.
 ///
 /// Every renderer reads from this struct instead of using hard-coded colours
@@ -23,6 +34,16 @@ pub struct Theme {
 
     pub note_background: String,
     pub note_border: String,
+
+    /// When `Auto`, the rendered SVG toggles its palette based on the
+    /// viewer's `prefers-color-scheme`. `Light` and `Dark` bake a single
+    /// palette into the output.
+    pub color_scheme: ColorScheme,
+    /// The dark-mode counterparts for `Auto` — only consulted when
+    /// `color_scheme` is `Auto`. Falls back to the dark preset's defaults.
+    pub dark_background_color: String,
+    pub dark_font_color: String,
+    pub dark_arrow_color: String,
 }
 
 impl Default for Theme {
@@ -45,6 +66,11 @@ impl Default for Theme {
 
             note_background: "#ffffc0".into(),
             note_border: "#bbbb00".into(),
+
+            color_scheme: ColorScheme::Light,
+            dark_background_color: "#1e1e1e".into(),
+            dark_font_color: "#e8e8e8".into(),
+            dark_arrow_color: "#e8e8e8".into(),
         }
     }
 }
@@ -115,6 +141,8 @@ impl Theme {
         match name.to_lowercase().as_str() {
             "plain" => Self::plain(),
             "amiga" => Self::amiga(),
+            "dark" => Self::dark(),
+            "auto" | "adaptive" => Self::auto(),
             _ => Self::default(),
         }
     }
@@ -142,6 +170,38 @@ impl Theme {
             sequence_lifeline_color: "#ff8800".into(),
             note_background: "#ffaa00".into(),
             note_border: "#ff8800".into(),
+            ..Self::default()
+        }
+    }
+
+    /// Explicit dark palette. Backgrounds shift near-black, text near-white,
+    /// shape fills and borders pulled toward muted cool tones that retain
+    /// enough contrast against the dark canvas.
+    fn dark() -> Self {
+        Self {
+            background_color: "#1e1e1e".into(),
+            font_color: "#e8e8e8".into(),
+            arrow_color: "#d0d0d0".into(),
+            class_background: "#2d3748".into(),
+            class_border: "#7fa0c8".into(),
+            sequence_participant_background: "#2d3748".into(),
+            sequence_participant_border: "#7fa0c8".into(),
+            sequence_lifeline_color: "#888888".into(),
+            note_background: "#3a3a00".into(),
+            note_border: "#bbbb55".into(),
+            color_scheme: ColorScheme::Dark,
+            ..Self::default()
+        }
+    }
+
+    /// Adaptive palette. Default light palette drives the base SVG, and a
+    /// CSS `@media (prefers-color-scheme: dark)` rule swaps background +
+    /// text colours when the viewer prefers dark. Everything else (shape
+    /// fills, borders) stays constant — the palette is already tuned for
+    /// legibility on both backgrounds.
+    fn auto() -> Self {
+        Self {
+            color_scheme: ColorScheme::Auto,
             ..Self::default()
         }
     }
