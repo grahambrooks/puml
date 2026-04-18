@@ -153,7 +153,6 @@ jobs:
             echo "sha_${key}=${sha}" >> "$GITHUB_OUTPUT"
           }
           emit linux_x86 x86_64-unknown-linux-gnu
-          emit mac_x86   x86_64-apple-darwin
           emit mac_arm   aarch64-apple-darwin
 
   homebrew:
