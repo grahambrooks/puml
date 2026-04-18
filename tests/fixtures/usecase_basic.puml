@@ -1,0 +1,12 @@
+@startuml
+:User:
+:Admin:
+(Login)
+(View Dashboard)
+(Manage Users)
+
+:User: --> (Login)
+:User: --> (View Dashboard)
+:Admin: --> (Login)
+:Admin: --> (Manage Users)
+@enduml

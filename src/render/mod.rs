@@ -4,6 +4,7 @@ pub mod primitives;
 pub mod sequence;
 pub mod state;
 pub mod theme;
+pub mod usecase;
 
 use crate::ast::DiagramAst;
 use crate::layout;
@@ -31,6 +32,11 @@ pub fn render(ast: &DiagramAst) -> Document {
             let theme = build_theme(&st.skinparams);
             let layout = layout::state::layout(st);
             state::render(&layout, &theme)
+        }
+        DiagramAst::UseCase(uc) => {
+            let theme = build_theme(&uc.skinparams);
+            let layout = layout::usecase::layout(uc);
+            usecase::render(&layout, &theme)
         }
     }
 }

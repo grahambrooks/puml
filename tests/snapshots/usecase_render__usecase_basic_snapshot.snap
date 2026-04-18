@@ -1,0 +1,66 @@
+---
+source: tests/usecase_render.rs
+assertion_line: 33
+expression: svg
+---
+<svg height="310" viewBox="0 0 355 310" width="355" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="uc-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="70" y2="55"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="180" y1="70" y2="135"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="180" y2="55"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="180" y2="215"/>
+</g>
+<g>
+<circle cx="70" cy="40" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="48" y2="82"/>
+<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="61.6" y2="61.6"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="82" y2="96"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="82" y2="96"/>
+<text font-size="13" text-anchor="middle" x="70" y="108">
+User
+</text>
+</g>
+<g>
+<circle cx="70" cy="150" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="158" y2="192"/>
+<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="171.6" y2="171.6"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="192" y2="206"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="192" y2="206"/>
+<text font-size="13" text-anchor="middle" x="70" y="218">
+Admin
+</text>
+</g>
+<g>
+<ellipse cx="247.5" cy="55" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="247.5" y="59.333333333333336">
+Login
+</text>
+</g>
+<g>
+<ellipse cx="247.5" cy="135" fill="#fff2cc" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="247.5" y="139.33333333333334">
+View Dashboard
+</text>
+</g>
+<g>
+<ellipse cx="247.5" cy="215" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="247.5" y="219.33333333333334">
+Manage Users
+</text>
+</g>
+</svg>

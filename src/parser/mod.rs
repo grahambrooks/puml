@@ -3,6 +3,7 @@ pub mod class;
 pub mod preprocessor;
 pub mod sequence;
 pub mod state;
+pub mod usecase;
 
 /// Parse a `skinparam key value` line (trailing newline ok) into `(key, value)`.
 /// Returns None for empty pairs or block forms.
@@ -44,6 +45,7 @@ pub fn parse(source: &DiagramSource) -> Result<DiagramAst, PumlError> {
         "class" => Ok(DiagramAst::Class(class::parse(&source.content)?)),
         "activity" => Ok(DiagramAst::Activity(activity::parse(&source.content)?)),
         "state" => Ok(DiagramAst::State(state::parse(&source.content)?)),
+        "usecase" => Ok(DiagramAst::UseCase(usecase::parse(&source.content)?)),
         "" => {
             // Auto-detect failed — try sequence first, then class
             sequence::parse(&source.content)
@@ -68,6 +70,7 @@ fn detect_type(source: &str) -> String {
     let mut has_class = false;
     let mut has_sequence_strong = false;
     let mut has_arrow = false;
+    let mut has_usecase = false;
 
     for line in source.lines() {
         let t = line.trim();
@@ -133,6 +136,15 @@ fn detect_type(source: &str) -> String {
         if t.contains("->") || t.contains("-->") {
             has_arrow = true;
         }
+        // Use-case markers: explicit keyword OR standalone bracketed name.
+        // `(X)` and `:X:` must occupy the entire line to avoid conflict with
+        // sequence notes and message labels.
+        if t.starts_with("usecase ")
+            || is_standalone_bracketed(t, '(', ')')
+            || is_standalone_bracketed(t, ':', ':')
+        {
+            has_usecase = true;
+        }
     }
 
     // Priority: strong diagram-specific markers > arrow-only detection
@@ -145,8 +157,28 @@ fn detect_type(source: &str) -> String {
     if has_class {
         return "class".to_string();
     }
+    // Use case before generic sequence: shorthand (X) / :X: shouldn't be
+    // mistaken for sequence messages since those contain arrows.
+    if has_usecase && !has_sequence_strong {
+        return "usecase".to_string();
+    }
     if has_sequence_strong || has_arrow {
         return "sequence".to_string();
     }
     "sequence".to_string()
+}
+
+/// True if `t` is `<open><inner><close>` with `inner` non-empty and containing
+/// no other instance of `close` — e.g. `(Login)` or `:User:`.
+fn is_standalone_bracketed(t: &str, open: char, close: char) -> bool {
+    if t.len() < 3 {
+        return false;
+    }
+    let first = t.chars().next().unwrap();
+    let last = t.chars().last().unwrap();
+    if first != open || last != close {
+        return false;
+    }
+    let inner = &t[open.len_utf8()..t.len() - close.len_utf8()];
+    !inner.is_empty() && !inner.contains(close)
 }

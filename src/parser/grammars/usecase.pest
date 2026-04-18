@@ -1,0 +1,81 @@
+// Use Case diagram grammar
+// Actors: `:Name:` (shorthand) or `actor Name` (explicit)
+// Use cases: `(Name)` (shorthand) or `usecase "Name"` (explicit)
+// Associations: `-->`, `<--`, `--`
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    " "* ~ (
+        title_stmt
+        | actor_explicit
+        | usecase_explicit
+        // association_stmt must precede the shorthand declarations so that
+        // `:User: --> (Login)` is parsed as an association rather than the
+        // shorthand `:User:` followed by a line_tail that silently eats the
+        // arrow and target.
+        | association_stmt
+        | actor_shorthand_stmt
+        | usecase_shorthand_stmt
+        | note_stmt
+        | skinparam_stmt
+        | newline
+    )
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+// ── Actors ────────────────────────────────────────────────────────────────────
+// `actor Name` or `actor "Long Name" as Alias`
+actor_explicit = {
+    ^"actor" ~ " "+ ~ (quoted_string | bare_name)
+    ~ (" "+ ~ ^"as" ~ " "+ ~ bare_name)?
+    ~ (" "+ ~ stereotype)?
+    ~ line_tail
+}
+
+// `:Name:` — standalone on its own line
+actor_shorthand_stmt = { actor_shorthand ~ line_tail }
+actor_shorthand = { ":" ~ (!":" ~ !NEWLINE ~ ANY)+ ~ ":" }
+
+// ── Use cases ─────────────────────────────────────────────────────────────────
+// `usecase Name as Alias` or `usecase "Name" as Alias`
+usecase_explicit = {
+    ^"usecase" ~ " "+ ~ (quoted_string | bare_name)
+    ~ (" "+ ~ ^"as" ~ " "+ ~ bare_name)?
+    ~ (" "+ ~ stereotype)?
+    ~ line_tail
+}
+
+// `(Name)` — standalone on its own line, renders as ellipse
+usecase_shorthand_stmt = { usecase_shorthand ~ line_tail }
+usecase_shorthand = { "(" ~ (!")" ~ !NEWLINE ~ ANY)+ ~ ")" }
+
+// ── Associations ──────────────────────────────────────────────────────────────
+association_stmt = {
+    endpoint ~ " "* ~ arrow ~ " "* ~ endpoint
+    ~ (" "* ~ ":" ~ " "* ~ association_label)?
+    ~ line_tail
+}
+
+endpoint = { actor_shorthand | usecase_shorthand | quoted_string | bare_name }
+arrow    = { "-->" | "<--" | ".>" | ".." | "--" | "->" | "<-" }
+
+association_label = { (!NEWLINE ~ ANY)+ }
+
+// ── Note ──────────────────────────────────────────────────────────────────────
+note_stmt = {
+    ^"note" ~ " "+ ~ (!NEWLINE ~ ANY)+ ~ line_tail
+}
+
+// ── Skinparam ────────────────────────────────────────────────────────────────
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+// ── Primitives ────────────────────────────────────────────────────────────────
+stereotype    = { "<<" ~ (!">>" ~ ANY)+ ~ ">>" }
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+bare_name     = { (ASCII_ALPHANUMERIC | "_" | "." | "-")+ }
+rest_of_line  = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+line_tail     = _{ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+newline       = _{ NEWLINE+ }
