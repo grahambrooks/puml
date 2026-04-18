@@ -117,10 +117,8 @@ fn parse_state_block(pair: Pair<Rule>, transitions: &mut Vec<Transition>) -> Sta
 
     for inner in pair.into_inner() {
         match inner.as_rule() {
-            Rule::state_ref => {
-                if name.is_empty() {
-                    name = state_ref_name(inner);
-                }
+            Rule::state_ref if name.is_empty() => {
+                name = state_ref_name(inner);
             }
             Rule::state_name => {
                 label = Some(inner.as_str().trim().to_string());
