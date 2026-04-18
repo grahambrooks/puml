@@ -55,20 +55,26 @@ Multiple diagrams in one file produce multiple output files (`out-1.svg`, `out-2
 
 ### Themes & dark mode
 
-Pick a palette with `--theme NAME` or `!theme NAME` inside the source:
+Every SVG `puml` emits **adapts to the viewer's OS theme by default** — light in
+light viewers, dark in dark viewers, via a `@media (prefers-color-scheme: dark)`
+rule inside the SVG itself. No opt-in, no separate light/dark files. Older
+viewers that ignore the rule fall back to the light rendering.
+
+Override with `--theme NAME` or `!theme NAME` inside the source:
 
 ```bash
-puml examples/sequence.puml --theme dark -o out.svg     # baked dark palette
-puml examples/sequence.puml --theme auto -o out.svg     # adapts per viewer
+puml examples/sequence.puml -o out.svg                  # adapts per viewer (default)
+puml examples/sequence.puml --theme light -o out.svg    # static light palette
+puml examples/sequence.puml --theme dark  -o out.svg    # static dark palette
 ```
 
-| Preset   | Effect                                                                                                     |
-|----------|------------------------------------------------------------------------------------------------------------|
-| `light`  | Default — near-white background, dark text. No opt-in needed.                                              |
-| `dark`   | Near-black background, near-white text, muted cool shape fills. Static palette, renders identically everywhere. |
-| `auto`   | Base light palette plus a `@media (prefers-color-scheme: dark)` rule so a single SVG flips automatically in viewers that expose the user's OS preference (GitHub, mkdocs, any modern browser). Ignored by older SVG renderers, which just get the light version. |
-| `plain`  | Monochrome class/sequence palette (white fill, dark borders).                                              |
-| `amiga`  | Retro deep-blue background with orange accents. Mostly for fun.                                            |
+| Preset   | Effect                                                                                                                                                                                                 |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `auto`   | **Default.** Base light palette plus a media query that flips the background + text colour when the viewer prefers dark. Shape fills (class blue, note yellow, choice amber) stay constant in both modes. |
+| `light`  | Opt out of adaptation — bakes the classic light palette into the SVG. Use when you want the output to render identically regardless of viewer theme.                                                    |
+| `dark`   | Near-black background, near-white text, muted cool shape fills. Static.                                                                                                                                |
+| `plain`  | Monochrome class/sequence palette (white fill, dark borders). Static.                                                                                                                                  |
+| `amiga`  | Retro deep-blue background with orange accents. Static.                                                                                                                                                |
 
 ## Examples
 

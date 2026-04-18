@@ -1,12 +1,17 @@
 /// Light vs. dark handling. `Auto` emits a single SVG whose palette follows
 /// the viewer's `prefers-color-scheme` via CSS media queries; `Light`/`Dark`
 /// bake a single palette into the output and don't adapt.
+///
+/// `Auto` is the default — a bare `.puml` with no `!theme` directive gets
+/// an SVG that renders readable in light viewers and flips automatically
+/// in dark ones. Users who want a strictly static palette opt in with
+/// `!theme light` / `!theme dark` or `--theme light` / `--theme dark`.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum ColorScheme {
     #[default]
+    Auto,
     Light,
     Dark,
-    Auto,
 }
 
 /// Resolved visual parameters for rendering.
@@ -67,7 +72,7 @@ impl Default for Theme {
             note_background: "#ffffc0".into(),
             note_border: "#bbbb00".into(),
 
-            color_scheme: ColorScheme::Light,
+            color_scheme: ColorScheme::default(),
             dark_background_color: "#1e1e1e".into(),
             dark_font_color: "#e8e8e8".into(),
             dark_arrow_color: "#e8e8e8".into(),
@@ -139,6 +144,7 @@ impl Theme {
     /// Select a built-in theme preset. Unknown names fall back to default.
     pub fn from_preset(name: &str) -> Self {
         match name.to_lowercase().as_str() {
+            "light" => Self::light(),
             "plain" => Self::plain(),
             "amiga" => Self::amiga(),
             "dark" => Self::dark(),
@@ -147,6 +153,17 @@ impl Theme {
         }
     }
 
+    /// Static light palette — explicit opt-out of the adaptive default.
+    /// Matches the classic hard-coded values used before theming existed.
+    fn light() -> Self {
+        Self {
+            color_scheme: ColorScheme::Light,
+            ..Self::default()
+        }
+    }
+
+    /// Monochrome white/grey palette. Pinned to Light because a white
+    /// background would invert awkwardly in a dark viewer.
     fn plain() -> Self {
         Self {
             class_background: "#ffffff".into(),
@@ -154,10 +171,15 @@ impl Theme {
             sequence_participant_background: "#ffffff".into(),
             sequence_participant_border: "#333333".into(),
             sequence_lifeline_color: "#888888".into(),
+            color_scheme: ColorScheme::Light,
             ..Self::default()
         }
     }
 
+    /// Retro Amiga deep-blue palette. Pinned to Light (i.e. static) because
+    /// the custom colours are the whole point — flipping them to a generic
+    /// dark palette under `prefers-color-scheme: dark` would defeat the
+    /// theme.
     fn amiga() -> Self {
         Self {
             background_color: "#000088".into(),
@@ -170,6 +192,7 @@ impl Theme {
             sequence_lifeline_color: "#ff8800".into(),
             note_background: "#ffaa00".into(),
             note_border: "#ff8800".into(),
+            color_scheme: ColorScheme::Light,
             ..Self::default()
         }
     }
@@ -198,12 +221,11 @@ impl Theme {
     /// CSS `@media (prefers-color-scheme: dark)` rule swaps background +
     /// text colours when the viewer prefers dark. Everything else (shape
     /// fills, borders) stays constant — the palette is already tuned for
-    /// legibility on both backgrounds.
+    /// legibility on both backgrounds. This is the default scheme; calling
+    /// `Self::auto()` is equivalent to `Self::default()`, kept for clarity
+    /// at call sites that want to name the preset.
     fn auto() -> Self {
-        Self {
-            color_scheme: ColorScheme::Auto,
-            ..Self::default()
-        }
+        Self::default()
     }
 }
 
