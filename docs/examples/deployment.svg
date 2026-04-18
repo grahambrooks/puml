@@ -93,8 +93,7 @@ hosts
 </text>
 </g>
 <g>
-<rect fill="#f0f8ff" height="42" rx="3" stroke="#708090" stroke-width="1.5" width="140" x="30" y="90"/>
-<rect fill="#d0e4f5" height="36" rx="3" stroke="#708090" stroke-width="1.5" width="140" x="30" y="90"/>
+<path d="M170.00,111.00 A22.12,22.12 0 0 1 149.50,125.85 A37.47,37.47 0 0 1 100.00,132.00 A37.47,37.47 0 0 1 50.50,125.85 A22.12,22.12 0 0 1 30.00,111.00 A22.12,22.12 0 0 1 50.50,96.15 A37.47,37.47 0 0 1 100.00,90.00 A37.47,37.47 0 0 1 149.50,96.15 A22.12,22.12 0 0 1 170.00,111.00 Z" fill="#f0f8ff" stroke="#708090" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="100" y="102">
 «cloud»
 </text>
@@ -103,8 +102,9 @@ AWS us-east-1
 </text>
 </g>
 <g>
-<rect fill="#eeeeee" height="42" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="210" y="90"/>
-<rect fill="#cccccc" height="36" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="210" y="90"/>
+<polygon fill="#eeeeee" points="210,96 216,90 350,90 344,96" stroke="#444444" stroke-width="1.5"/>
+<polygon fill="#eeeeee" points="344,96 350,90 350,126 344,132" stroke="#444444" stroke-width="1.5"/>
+<rect fill="#eeeeee" height="36" stroke="#444444" stroke-width="1.5" width="134" x="210" y="96"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="280" y="102">
 «node»
 </text>
@@ -113,8 +113,9 @@ Edge CDN
 </text>
 </g>
 <g>
-<rect fill="#eeeeee" height="42" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="390" y="90"/>
-<rect fill="#cccccc" height="36" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="390" y="90"/>
+<polygon fill="#eeeeee" points="390,96 396,90 530,90 524,96" stroke="#444444" stroke-width="1.5"/>
+<polygon fill="#eeeeee" points="524,96 530,90 530,126 524,132" stroke="#444444" stroke-width="1.5"/>
+<rect fill="#eeeeee" height="36" stroke="#444444" stroke-width="1.5" width="134" x="390" y="96"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="460" y="102">
 «node»
 </text>
@@ -123,8 +124,9 @@ Load Balancer
 </text>
 </g>
 <g>
-<rect fill="#eeeeee" height="42" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="570" y="90"/>
-<rect fill="#cccccc" height="36" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="570" y="90"/>
+<polygon fill="#eeeeee" points="570,96 576,90 710,90 704,96" stroke="#444444" stroke-width="1.5"/>
+<polygon fill="#eeeeee" points="704,96 710,90 710,126 704,132" stroke="#444444" stroke-width="1.5"/>
+<rect fill="#eeeeee" height="36" stroke="#444444" stroke-width="1.5" width="134" x="570" y="96"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="640" y="102">
 «node»
 </text>
@@ -133,8 +135,9 @@ API Server 1
 </text>
 </g>
 <g>
-<rect fill="#eeeeee" height="42" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="750" y="90"/>
-<rect fill="#cccccc" height="36" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="750" y="90"/>
+<polygon fill="#eeeeee" points="750,96 756,90 890,90 884,96" stroke="#444444" stroke-width="1.5"/>
+<polygon fill="#eeeeee" points="884,96 890,90 890,126 884,132" stroke="#444444" stroke-width="1.5"/>
+<rect fill="#eeeeee" height="36" stroke="#444444" stroke-width="1.5" width="134" x="750" y="96"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="820" y="102">
 «node»
 </text>
@@ -143,8 +146,11 @@ API Server 2
 </text>
 </g>
 <g>
-<rect fill="#fff0f5" height="42" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="930" y="90"/>
-<rect fill="#f0cddf" height="36" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="930" y="90"/>
+<rect fill="#fff0f5" height="26.879999999999995" stroke="none" width="140" x="930" y="97.56"/>
+<line stroke="#8b5a8b" stroke-width="1.5" x1="930" x2="930" y1="97.56" y2="124.44"/>
+<line stroke="#8b5a8b" stroke-width="1.5" x1="1070" x2="1070" y1="97.56" y2="124.44"/>
+<path d="M930,124.44 A70,7.56 0 0 0 1070,124.44" fill="none" stroke="#8b5a8b" stroke-width="1.5"/>
+<ellipse cx="1000" cy="97.56" fill="#fff0f5" rx="70" ry="7.56" stroke="#8b5a8b" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="1000" y="102">
 «database»
 </text>
@@ -153,8 +159,11 @@ Primary DB
 </text>
 </g>
 <g>
-<rect fill="#fff0f5" height="42" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="1110" y="90"/>
-<rect fill="#f0cddf" height="36" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="1110" y="90"/>
+<rect fill="#fff0f5" height="26.879999999999995" stroke="none" width="140" x="1110" y="97.56"/>
+<line stroke="#8b5a8b" stroke-width="1.5" x1="1110" x2="1110" y1="97.56" y2="124.44"/>
+<line stroke="#8b5a8b" stroke-width="1.5" x1="1250" x2="1250" y1="97.56" y2="124.44"/>
+<path d="M1110,124.44 A70,7.56 0 0 0 1250,124.44" fill="none" stroke="#8b5a8b" stroke-width="1.5"/>
+<ellipse cx="1180" cy="97.56" fill="#fff0f5" rx="70" ry="7.56" stroke="#8b5a8b" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="1180" y="102">
 «database»
 </text>
@@ -163,8 +172,11 @@ Replica DB
 </text>
 </g>
 <g>
-<rect fill="#f0f5ff" height="42" rx="3" stroke="#4682b4" stroke-width="1.5" width="140" x="1290" y="90"/>
-<rect fill="#d0e0f0" height="36" rx="3" stroke="#4682b4" stroke-width="1.5" width="140" x="1290" y="90"/>
+<rect fill="#f0f5ff" height="42" stroke="none" width="120" x="1300" y="90"/>
+<line stroke="#4682b4" stroke-width="1.5" x1="1300" x2="1420" y1="90" y2="90"/>
+<line stroke="#4682b4" stroke-width="1.5" x1="1300" x2="1420" y1="132" y2="132"/>
+<ellipse cx="1300" cy="111" fill="#f0f5ff" rx="10" ry="21" stroke="#4682b4" stroke-width="1.5"/>
+<path d="M1420,90 A10,21 0 0 1 1420,132" fill="none" stroke="#4682b4" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="1360" y="102">
 «queue»
 </text>
@@ -173,8 +185,9 @@ Event Bus
 </text>
 </g>
 <g>
-<rect fill="#fffacd" height="42" rx="3" stroke="#b8860b" stroke-width="1.5" width="140" x="1470" y="90"/>
-<rect fill="#ffe4b5" height="36" rx="3" stroke="#b8860b" stroke-width="1.5" width="140" x="1470" y="90"/>
+<path d="M1470,90 L1519,90 L1529,100 L1610,100 L1610,132 L1470,132 Z" fill="#fffacd" stroke="#b8860b" stroke-width="1.5"/>
+<path d="M1470,90 L1519,90 L1529,100 L1470,100 Z" fill="#ffe4b5" stroke="none"/>
+<line stroke="#b8860b" stroke-width="1" x1="1470" x2="1529" y1="100" y2="100"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="1540" y="102">
 «folder»
 </text>
