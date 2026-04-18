@@ -169,8 +169,6 @@ jobs:
           V: ${{ needs.version.outputs.version }}
           URL_LX: ${{ needs.release.outputs.url_linux_x86 }}
           SHA_LX: ${{ needs.release.outputs.sha_linux_x86 }}
-          URL_MX: ${{ needs.release.outputs.url_mac_x86 }}
-          SHA_MX: ${{ needs.release.outputs.sha_mac_x86 }}
           URL_MA: ${{ needs.release.outputs.url_mac_arm }}
           SHA_MA: ${{ needs.release.outputs.sha_mac_arm }}
           REPO: ${{ github.repository }}
@@ -187,10 +185,6 @@ jobs:
               on_arm do
                 url "${URL_MA}"
                 sha256 "${SHA_MA}"
-              end
-              on_intel do
-                url "${URL_MX}"
-                sha256 "${SHA_MX}"
               end
             end
 
