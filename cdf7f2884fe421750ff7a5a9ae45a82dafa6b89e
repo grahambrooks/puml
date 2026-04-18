@@ -1,0 +1,60 @@
+src/ast/timing.rs
+  d6aea5936d2aef15 1-30
+src/ast/mod.rs
+  d6aea5936d2aef15 5,18
+src/layout/timing.rs
+  d6aea5936d2aef15 1-126
+src/render/mod.rs
+  d6aea5936d2aef15 7,42-46
+tests/timing_render.rs
+  d6aea5936d2aef15 1-34
+src/render/timing.rs
+  d6aea5936d2aef15 1-134
+src/layout/mod.rs
+  d6aea5936d2aef15 5
+README.md
+  d6aea5936d2aef15 58,60
+tests/fixtures/timing_basic.puml
+  d6aea5936d2aef15 1-14
+src/parser/mod.rs
+  d6aea5936d2aef15 6,50,76,151-160,164-166
+src/parser/grammars/timing.pest
+  d6aea5936d2aef15 1-43
+src/parser/timing.rs
+  d6aea5936d2aef15 1-150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "cdf7f2884fe421750ff7a5a9ae45a82dafa6b89e",
+  "prompts": {
+    "d6aea5936d2aef15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2a6ee1d-9534-4713-be22-dfed3b2329e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 563,
+      "total_deletions": 7,
+      "accepted_lines": 558,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/90fe6b66aa13f2f1942c4603b10f69f697651b57c717dbc99407ab6140371b1d"
+    },
+    "efb5cd870b515462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ac94be9-bf02-4f71-aaad-21af2a2745cb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 20,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/77caa4608029a2f3ca42d32a5c75f8491b433984f0dcb35784deef06be7a2701"
+    }
+  }
+}
