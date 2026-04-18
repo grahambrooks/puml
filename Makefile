@@ -11,7 +11,7 @@ help:
 # ── Build ────────────────────────────────────────────────────────────────────
 
 .PHONY: build
-build: ## Debug build
+build: fmt clippy ## Debug build (runs fmt and clippy first)
 	cargo build
 
 .PHONY: release

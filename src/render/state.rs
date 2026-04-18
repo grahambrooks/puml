@@ -189,7 +189,7 @@ fn render_state_box(node: &StateLayoutNode) -> Group {
         .set("y", node.y + node.h / 2.0 + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
         .set("font-size", FONT_SIZE)
-        .add(text_node(display.to_string()));
+        .add(text_node(display));
 
     Group::new().add(rect).add(text)
 }
