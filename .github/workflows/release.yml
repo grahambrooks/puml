@@ -1,0 +1,226 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'HomebrewFormula/**'
+      - '**.md'
+      - '.idea/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
+
+  version:
+    name: Compute version
+    needs: check
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: v
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATE=$(date -u +'%Y.%-m.%-d')
+          EXISTING=$(git tag -l "v${DATE}" "v${DATE}-*" | wc -l | tr -d ' ')
+          if [ "$EXISTING" = "0" ]; then
+            VERSION="$DATE"
+          else
+            NEXT=$((EXISTING + 1))
+            VERSION="${DATE}-${NEXT}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Computed: v$VERSION"
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-13
+          - target: aarch64-apple-darwin
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: Set package version
+        shell: bash
+        env:
+          V: ${{ needs.version.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import os, re, pathlib
+          v = os.environ["V"]
+          p = pathlib.Path("Cargo.toml")
+          t = p.read_text()
+          t = re.sub(r'^version\s*=\s*".*"$', f'version = "{v}"', t, count=1, flags=re.M)
+          p.write_text(t)
+          PY
+          grep '^version' Cargo.toml
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Package
+        shell: bash
+        env:
+          V: ${{ needs.version.outputs.version }}
+          T: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          tar -czf "dist/puml-${V}-${T}.tar.gz" -C "target/${T}/release" puml
+          (cd dist && shasum -a 256 "puml-${V}-${T}.tar.gz" > "puml-${V}-${T}.tar.gz.sha256")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.target }}
+          path: dist/*
+
+  release:
+    name: GitHub release
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    outputs:
+      url_linux_x86: ${{ steps.shas.outputs.url_linux_x86 }}
+      sha_linux_x86: ${{ steps.shas.outputs.sha_linux_x86 }}
+      url_mac_x86: ${{ steps.shas.outputs.url_mac_x86 }}
+      sha_mac_x86: ${{ steps.shas.outputs.sha_mac_x86 }}
+      url_mac_arm: ${{ steps.shas.outputs.url_mac_arm }}
+      sha_mac_arm: ${{ steps.shas.outputs.sha_mac_arm }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: dist-*
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "Automated release from ${SHORT_SHA}" \
+            --target "$GITHUB_SHA" \
+            dist/*
+      - id: shas
+        shell: bash
+        env:
+          V: ${{ needs.version.outputs.version }}
+          TAG: ${{ needs.version.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          base="https://github.com/${REPO}/releases/download/${TAG}"
+          emit () {
+            key=$1; target=$2
+            f="puml-${V}-${target}.tar.gz"
+            sha=$(awk '{print $1}' "dist/${f}.sha256")
+            echo "url_${key}=${base}/${f}" >> "$GITHUB_OUTPUT"
+            echo "sha_${key}=${sha}" >> "$GITHUB_OUTPUT"
+          }
+          emit linux_x86 x86_64-unknown-linux-gnu
+          emit mac_x86   x86_64-apple-darwin
+          emit mac_arm   aarch64-apple-darwin
+
+  homebrew:
+    name: Update Homebrew formula
+    needs: [version, release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Write formula
+        env:
+          V: ${{ needs.version.outputs.version }}
+          URL_LX: ${{ needs.release.outputs.url_linux_x86 }}
+          SHA_LX: ${{ needs.release.outputs.sha_linux_x86 }}
+          URL_MX: ${{ needs.release.outputs.url_mac_x86 }}
+          SHA_MX: ${{ needs.release.outputs.sha_mac_x86 }}
+          URL_MA: ${{ needs.release.outputs.url_mac_arm }}
+          SHA_MA: ${{ needs.release.outputs.sha_mac_arm }}
+          REPO: ${{ github.repository }}
+        run: |
+          mkdir -p HomebrewFormula
+          cat > HomebrewFormula/puml.rb <<EOF
+          class Puml < Formula
+            desc "Rust CLI reimplementation of PlantUML"
+            homepage "https://github.com/${REPO}"
+            version "${V}"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "${URL_MA}"
+                sha256 "${SHA_MA}"
+              end
+              on_intel do
+                url "${URL_MX}"
+                sha256 "${SHA_MX}"
+              end
+            end
+
+            on_linux do
+              url "${URL_LX}"
+              sha256 "${SHA_LX}"
+            end
+
+            def install
+              bin.install "puml"
+            end
+
+            test do
+              system "#{bin}/puml", "--version"
+            end
+          end
+          EOF
+      - name: Commit formula
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add HomebrewFormula/puml.rb
+          if git diff --cached --quiet; then
+            echo "No formula changes"
+            exit 0
+          fi
+          git commit -m "chore(release): homebrew formula v${{ needs.version.outputs.version }} [skip ci]"
+          git push

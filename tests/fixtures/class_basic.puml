@@ -1,0 +1,36 @@
+@startuml
+title Basic Class Diagram
+
+class Animal {
+  +name: String
+  +age: int
+  +speak()
+  +move()
+}
+
+class Dog {
+  +breed: String
+  +fetch()
+}
+
+class Cat {
+  +indoor: bool
+  +purr()
+}
+
+interface Drawable {
+  +draw()
+  +resize()
+}
+
+abstract class Shape {
+  #color: String
+  +{abstract} area(): double
+  +{abstract} perimeter(): double
+}
+
+Dog --|> Animal : extends
+Cat --|> Animal : extends
+Dog ..|> Drawable : implements
+Shape ..|> Drawable : implements
+@enduml

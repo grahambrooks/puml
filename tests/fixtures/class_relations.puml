@@ -1,0 +1,27 @@
+@startuml
+class Company {
+  +name: String
+}
+
+class Department {
+  +name: String
+  +budget: float
+}
+
+class Employee {
+  +id: int
+  +name: String
+  +salary: float
+  +work()
+}
+
+enum Role {
+  MANAGER
+  ENGINEER
+  DESIGNER
+}
+
+Company "1" *-- "many" Department : contains
+Department "1" o-- "many" Employee : employs
+Employee -- Role : has
+@enduml

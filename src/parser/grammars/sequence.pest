@@ -3,20 +3,22 @@
 diagram = { SOI ~ statement* ~ EOI }
 
 statement = _{
-    title_stmt
-    | participant_stmt
-    | message_stmt
-    | note_stmt
-    | group_stmt
-    | divider_stmt
-    | activate_stmt
-    | deactivate_stmt
-    | delay_stmt
-    | space_stmt
-    | autonumber_stmt
-    | hide_footbox_stmt
-    | skinparam_stmt
-    | newline
+    " "* ~ (
+        title_stmt
+        | participant_stmt
+        | message_stmt
+        | note_stmt
+        | group_stmt
+        | divider_stmt
+        | activate_stmt
+        | deactivate_stmt
+        | delay_stmt
+        | space_stmt
+        | autonumber_stmt
+        | hide_footbox_stmt
+        | skinparam_stmt
+        | newline
+    )
 }
 
 // ── Title ────────────────────────────────────────────────────────────────────
@@ -39,9 +41,11 @@ participant_ref = { quoted_string | bare_name }
 
 arrow = { arrow_token }
 arrow_token = _{
-    "-->>" | "->>" | "-->" | "->" | "<->" | "<-->" |
-    "-\\" | "\\" | "//" | "-/" |
-    "->x" | "->o" | "x->" | "o->"
+    "<-->>" | "<->>" | "<-->" | "<->" |
+    "-->>" | "->>" | "-->" | "->" |
+    "<<--" | "<<-" | "<--" | "<-" |
+    "->x" | "->o" | "x->" | "o->" |
+    "-\\" | "\\" | "//" | "-/"
 }
 
 // ── Notes ────────────────────────────────────────────────────────────────────
@@ -65,14 +69,14 @@ note_line = { !^"end note" ~ rest_of_line }
 
 // ── Groups ───────────────────────────────────────────────────────────────────
 group_stmt = {
-    group_kw ~ (" " ~ rest_of_line)? ~ newline ~
+    group_kw ~ (" "+ ~ rest_of_line)? ~ (" "* ~ NEWLINE)? ~
     group_body ~
-    ^"end"
+    ^"end" ~ " "* ~ NEWLINE?
 }
 
 group_kw = { ^"loop" | ^"alt" | ^"opt" | ^"par" | ^"critical" | ^"break" | ^"group" | ^"ref" }
 group_body = { (else_clause | statement)* }
-else_clause = { (^"else" | ^"also") ~ (" " ~ rest_of_line)? ~ newline ~ statement* }
+else_clause = { (^"else" | ^"also") ~ (" "+ ~ rest_of_line)? ~ (" "* ~ NEWLINE)? ~ statement* }
 
 // ── Dividers ─────────────────────────────────────────────────────────────────
 divider_stmt = { "==" ~ rest_of_line }
@@ -86,7 +90,7 @@ delay_stmt = { "..." ~ (" " ~ rest_of_line)? }
 space_stmt = { "|||" ~ (ASCII_DIGIT+)? }
 
 // ── Autonumber ───────────────────────────────────────────────────────────────
-autonumber_stmt = { ^"autonumber" ~ (" " ~ ASCII_DIGIT+)? ~ rest_of_line? }
+autonumber_stmt = { ^"autonumber" ~ (" "+ ~ ASCII_DIGIT+)? ~ (" "* ~ NEWLINE) }
 
 // ── Misc ─────────────────────────────────────────────────────────────────────
 hide_footbox_stmt = { ^"hide" ~ " "+ ~ ^"footbox" }

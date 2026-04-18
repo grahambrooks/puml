@@ -1,0 +1,82 @@
+---
+source: tests/state_render.rs
+assertion_line: 40
+expression: svg
+---
+<svg height="484" viewBox="0 0 284 484" width="284" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="state-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="142" x2="142" y1="54" y2="104"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="142" x2="142" y1="140" y2="190"/>
+<text font-size="11" x="148" y="165">
+poll
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="142" x2="100" y1="222" y2="358"/>
+<text font-size="11" x="127" y="290">
+ready
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="142" x2="142" y1="222" y2="272"/>
+<text font-size="11" x="148" y="247">
+wait
+</text>
+</g>
+<g>
+<path class="arrow" d="M100,394 C140,414 272,338 232,358" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="172" y="376">
+resume
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="142" x2="100" y1="308" y2="358"/>
+<text font-size="11" x="127" y="333">
+go
+</text>
+</g>
+<g>
+<path class="arrow" d="M100,394 C140,414 182,10 142,30" marker-end="url(#state-arrow)"/>
+</g>
+<g>
+<circle cx="142" cy="42" fill="#181818" r="12"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="104"/>
+<text font-size="13" text-anchor="middle" x="142" y="126.33333333333333">
+Idle
+</text>
+</g>
+<g>
+<polygon fill="#fff2cc" points="142,190 158,206 142,222 126,206" stroke="#d6b656" stroke-width="1.5"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="358"/>
+<text font-size="13" text-anchor="middle" x="100" y="380.3333333333333">
+Active
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="272"/>
+<text font-size="13" text-anchor="middle" x="142" y="294.3333333333333">
+Paused
+</text>
+</g>
+<g>
+<circle cx="232" cy="370" fill="#ffffff" r="12" stroke="#181818" stroke-width="1.5"/>
+<text font-size="11" font-weight="bold" text-anchor="middle" x="232" y="374.3333333333333">
+H
+</text>
+</g>
+</svg>

@@ -43,3 +43,33 @@ fn participants_snapshot() {
     let svg = render_fixture("participants.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn groups_renders() {
+    let svg = render_fixture("sequence_groups.puml");
+    assert!(svg.contains("alt"));
+    assert!(svg.contains("loop"));
+    // autonumber prefix should appear on at least the first message label
+    assert!(svg.contains("1:"));
+}
+
+#[test]
+fn groups_snapshot() {
+    let svg = render_fixture("sequence_groups.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn reverse_arrows_render() {
+    let svg = render_fixture("sequence_return.puml");
+    // All three messages land, regardless of which direction they're written.
+    assert!(svg.contains("request"));
+    assert!(svg.contains("reverse"));
+    assert!(svg.contains("response"));
+}
+
+#[test]
+fn reverse_arrows_snapshot() {
+    let svg = render_fixture("sequence_return.puml");
+    insta::assert_snapshot!(svg);
+}

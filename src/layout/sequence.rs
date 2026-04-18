@@ -50,11 +50,23 @@ pub struct DividerLayout {
     pub total_width: f64,
 }
 
+pub struct GroupLayout {
+    pub kind: String,
+    pub label: String,
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+    /// y positions of section dividers (else/also breaks) relative to diagram origin
+    pub section_breaks: Vec<(f64, Option<String>)>,
+}
+
 pub enum LayoutElement {
     Message(MessageLayout),
     Note(NoteLayout),
     Activation(ActivationLayout),
     Divider(DividerLayout),
+    Group(GroupLayout),
 }
 
 pub struct SequenceLayout {
@@ -78,7 +90,6 @@ fn participant_display(p: &Participant) -> String {
 pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     let participants = diagram.ordered_participants();
 
-    // Compute column widths based on longest label they carry
     let n = participants.len();
     let mut col_widths: Vec<f64> = participants
         .iter()
@@ -88,33 +99,8 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         })
         .collect();
 
-    // Widen columns to fit message labels that span them
-    for elem in &diagram.elements {
-        if let SequenceElement::Message(msg) = elem {
-            let fi = participants.iter().position(|p| {
-                p.alias.as_deref().unwrap_or(&p.name) == msg.from || p.name == msg.from
-            });
-            let ti = participants
-                .iter()
-                .position(|p| p.alias.as_deref().unwrap_or(&p.name) == msg.to || p.name == msg.to);
-            if let (Some(fi), Some(ti)) = (fi, ti) {
-                if fi != ti {
-                    let (lo, hi) = (fi.min(ti), fi.max(ti));
-                    let span: f64 = col_widths[lo..=hi].iter().sum::<f64>()
-                        + PARTICIPANT_H_PADDING * (hi - lo) as f64;
-                    let needed = text_width(&msg.label) + 20.0;
-                    if needed > span && hi > lo {
-                        let extra = (needed - span) / (hi - lo) as f64;
-                        for w in &mut col_widths[lo..hi] {
-                            *w += extra;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    widen_for_messages(&participants, &diagram.elements, &mut col_widths);
 
-    // Compute center x for each participant
     let mut centers: Vec<f64> = Vec::with_capacity(n);
     let mut x = SIDE_MARGIN;
     for (i, w) in col_widths.iter().enumerate() {
@@ -126,7 +112,6 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     }
     let total_width = x + SIDE_MARGIN;
 
-    // Build participant layouts
     let participant_layouts: Vec<ParticipantLayout> = participants
         .iter()
         .enumerate()
@@ -139,119 +124,33 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         })
         .collect();
 
-    // Lay out elements row by row
-    let mut y = TOP_MARGIN + PARTICIPANT_HEIGHT + 10.0;
-    let mut elements: Vec<LayoutElement> = Vec::new();
-    let mut active_depth: Vec<u32> = vec![0; n]; // activation depth per participant
-    let mut open_activations: Vec<(usize, f64)> = Vec::new(); // (participant idx, start y)
+    let mut ctx = LayoutCtx {
+        participants: &participants,
+        centers: &centers,
+        total_width,
+        elements: Vec::new(),
+        active_depth: vec![0; n],
+        open_activations: Vec::new(),
+        y: TOP_MARGIN + PARTICIPANT_HEIGHT + 10.0,
+        autonumber: None,
+    };
 
-    for elem in &diagram.elements {
-        match elem {
-            SequenceElement::Message(msg) => {
-                let fi = find_participant(&participants, &msg.from);
-                let ti = find_participant(&participants, &msg.to);
-                let (from_x, to_x) = match (fi, ti) {
-                    (Some(f), Some(t)) => (centers[f], centers[t]),
-                    (Some(f), None) => (centers[f], centers[f] + 60.0),
-                    _ => (SIDE_MARGIN + 60.0, SIDE_MARGIN + 180.0),
-                };
-                let dashed = matches!(msg.arrow, ArrowStyle::Dashed | ArrowStyle::SolidThick);
-                let self_msg = fi == ti;
-                elements.push(LayoutElement::Message(MessageLayout {
-                    from_x,
-                    to_x,
-                    y,
-                    label: msg.label.clone(),
-                    dashed,
-                    self_msg,
-                    lost: matches!(msg.arrow, ArrowStyle::Lost),
-                }));
-                y += ROW_HEIGHT;
-            }
-            SequenceElement::Note(note) => {
-                let anchor_x = note
-                    .participants
-                    .first()
-                    .and_then(|name| find_participant(&participants, name).map(|i| centers[i]))
-                    .unwrap_or(SIDE_MARGIN + 60.0);
-                let note_w = note
-                    .lines
-                    .iter()
-                    .map(|l| text_width(l))
-                    .fold(120.0_f64, f64::max)
-                    + 20.0;
-                let note_h = note.lines.len() as f64 * (FONT_SIZE + 4.0) + 12.0;
-                let note_x = match note.position {
-                    NotePosition::Left => anchor_x - note_w - 10.0,
-                    NotePosition::Right => anchor_x + 10.0,
-                    NotePosition::Over => anchor_x - note_w / 2.0,
-                };
-                elements.push(LayoutElement::Note(NoteLayout {
-                    x: note_x,
-                    y,
-                    width: note_w,
-                    height: note_h,
-                    lines: note.lines.clone(),
-                }));
-                y += note_h + 10.0;
-            }
-            SequenceElement::Activate(name) => {
-                if let Some(i) = find_participant(&participants, name) {
-                    open_activations.push((i, y));
-                    active_depth[i] += 1;
-                }
-            }
-            SequenceElement::Deactivate(name) => {
-                if let Some(i) = find_participant(&participants, name) {
-                    if active_depth[i] > 0 {
-                        active_depth[i] -= 1;
-                        if let Some(pos) = open_activations.iter().rposition(|(idx, _)| *idx == i) {
-                            let (_, y_start) = open_activations.remove(pos);
-                            let depth = active_depth[i];
-                            elements.push(LayoutElement::Activation(ActivationLayout {
-                                participant_x: centers[i],
-                                y_start,
-                                y_end: y,
-                                depth,
-                            }));
-                        }
-                    }
-                }
-            }
-            SequenceElement::Divider(div) => {
-                elements.push(LayoutElement::Divider(DividerLayout {
-                    y,
-                    label: div.label.clone(),
-                    total_width,
-                }));
-                y += ROW_HEIGHT;
-            }
-            SequenceElement::Space(px) => {
-                y += *px as f64;
-            }
-            SequenceElement::Delay(label) => {
-                elements.push(LayoutElement::Divider(DividerLayout {
-                    y,
-                    label: label.clone(),
-                    total_width,
-                }));
-                y += ROW_HEIGHT / 2.0;
-            }
-            SequenceElement::Group(_) | SequenceElement::Autonumber(_) => {}
-        }
-    }
+    layout_elements(&mut ctx, &diagram.elements);
 
     // Close any still-open activations
-    for (i, y_start) in open_activations {
-        elements.push(LayoutElement::Activation(ActivationLayout {
-            participant_x: centers[i],
-            y_start,
-            y_end: y,
-            depth: 0,
-        }));
+    let y_end = ctx.y;
+    let remaining: Vec<(usize, f64)> = std::mem::take(&mut ctx.open_activations);
+    for (i, y_start) in remaining {
+        ctx.elements
+            .push(LayoutElement::Activation(ActivationLayout {
+                participant_x: centers[i],
+                y_start,
+                y_end,
+                depth: 0,
+            }));
     }
 
-    let lifeline_height = y + 10.0;
+    let lifeline_height = ctx.y + 10.0;
     let footer_h = if diagram.hide_footbox {
         0.0
     } else {
@@ -261,12 +160,236 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
 
     SequenceLayout {
         participants: participant_layouts,
-        elements,
+        elements: ctx.elements,
         lifeline_height,
         total_width,
         total_height,
         title: diagram.title.clone(),
         hide_footbox: diagram.hide_footbox,
+    }
+}
+
+struct LayoutCtx<'a> {
+    participants: &'a [&'a Participant],
+    centers: &'a [f64],
+    total_width: f64,
+    elements: Vec<LayoutElement>,
+    active_depth: Vec<u32>,
+    open_activations: Vec<(usize, f64)>,
+    y: f64,
+    /// When Some, messages receive an autonumber prefix and the counter advances.
+    autonumber: Option<u32>,
+}
+
+fn layout_elements(ctx: &mut LayoutCtx, elements: &[SequenceElement]) {
+    for elem in elements {
+        layout_one(ctx, elem);
+    }
+}
+
+fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
+    match elem {
+        SequenceElement::Message(msg) => {
+            let fi = find_participant(ctx.participants, &msg.from);
+            let ti = find_participant(ctx.participants, &msg.to);
+            let (from_x, to_x) = match (fi, ti) {
+                (Some(f), Some(t)) => (ctx.centers[f], ctx.centers[t]),
+                (Some(f), None) => (ctx.centers[f], ctx.centers[f] + 60.0),
+                _ => (SIDE_MARGIN + 60.0, SIDE_MARGIN + 180.0),
+            };
+            let dashed = matches!(msg.arrow, ArrowStyle::Dashed);
+            let self_msg = fi == ti;
+
+            let mut label = msg.label.clone();
+            if let Some(ref mut n) = ctx.autonumber {
+                let prefix = format!("{}: ", n);
+                label = if label.is_empty() {
+                    prefix.trim_end().to_string()
+                } else {
+                    format!("{}{}", prefix, label)
+                };
+                *n += 1;
+            }
+
+            ctx.elements.push(LayoutElement::Message(MessageLayout {
+                from_x,
+                to_x,
+                y: ctx.y,
+                label,
+                dashed,
+                self_msg,
+                lost: matches!(msg.arrow, ArrowStyle::Lost),
+            }));
+            ctx.y += ROW_HEIGHT;
+        }
+        SequenceElement::Note(note) => {
+            let anchor_x = note
+                .participants
+                .first()
+                .and_then(|name| find_participant(ctx.participants, name).map(|i| ctx.centers[i]))
+                .unwrap_or(SIDE_MARGIN + 60.0);
+            let note_w = note
+                .lines
+                .iter()
+                .map(|l| text_width(l))
+                .fold(120.0_f64, f64::max)
+                + 20.0;
+            let note_h = note.lines.len() as f64 * (FONT_SIZE + 4.0) + 12.0;
+            let note_x = match note.position {
+                NotePosition::Left => anchor_x - note_w - 10.0,
+                NotePosition::Right => anchor_x + 10.0,
+                NotePosition::Over => anchor_x - note_w / 2.0,
+            };
+            ctx.elements.push(LayoutElement::Note(NoteLayout {
+                x: note_x,
+                y: ctx.y,
+                width: note_w,
+                height: note_h,
+                lines: note.lines.clone(),
+            }));
+            ctx.y += note_h + 10.0;
+        }
+        SequenceElement::Activate(name) => {
+            if let Some(i) = find_participant(ctx.participants, name) {
+                ctx.open_activations.push((i, ctx.y));
+                ctx.active_depth[i] += 1;
+            }
+        }
+        SequenceElement::Deactivate(name) => {
+            if let Some(i) = find_participant(ctx.participants, name) {
+                if ctx.active_depth[i] > 0 {
+                    ctx.active_depth[i] -= 1;
+                    if let Some(pos) = ctx.open_activations.iter().rposition(|(idx, _)| *idx == i) {
+                        let (_, y_start) = ctx.open_activations.remove(pos);
+                        let depth = ctx.active_depth[i];
+                        let cx = ctx.centers[i];
+                        ctx.elements
+                            .push(LayoutElement::Activation(ActivationLayout {
+                                participant_x: cx,
+                                y_start,
+                                y_end: ctx.y,
+                                depth,
+                            }));
+                    }
+                }
+            }
+        }
+        SequenceElement::Divider(div) => {
+            ctx.elements.push(LayoutElement::Divider(DividerLayout {
+                y: ctx.y,
+                label: div.label.clone(),
+                total_width: ctx.total_width,
+            }));
+            ctx.y += ROW_HEIGHT;
+        }
+        SequenceElement::Space(px) => {
+            ctx.y += *px as f64;
+        }
+        SequenceElement::Delay(label) => {
+            ctx.elements.push(LayoutElement::Divider(DividerLayout {
+                y: ctx.y,
+                label: label.clone(),
+                total_width: ctx.total_width,
+            }));
+            ctx.y += ROW_HEIGHT / 2.0;
+        }
+        SequenceElement::Autonumber(start) => {
+            ctx.autonumber = Some(start.unwrap_or(1));
+        }
+        SequenceElement::Group(group) => {
+            layout_group(ctx, group);
+        }
+    }
+}
+
+const GROUP_HEADER_H: f64 = 20.0;
+const GROUP_PAD_Y: f64 = 8.0;
+
+fn layout_group(ctx: &mut LayoutCtx, group: &GroupBlock) {
+    let y_start = ctx.y;
+    ctx.y += GROUP_HEADER_H + GROUP_PAD_Y;
+
+    let mut section_breaks: Vec<(f64, Option<String>)> = Vec::new();
+
+    for (i, (section_label, section_body)) in group.sections.iter().enumerate() {
+        if i > 0 {
+            section_breaks.push((ctx.y, section_label.clone()));
+            ctx.y += GROUP_HEADER_H;
+        }
+        layout_elements(ctx, section_body);
+    }
+
+    ctx.y += GROUP_PAD_Y;
+    let y_end = ctx.y;
+
+    // Span across all participants (simple approach — tighten later)
+    let x = if ctx.centers.is_empty() {
+        SIDE_MARGIN
+    } else {
+        ctx.centers.first().copied().unwrap_or(SIDE_MARGIN) - 60.0
+    };
+    let x_right = ctx
+        .centers
+        .last()
+        .copied()
+        .map(|c| c + 60.0)
+        .unwrap_or(ctx.total_width - SIDE_MARGIN);
+    let x = x.max(SIDE_MARGIN / 2.0);
+    let width = (x_right - x).max(100.0);
+
+    ctx.elements.push(LayoutElement::Group(GroupLayout {
+        kind: group.kind.clone(),
+        label: group.label.clone(),
+        x,
+        y: y_start,
+        width,
+        height: y_end - y_start,
+        section_breaks,
+    }));
+}
+
+fn collect_messages<'a>(elements: &'a [SequenceElement], out: &mut Vec<&'a Message>) {
+    for e in elements {
+        match e {
+            SequenceElement::Message(m) => out.push(m),
+            SequenceElement::Group(g) => {
+                for (_, body) in &g.sections {
+                    collect_messages(body, out);
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+fn widen_for_messages(
+    participants: &[&Participant],
+    elements: &[SequenceElement],
+    col_widths: &mut [f64],
+) {
+    let mut msgs: Vec<&Message> = Vec::new();
+    collect_messages(elements, &mut msgs);
+    for msg in msgs {
+        let fi = participants
+            .iter()
+            .position(|p| p.alias.as_deref().unwrap_or(&p.name) == msg.from || p.name == msg.from);
+        let ti = participants
+            .iter()
+            .position(|p| p.alias.as_deref().unwrap_or(&p.name) == msg.to || p.name == msg.to);
+        if let (Some(fi), Some(ti)) = (fi, ti) {
+            if fi != ti {
+                let (lo, hi) = (fi.min(ti), fi.max(ti));
+                let span: f64 = col_widths[lo..=hi].iter().sum::<f64>()
+                    + PARTICIPANT_H_PADDING * (hi - lo) as f64;
+                let needed = text_width(&msg.label) + 20.0;
+                if needed > span && hi > lo {
+                    let extra = (needed - span) / (hi - lo) as f64;
+                    for w in &mut col_widths[lo..hi] {
+                        *w += extra;
+                    }
+                }
+            }
+        }
     }
 }
 

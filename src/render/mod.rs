@@ -1,6 +1,8 @@
+pub mod activity;
 pub mod class;
 pub mod primitives;
 pub mod sequence;
+pub mod state;
 
 use crate::ast::DiagramAst;
 use crate::layout;
@@ -15,6 +17,14 @@ pub fn render(ast: &DiagramAst) -> Document {
         DiagramAst::Class(cls) => {
             let layout = layout::class::layout(cls);
             class::render(&layout)
+        }
+        DiagramAst::Activity(act) => {
+            let layout = layout::activity::layout(act);
+            activity::render(&layout)
+        }
+        DiagramAst::State(st) => {
+            let layout = layout::state::layout(st);
+            state::render(&layout)
         }
     }
 }

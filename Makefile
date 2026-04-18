@@ -1,58 +1,66 @@
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := help
+
+# ── Help ─────────────────────────────────────────────────────────────────────
+
+.PHONY: help
+help:
+	@echo "Available targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
 
 # ── Build ────────────────────────────────────────────────────────────────────
 
 .PHONY: build
-build:
+build: ## Debug build
 	cargo build
 
 .PHONY: release
-release:
+release: ## Release build
 	cargo build --release
 
 # ── Lint & Format ─────────────────────────────────────────────────────────────
 
 .PHONY: fmt
-fmt:
+fmt: ## Format sources
 	cargo fmt
 
 .PHONY: fmt-check
-fmt-check:
+fmt-check: ## Verify formatting without writing
 	cargo fmt -- --check
 
 .PHONY: clippy
-clippy:
+clippy: ## Lint with clippy (warnings as errors)
 	cargo clippy -- -D warnings
 
 # ── Test ─────────────────────────────────────────────────────────────────────
 
 .PHONY: test
-test:
+test: ## Run tests
 	cargo test
 
 .PHONY: test-verbose
-test-verbose:
+test-verbose: ## Run tests with stdout captured
 	cargo test -- --nocapture
 
 .PHONY: snapshots
-snapshots:
+snapshots: ## Update insta snapshots
 	INSTA_UPDATE=always cargo test
 
 # ── Combined checks (run before committing) ───────────────────────────────────
 
 .PHONY: check
-check: fmt-check clippy test
+check: fmt-check clippy test ## Pre-commit checks (fmt-check + clippy + test)
 
 # ── Run ──────────────────────────────────────────────────────────────────────
 
 .PHONY: run
-run:
+run: ## Render examples/sequence.puml to out.svg
 	cargo run -- examples/sequence.puml -o out.svg
 	@echo "wrote out.svg"
 
 # ── Clean ────────────────────────────────────────────────────────────────────
 
 .PHONY: clean
-clean:
+clean: ## Remove build artifacts and out.svg
 	cargo clean
 	rm -f out.svg

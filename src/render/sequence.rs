@@ -1,14 +1,13 @@
 use svg::node::element::{Circle, Group, Line, Rectangle, Text};
-use svg::node::Text as TextNode;
 use svg::Document;
 
 use crate::ast::sequence::ParticipantKind;
 use crate::layout::sequence::{
-    ActivationLayout, DividerLayout, LayoutElement, MessageLayout, NoteLayout, ParticipantLayout,
-    SequenceLayout,
+    ActivationLayout, DividerLayout, GroupLayout, LayoutElement, MessageLayout, NoteLayout,
+    ParticipantLayout, SequenceLayout,
 };
 
-use super::primitives::{arrowhead_defs, style_block};
+use super::primitives::{arrowhead_defs, style_block, text_node};
 
 const PARTICIPANT_HEIGHT: f64 = 40.0;
 const PARTICIPANT_WIDTH: f64 = 120.0;
@@ -48,7 +47,7 @@ pub fn render(layout: &SequenceLayout) -> Document {
             .set("y", TOP_MARGIN + 5.0)
             .set("text-anchor", "middle")
             .set("class", "title")
-            .add(TextNode::new(t.clone()));
+            .add(text_node(t.clone()));
         doc = doc.add(title_el);
     }
 
@@ -71,7 +70,13 @@ pub fn render(layout: &SequenceLayout) -> Document {
         doc = doc.add(line);
     }
 
-    // Elements
+    // Draw group containers first so they sit below messages/notes.
+    for elem in &layout.elements {
+        if let LayoutElement::Group(g) = elem {
+            doc = doc.add(render_group(g, y_off));
+        }
+    }
+
     for elem in &layout.elements {
         match elem {
             LayoutElement::Message(m) => {
@@ -86,6 +91,7 @@ pub fn render(layout: &SequenceLayout) -> Document {
             LayoutElement::Divider(d) => {
                 doc = doc.add(render_divider(d, y_off));
             }
+            LayoutElement::Group(_) => {}
         }
     }
 
@@ -121,7 +127,7 @@ fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {
                 .set("x", p.x)
                 .set("y", y + PARTICIPANT_HEIGHT / 2.0 + FONT_SIZE / 2.0 - 2.0)
                 .set("text-anchor", "middle")
-                .add(TextNode::new(p.display.clone()));
+                .add(text_node(p.display.clone()));
             Group::new().add(rect).add(text)
         }
     }
@@ -175,7 +181,7 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
         .set("x", cx)
         .set("y", y + PARTICIPANT_HEIGHT + FONT_SIZE)
         .set("text-anchor", "middle")
-        .add(TextNode::new(p.display.clone()));
+        .add(text_node(p.display.clone()));
 
     Group::new()
         .add(head)
@@ -216,7 +222,7 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
         let label = Text::new()
             .set("x", x + loop_w + 4.0)
             .set("y", y + 10.0)
-            .add(TextNode::new(m.label.clone()));
+            .add(text_node(m.label.clone()));
         return Group::new().add(path).add(label);
     }
 
@@ -233,7 +239,7 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
         .set("x", text_x)
         .set("y", label_y)
         .set("text-anchor", "middle")
-        .add(TextNode::new(m.label.clone()));
+        .add(text_node(m.label.clone()));
 
     Group::new().add(line).add(label)
 }
@@ -281,7 +287,7 @@ fn render_note(n: &NoteLayout, y_off: f64) -> Group {
         let t = Text::new()
             .set("x", n.x + 6.0)
             .set("y", ty)
-            .add(TextNode::new(line.clone()));
+            .add(text_node(line.clone()));
         g = g.add(t);
     }
     g
@@ -298,6 +304,85 @@ fn render_activation(a: &ActivationLayout, y_off: f64) -> Group {
     Group::new().add(rect)
 }
 
+fn render_group(g: &GroupLayout, y_off: f64) -> Group {
+    let y = g.y + y_off;
+    let kind_display = g.kind.to_lowercase();
+    let tab_w = (kind_display.len() as f64 * 8.0 + 16.0).max(40.0);
+    let tab_h = 16.0;
+
+    let frame = Rectangle::new()
+        .set("x", g.x)
+        .set("y", y)
+        .set("width", g.width)
+        .set("height", g.height)
+        .set("fill", "none")
+        .set("stroke", "#888")
+        .set("stroke-width", "1.2");
+
+    let tab = svg::node::element::Polygon::new()
+        .set(
+            "points",
+            format!(
+                "{},{} {},{} {},{} {},{} {},{}",
+                g.x,
+                y,
+                g.x + tab_w,
+                y,
+                g.x + tab_w + tab_h * 0.5,
+                y + tab_h * 0.5,
+                g.x + tab_w,
+                y + tab_h,
+                g.x,
+                y + tab_h
+            ),
+        )
+        .set("fill", "#eeeeee")
+        .set("stroke", "#888")
+        .set("stroke-width", "1.2");
+
+    let tab_label = Text::new()
+        .set("x", g.x + 8.0)
+        .set("y", y + tab_h - 4.0)
+        .set("font-weight", "bold")
+        .set("font-size", FONT_SIZE - 2.0)
+        .add(text_node(kind_display));
+
+    let mut grp = Group::new().add(frame).add(tab).add(tab_label);
+
+    if !g.label.is_empty() {
+        let label = Text::new()
+            .set("x", g.x + tab_w + tab_h * 0.5 + 8.0)
+            .set("y", y + tab_h - 4.0)
+            .set("font-size", FONT_SIZE - 1.0)
+            .add(text_node(format!("[{}]", g.label)));
+        grp = grp.add(label);
+    }
+
+    for (break_y, section_label) in &g.section_breaks {
+        let by = break_y + y_off;
+        let line = Line::new()
+            .set("x1", g.x)
+            .set("y1", by)
+            .set("x2", g.x + g.width)
+            .set("y2", by)
+            .set("stroke", "#888")
+            .set("stroke-width", "1")
+            .set("stroke-dasharray", "4,3");
+        grp = grp.add(line);
+        if let Some(lbl) = section_label {
+            let t = Text::new()
+                .set("x", g.x + 8.0)
+                .set("y", by + 13.0)
+                .set("font-size", FONT_SIZE - 1.0)
+                .set("font-weight", "bold")
+                .add(text_node(format!("[{}]", lbl)));
+            grp = grp.add(t);
+        }
+    }
+
+    grp
+}
+
 fn render_divider(d: &DividerLayout, y_off: f64) -> Group {
     let y = d.y + y_off;
     let cx = d.total_width / 2.0;
@@ -312,6 +397,6 @@ fn render_divider(d: &DividerLayout, y_off: f64) -> Group {
         .set("y", y - 4.0)
         .set("text-anchor", "middle")
         .set("class", "divider-label")
-        .add(TextNode::new(d.label.clone()));
+        .add(text_node(d.label.clone()));
     Group::new().add(line).add(label)
 }

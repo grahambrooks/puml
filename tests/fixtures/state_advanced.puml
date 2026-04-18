@@ -1,0 +1,14 @@
+@startuml
+[*] --> Idle
+state Idle
+state Decision <<choice>>
+state Active
+state Paused
+
+Idle --> Decision : poll
+Decision --> Active : ready
+Decision --> Paused : wait
+Active --> [H] : resume
+Paused --> Active : go
+Active --> [*]
+@enduml

@@ -1,0 +1,67 @@
+// State diagram grammar
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    title_stmt
+    | state_block
+    | transition_stmt
+    | note_stmt
+    | hide_stmt
+    | skinparam_stmt
+    | newline
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+// ── State block (composite or standalone declaration) ────────────────────────
+state_block = {
+    ^"state" ~ " "+ ~ state_ref ~ (" "+ ~ ^"as" ~ " "+ ~ state_name)? ~ (" "+ ~ stereotype)? ~ " "* ~ "{" ~ line_tail ~
+    inner_element* ~
+    "}" ~ line_tail
+    | ^"state" ~ " "+ ~ state_ref ~ (" "+ ~ ^"as" ~ " "+ ~ state_name)? ~ (" "+ ~ stereotype)? ~ line_tail
+}
+
+stereotype = { "<<" ~ (!">>" ~ ANY)+ ~ ">>" }
+
+// ── Transition ────────────────────────────────────────────────────────────────
+transition_stmt = {
+    state_ref ~ " "* ~ "-->" ~ " "* ~ state_ref ~ (" "* ~ ":" ~ " "* ~ transition_label)? ~ line_tail
+}
+
+transition_label = { (!NEWLINE ~ ANY)+ }
+
+// ── Note ──────────────────────────────────────────────────────────────────────
+note_stmt = {
+    ^"note" ~ " "+ ~ note_pos ~ " "* ~ ^"of" ~ " "* ~ state_ref ~ line_tail ~
+    note_line* ~
+    ^"end" ~ " "+ ~ ^"note" ~ line_tail
+}
+note_pos  = { ^"left" | ^"right" }
+note_line = { !( ^"end" ~ " "+ ~ ^"note") ~ rest_of_line }
+
+// ── hide/show ─────────────────────────────────────────────────────────────────
+hide_stmt      = { ^"hide" ~ " "+ ~ rest_of_line }
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+// ── Inner elements (inside a composite state) ─────────────────────────────────
+inner_element = _{
+    transition_stmt
+    | note_stmt
+    | state_block
+    | divider_stmt
+    | newline
+}
+
+divider_stmt = { " "* ~ "--" ~ (!NEWLINE ~ ANY)* ~ line_tail }
+
+// ── State reference (name or [*], [H], [H*]) ─────────────────────────────────
+state_ref  = { "[*]" | "[H*]" | "[H]" | state_name }
+// State names: no spaces, no dashes (avoids consuming "-->" tokens)
+state_name = { (ASCII_ALPHANUMERIC | "_")+ }
+
+// ── Primitives ────────────────────────────────────────────────────────────────
+rest_of_line = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+line_tail    = _{ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+newline      = _{ NEWLINE+ }

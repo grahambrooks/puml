@@ -1,0 +1,136 @@
+// Class diagram grammar
+
+diagram = { SOI ~ statement* ~ EOI }
+
+statement = _{
+    " "* ~ (
+        title_stmt
+        | class_def
+        | note_stmt
+        | relation_stmt
+        | namespace_stmt
+        | hide_stmt
+        | skinparam_stmt
+        | newline
+    )
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+// ── Class/Interface/Enum definitions ─────────────────────────────────────────
+class_def = {
+    class_kw ~ " "+ ~ class_name
+    ~ (" "+ ~ ^"as" ~ " "+ ~ alias)?
+    ~ (" "* ~ stereotype)?
+    ~ (" "* ~ color)?
+    ~ (" "* ~ "{" ~ " "* ~ NEWLINE? ~ member* ~ " "* ~ "}")?
+    ~ rest_of_line?
+}
+
+class_kw = {
+    ^"abstract" ~ " "+ ~ ^"class"
+    | ^"abstract"
+    | ^"interface"
+    | ^"annotation"
+    | ^"enum"
+    | ^"class"
+}
+
+class_name = { quoted_string | class_bare_name }
+class_bare_name = { bare_name ~ generic_params? }
+generic_params = { "<" ~ (!">" ~ !NEWLINE ~ ANY)+ ~ ">" }
+alias      = { bare_name }
+stereotype = { "<<" ~ (!">>" ~ ANY)+ ~ ">>" }
+color      = { "#" ~ ASCII_ALPHANUMERIC+ }
+
+// ── Members ───────────────────────────────────────────────────────────────────
+member = {
+    separator_line
+    | member_line
+}
+
+separator_line = { " "* ~ "--" ~ line_tail }
+
+member_line = {
+    " "*
+    ~ visibility?
+    ~ modifier*
+    ~ member_name
+    ~ params?
+    ~ (" "* ~ ":" ~ " "* ~ type_name)?
+    ~ modifier*
+    ~ line_tail
+}
+
+visibility = { "+" | "-" | "#" | "~" }
+modifier   = { "{" ~ (!"}" ~ ANY)+ ~ "}" ~ " "* }
+member_name = { (ASCII_ALPHANUMERIC | "_")+ }
+params      = { "(" ~ (!")" ~ ANY)* ~ ")" }
+type_name   = { (!NEWLINE ~ !"}" ~ ANY)+ }
+
+// ── Relations ─────────────────────────────────────────────────────────────────
+relation_stmt = {
+    class_ref
+    ~ " "* ~ card_label?
+    ~ " "* ~ relation_arrow
+    ~ " "* ~ card_label?
+    ~ " "* ~ class_ref
+    ~ (" "* ~ ":" ~ " "* ~ rest_of_line)?
+}
+
+class_ref  = { quoted_string | bare_name }
+card_label = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
+relation_arrow = {
+    // inheritance / extension
+    "<|--" | "--|>" | "<|.." | "..|>"
+    // composition / aggregation
+    | "*--" | "--*" | "o--" | "--o"
+    | "*-" | "-*" | "o-" | "-o"
+    // directed association / dependency
+    | "<--" | "-->" | "<-" | "->"
+    | "<.." | "..>" | "<." | ".>"
+    // plain
+    | "--" | ".."
+    | "<|-->" | "<-->"
+}
+
+// ── Namespace / Package ───────────────────────────────────────────────────────
+namespace_stmt = {
+    (^"namespace" | ^"package") ~ " "+ ~ (quoted_string | bare_name) ~ (" "+ ~ ^"as" ~ " "+ ~ bare_name)? ~ (" "* ~ color)? ~ " "* ~ "{" ~ " "* ~ NEWLINE? ~
+    statement* ~
+    "}"
+}
+
+// ── Notes ─────────────────────────────────────────────────────────────────────
+note_stmt = {
+    inline_note | multiline_note
+}
+
+inline_note = {
+    ^"note" ~ " "+ ~ note_pos ~ " "+ ~ ^"of" ~ " "+ ~ class_ref ~ " "* ~ ":" ~ " "* ~ rest_of_line
+}
+
+multiline_note = {
+    ^"note" ~ " "+ ~ note_pos ~ " "+ ~ ^"of" ~ " "+ ~ class_ref ~ line_tail ~
+    note_line* ~
+    ^"end" ~ " "+ ~ ^"note" ~ line_tail
+}
+
+note_pos  = { ^"left" | ^"right" | ^"top" | ^"bottom" }
+note_line = { !(^"end" ~ " "+ ~ ^"note") ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
+
+// ── Hide ─────────────────────────────────────────────────────────────────────
+hide_stmt = { ^"hide" ~ " "+ ~ rest_of_line }
+
+// ── Skinparam ─────────────────────────────────────────────────────────────────
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+// ── Primitives ────────────────────────────────────────────────────────────────
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+bare_name     = { (ASCII_ALPHANUMERIC | "_" | "." | ":" | "-")+ }
+rest_of_line  = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+// Consumes any trailing content on a line including the newline itself
+line_tail     = _{ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+newline       = _{ NEWLINE+ }

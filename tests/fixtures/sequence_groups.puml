@@ -1,0 +1,12 @@
+@startuml
+autonumber
+Alice -> Bob : query
+alt success
+  Bob --> Alice : 200 OK
+else error
+  Bob --> Alice : 500 Error
+end
+loop 3 times
+  Alice -> Bob : poll
+end
+@enduml

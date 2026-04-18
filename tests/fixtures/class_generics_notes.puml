@@ -1,0 +1,15 @@
+@startuml
+package model {
+  class Container<T> <<data>> {
+    +items: List<T>
+    +add(item: T)
+    +get(index: int): T
+  }
+  interface Iterable<T> {
+    +iterator(): Iterator<T>
+  }
+}
+
+Container --|> Iterable
+note right of Container : Generic container\nholds elements of type T
+@enduml

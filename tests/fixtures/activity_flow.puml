@@ -1,0 +1,13 @@
+@startuml
+start
+:Read request;
+if (authenticated?) then (yes)
+  :Load user;
+  :Process;
+else (no)
+  :Reject;
+  kill
+endif
+:Send response;
+stop
+@enduml

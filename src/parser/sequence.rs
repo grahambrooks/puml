@@ -161,24 +161,29 @@ fn parse_participant(pair: Pair<Rule>) -> Participant {
     }
 }
 
-fn parse_arrow_style(s: &str) -> ArrowStyle {
-    match s {
-        "-->" => ArrowStyle::Dashed,
-        "->>" | "-->>" => ArrowStyle::SolidThick,
-        "->x" => ArrowStyle::Lost,
+/// Returns (style, is_reverse). Reverse arrows (`<-`, `<--`) are rendered by
+/// swapping from/to and marking the message as a return.
+fn parse_arrow_style(s: &str) -> (ArrowStyle, bool) {
+    let reverse = s.starts_with('<') && !s.ends_with('>');
+    let style = match s {
+        "-->" | "<--" => ArrowStyle::Dashed,
+        "-->>" | "<<--" => ArrowStyle::Dashed,
+        "->>" | "<<-" => ArrowStyle::SolidThick,
+        "->x" | "x->" => ArrowStyle::Lost,
         _ => ArrowStyle::Solid,
-    }
+    };
+    (style, reverse)
 }
 
 fn parse_message(pair: Pair<Rule>) -> (Message, String, String) {
     let mut parts = pair.into_inner();
 
-    let from_raw = parts
+    let left_raw = parts
         .next()
         .map(|p| unquote(p.as_str().trim()))
         .unwrap_or_default();
     let arrow_pair = parts.next();
-    let to_raw = parts
+    let right_raw = parts
         .next()
         .map(|p| unquote(p.as_str().trim()))
         .unwrap_or_default();
@@ -187,9 +192,15 @@ fn parse_message(pair: Pair<Rule>) -> (Message, String, String) {
         .map(|p| p.as_str().trim().to_string())
         .unwrap_or_default();
 
-    let arrow_style = arrow_pair
+    let (arrow_style, reverse) = arrow_pair
         .map(|p| parse_arrow_style(p.as_str().trim()))
-        .unwrap_or(ArrowStyle::Solid);
+        .unwrap_or((ArrowStyle::Solid, false));
+
+    let (from_raw, to_raw) = if reverse {
+        (right_raw, left_raw)
+    } else {
+        (left_raw, right_raw)
+    };
 
     let msg = Message {
         from: from_raw.clone(),
@@ -198,7 +209,7 @@ fn parse_message(pair: Pair<Rule>) -> (Message, String, String) {
         arrow: arrow_style,
         activate: false,
         deactivate: false,
-        return_msg: false,
+        return_msg: reverse,
     };
     (msg, from_raw, to_raw)
 }
@@ -243,7 +254,7 @@ fn parse_note(pair: Pair<Rule>) -> Option<Note> {
 fn parse_group(pair: Pair<Rule>) -> GroupBlock {
     let mut kind = String::new();
     let mut label = String::new();
-    let mut main_elements: Vec<SequenceElement> = Vec::new();
+    let mut sections: Vec<(Option<String>, Vec<SequenceElement>)> = vec![(None, Vec::new())];
 
     for p in pair.into_inner() {
         match p.as_rule() {
@@ -251,7 +262,22 @@ fn parse_group(pair: Pair<Rule>) -> GroupBlock {
             Rule::rest_of_line => label = p.as_str().trim().to_string(),
             Rule::group_body => {
                 for stmt in p.into_inner() {
-                    collect_element(stmt, &mut main_elements);
+                    if stmt.as_rule() == Rule::else_clause {
+                        let mut section_label: Option<String> = None;
+                        let mut section_elems: Vec<SequenceElement> = Vec::new();
+                        for inner in stmt.into_inner() {
+                            match inner.as_rule() {
+                                Rule::rest_of_line => {
+                                    section_label = Some(inner.as_str().trim().to_string());
+                                }
+                                _ => collect_element(inner, &mut section_elems),
+                            }
+                        }
+                        sections.push((section_label, section_elems));
+                    } else {
+                        let last = sections.last_mut().unwrap();
+                        collect_element(stmt, &mut last.1);
+                    }
                 }
             }
             _ => {}
@@ -261,7 +287,7 @@ fn parse_group(pair: Pair<Rule>) -> GroupBlock {
     GroupBlock {
         kind,
         label,
-        sections: vec![(None, main_elements)],
+        sections,
     }
 }
 
@@ -335,5 +361,38 @@ mod tests {
         let src = "title My Diagram\nAlice -> Bob : hi\n";
         let diagram = parse(src).unwrap();
         assert_eq!(diagram.title.as_deref(), Some("My Diagram"));
+    }
+
+    #[test]
+    fn parses_autonumber_bare() {
+        let src = "autonumber\nAlice -> Bob : hi\n";
+        let diagram = parse(src).unwrap();
+        assert!(matches!(
+            diagram.elements[0],
+            SequenceElement::Autonumber(_)
+        ));
+    }
+
+    #[test]
+    fn parses_groups_fixture_content() {
+        let src = "autonumber\nAlice -> Bob : query\nalt success\n  Bob --> Alice : 200 OK\nelse error\n  Bob --> Alice : 500 Error\nend\nloop 3 times\n  Alice -> Bob : poll\nend\n";
+        match parse(src) {
+            Ok(_) => {}
+            Err(e) => panic!("parse failed: {}", e),
+        }
+    }
+
+    #[test]
+    fn parses_reverse_arrows() {
+        let src = "Alice <- Bob : response\n";
+        let diagram = parse(src).unwrap();
+        match &diagram.elements[0] {
+            SequenceElement::Message(m) => {
+                assert_eq!(m.from, "Bob");
+                assert_eq!(m.to, "Alice");
+                assert!(m.return_msg);
+            }
+            _ => panic!("expected message"),
+        }
     }
 }

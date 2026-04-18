@@ -1,0 +1,127 @@
+// Activity diagram grammar (beta/new syntax)
+// WHITESPACE is automatically skipped between tokens in non-atomic rules
+
+WHITESPACE = _{ " " | "\t" }
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    title_stmt
+    | start_stmt
+    | stop_stmt
+    | end_stmt
+    | detach_stmt
+    | kill_stmt
+    | if_stmt
+    | while_stmt
+    | repeat_stmt
+    | fork_stmt
+    | partition_stmt
+    | note_stmt
+    | arrow_stmt
+    | action_stmt
+    | label_stmt
+    | skinparam_stmt
+    | newline
+}
+
+// ── Control ───────────────────────────────────────────────────────────────────
+title_stmt  = { ^"title" ~ rest_of_line }
+start_stmt  = { ^"start" ~ NEWLINE }
+stop_stmt   = { ^"stop" ~ NEWLINE }
+end_stmt    = { ^"end" ~ !(ASCII_ALPHANUMERIC) ~ NEWLINE }
+detach_stmt = { ^"detach" ~ NEWLINE }
+kill_stmt   = { ^"kill" ~ NEWLINE }
+
+// ── Action ────────────────────────────────────────────────────────────────────
+action_stmt = ${ " "* ~ ":" ~ action_text ~ ";" ~ (" "* ~ color)? ~ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+action_text = { (!";" ~ !NEWLINE ~ ANY)+ }
+color       = { "#" ~ ASCII_ALPHANUMERIC+ }
+
+// ── Label (standalone |label|) ────────────────────────────────────────────────
+label_stmt  = { "|" ~ ((!"|" ~ ANY)+) ~ "|" ~ NEWLINE? }
+
+// ── Arrow ─────────────────────────────────────────────────────────────────────
+arrow_stmt  = { "->" ~ arrow_label? ~ ";" ~ NEWLINE? }
+arrow_label = { " "* ~ (!(";" | NEWLINE) ~ ANY)+ }
+
+// ── If / elseif / else ────────────────────────────────────────────────────────
+if_stmt = {
+    ^"if" ~ "(" ~ condition ~ ")" ~ (^"then" ~ ("(" ~ branch_label ~ ")")?)? ~ NEWLINE ~
+    element* ~
+    elseif_clause* ~
+    else_clause? ~
+    ^"endif" ~ NEWLINE?
+}
+
+elseif_clause = {
+    ^"elseif" ~ "(" ~ condition ~ ")" ~ (^"then" ~ ("(" ~ branch_label ~ ")")?)? ~ NEWLINE ~
+    element*
+}
+
+else_clause = {
+    ^"else" ~ ("(" ~ branch_label ~ ")")? ~ NEWLINE ~
+    element*
+}
+
+condition    = { (!")" ~ ANY)+ }
+branch_label = { (!")" ~ ANY)+ }
+
+// ── While ─────────────────────────────────────────────────────────────────────
+while_stmt = {
+    ^"while" ~ "(" ~ condition ~ ")" ~ (^"is" ~ "(" ~ branch_label ~ ")")? ~ NEWLINE ~
+    element* ~
+    ^"endwhile" ~ ("(" ~ branch_label ~ ")")? ~ NEWLINE?
+}
+
+// ── Repeat ────────────────────────────────────────────────────────────────────
+repeat_stmt = {
+    ^"repeat" ~ NEWLINE ~
+    element* ~
+    ^"repeat" ~ ^"while" ~ "(" ~ condition ~ ")" ~ (^"is" ~ "(" ~ branch_label ~ ")")? ~ NEWLINE?
+}
+
+// ── Fork ──────────────────────────────────────────────────────────────────────
+fork_stmt = {
+    fork_start ~
+    fork_first_branch ~
+    fork_more_branch* ~
+    fork_end
+}
+
+fork_start        = _{ ^"fork" ~ !(" "* ~ ^"again") ~ NEWLINE }
+fork_first_branch = { element* }
+fork_more_branch  = { ^"fork" ~ ^"again" ~ NEWLINE ~ element* }
+
+fork_end = {
+    (^"end" ~ ^"fork" ~ ^"again"
+    | ^"end" ~ ^"merge"
+    | ^"end" ~ ^"fork"
+    ) ~ NEWLINE?
+}
+
+// ── Partition (swimlane) ───────────────────────────────────────────────────────
+partition_stmt = {
+    ^"partition" ~ partition_name ~ "{" ~ NEWLINE ~
+    element* ~
+    "}" ~ NEWLINE?
+}
+partition_name = { quoted_string | bare_name }
+
+// ── Note ──────────────────────────────────────────────────────────────────────
+note_stmt = {
+    ^"note" ~ note_pos ~ NEWLINE ~
+    note_line* ~
+    ^"end" ~ ^"note" ~ NEWLINE?
+}
+note_pos  = { ^"left" | ^"right" }
+note_line = { !( ^"end" ~ WHITESPACE+ ~ ^"note") ~ rest_of_line }
+
+// ── Skinparam ─────────────────────────────────────────────────────────────────
+skinparam_stmt = { ^"skinparam" ~ rest_of_line }
+
+// ── Primitives ────────────────────────────────────────────────────────────────
+quoted_string = ${ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+bare_name     = ${ (!("{" | NEWLINE) ~ ANY)+ }
+rest_of_line  = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+newline       = _{ NEWLINE+ }

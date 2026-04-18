@@ -1,0 +1,64 @@
+---
+source: tests/state_render.rs
+assertion_line: 25
+expression: svg
+---
+<svg height="402" viewBox="0 0 200 402" width="200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="state-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="54" y2="104"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="140" y2="276"/>
+<text font-size="11" x="106" y="208">
+start
+</text>
+</g>
+<g>
+<path class="arrow" d="M100,312 C140,332 140,170 100,190" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="106" y="251">
+pause
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="226" y2="276"/>
+<text font-size="11" x="106" y="251">
+resume
+</text>
+</g>
+<g>
+<path class="arrow" d="M100,312 C140,332 140,10 100,30" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="106" y="171">
+stop
+</text>
+</g>
+<g>
+<circle cx="100" cy="42" fill="#181818" r="12"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="104"/>
+<text font-size="13" text-anchor="middle" x="100" y="126.33333333333333">
+Idle
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="276"/>
+<text font-size="13" text-anchor="middle" x="100" y="298.3333333333333">
+Active
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="190"/>
+<text font-size="13" text-anchor="middle" x="100" y="212.33333333333334">
+Paused
+</text>
+</g>
+</svg>

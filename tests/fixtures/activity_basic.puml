@@ -1,0 +1,8 @@
+start
+:Read input;
+if (valid?) then (yes)
+  :Process data;
+else (no)
+  :Show error;
+endif
+stop

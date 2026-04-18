@@ -145,8 +145,10 @@ fn split_diagrams(source: &str) -> Vec<DiagramSource> {
     }
 
     if !has_markers && !bare_lines.is_empty() {
+        let mut content = bare_lines.join("\n");
+        content.push('\n');
         diagrams.push(DiagramSource {
-            content: bare_lines.join("\n"),
+            content,
             type_hint: None,
         });
     }
