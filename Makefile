@@ -58,6 +58,19 @@ run: ## Render examples/sequence.puml to out.svg
 	cargo run -- examples/sequence.puml -o out.svg
 	@echo "wrote out.svg"
 
+# ── Docs ─────────────────────────────────────────────────────────────────────
+
+.PHONY: docs
+docs: ## Re-render every examples/*.puml into docs/examples/*.svg
+	@cargo build --quiet
+	@mkdir -p docs/examples
+	@for f in examples/*.puml; do \
+		name=$$(basename "$$f" .puml); \
+		./target/debug/puml "$$f" -o "docs/examples/$$name.svg" \
+			&& echo "  wrote docs/examples/$$name.svg" \
+			|| { echo "  FAIL  $$f"; exit 1; }; \
+	done
+
 # ── Clean ────────────────────────────────────────────────────────────────────
 
 .PHONY: clean

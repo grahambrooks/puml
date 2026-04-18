@@ -100,11 +100,11 @@ or `for f in examples/*.puml; do puml "$f" -o "docs/examples/$(basename "$f" .pu
 
 ## Diagram support
 
-| Status   | Diagram                                                                         | Notes                                                                                                                                                                |
-|----------|---------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Shipping | Sequence, Class, Activity, State, Use Case, Timing, Mind Map, Gantt, Deployment | Full parser + layout + renderer with fixture coverage. Deployment uses real UML shapes (3D node, cloud outline, cylinders, folder tab, frame tab, folded document).  |
-| Partial  | Component, Object                                                               | Render via the class pipeline. Missing: `[Foo]` bracket components, `attr = value` object members.                                                                   |
-| Planned  | —                                                                               | All PlantUML diagram types currently parse and render.                                                                                                               |
+| Status   | Diagram                                                                         | Notes                                                                                                                                                               |
+|----------|---------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Shipping | Sequence, Class, Activity, State, Use Case, Timing, Mind Map, Gantt, Deployment | Full parser + layout + renderer with fixture coverage. Deployment uses real UML shapes (3D node, cloud outline, cylinders, folder tab, frame tab, folded document). |
+| Partial  | Component, Object                                                               | Render via the class pipeline. Missing: `[Foo]` bracket components, `attr = value` object members.                                                                  |
+| Planned  | —                                                                               | All PlantUML diagram types currently parse and render.                                                                                                              |
 
 "Shipping" means: parses the common PlantUML idioms for that diagram, produces a readable SVG, has fixture + snapshot
 coverage. It does **not** yet mean byte-level parity with `plantuml.jar`.
