@@ -121,16 +121,34 @@ Options:
 
 ## Development Commands
 
-```bash
-cargo build              # debug build
-cargo build --release    # release build
-cargo test               # unit + snapshot tests
-cargo test -- --nocapture  # show stdout during tests
-cargo run -- examples/sequence.puml -o out.svg
+Prefer the `Makefile` targets over raw `cargo` invocations — they're the same commands CI runs, so "works for me" and "works in CI" stay aligned. Run `make` with no arguments to list available targets.
 
-# Update snapshot tests after intentional render changes
+```bash
+make build          # fmt + clippy + cargo build
+make test           # cargo test
+make check          # fmt-check + clippy + test (use this before declaring done)
+make snapshots      # update insta snapshots (INSTA_UPDATE=always)
+make run            # render examples/sequence.puml to out.svg
+make release        # cargo build --release
+make clean          # cargo clean + remove out.svg
+```
+
+After an intentional render change, review snapshot diffs:
+
+```bash
 cargo insta review
 ```
+
+## Verifying a task is complete
+
+**Before reporting any code change as complete, run `make check` and confirm it passes.** This runs `fmt-check`, `clippy -D warnings`, and the full test suite — the same gates the release workflow enforces. If `make check` fails, the task is not done.
+
+- If `clippy` flags something, fix it rather than silencing it with `#[allow(...)]` unless the lint is genuinely wrong for this code.
+- If tests fail because snapshots legitimately changed, run `make snapshots` and inspect the diff before committing. Do not update snapshots blindly.
+- If `fmt-check` fails, run `make fmt` — never hand-format.
+- For UI/render changes, also run `make run` and open `out.svg` to confirm the output is sensible; snapshot equality alone doesn't prove the rendering is correct.
+
+Only after `make check` passes clean should you summarize the work as done.
 
 ## Testing Strategy
 
