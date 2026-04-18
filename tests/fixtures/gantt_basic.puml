@@ -1,0 +1,10 @@
+@startgantt
+title Project Schedule
+[Design] lasts 5 days
+[Build] lasts 10 days
+[Build] starts at [Design]'s end
+[Test] lasts 4 days
+[Test] starts at [Build]'s end
+[Launch] is a milestone
+[Launch] starts at day 20
+@endgantt

@@ -1,5 +1,6 @@
 pub mod activity;
 pub mod class;
+pub mod gantt;
 pub mod mindmap;
 pub mod preprocessor;
 pub mod sequence;
@@ -50,6 +51,7 @@ pub fn parse(source: &DiagramSource) -> Result<DiagramAst, PumlError> {
         "usecase" => Ok(DiagramAst::UseCase(usecase::parse(&source.content)?)),
         "timing" => Ok(DiagramAst::Timing(timing::parse(&source.content)?)),
         "mindmap" => Ok(DiagramAst::MindMap(mindmap::parse(&source.content)?)),
+        "gantt" => Ok(DiagramAst::Gantt(gantt::parse(&source.content)?)),
         "" => {
             // Auto-detect failed — try sequence first, then class
             sequence::parse(&source.content)

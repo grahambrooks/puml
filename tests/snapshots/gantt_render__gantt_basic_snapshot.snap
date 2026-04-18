@@ -1,0 +1,51 @@
+---
+source: tests/gantt_render.rs
+assertion_line: 32
+expression: svg
+---
+<svg height="284" viewBox="0 0 520 284" width="520" xmlns="http://www.w3.org/2000/svg">
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="260" y="20">
+Project Schedule
+</text>
+<line stroke="#666" stroke-width="1" x1="180" x2="180" y1="56" y2="64"/>
+<text font-size="10" text-anchor="middle" x="180" y="52">
+0
+</text>
+<line stroke="#666" stroke-width="1" x1="260" x2="260" y1="56" y2="64"/>
+<text font-size="10" text-anchor="middle" x="260" y="52">
+5
+</text>
+<line stroke="#666" stroke-width="1" x1="340" x2="340" y1="56" y2="64"/>
+<text font-size="10" text-anchor="middle" x="340" y="52">
+10
+</text>
+<line stroke="#666" stroke-width="1" x1="420" x2="420" y1="56" y2="64"/>
+<text font-size="10" text-anchor="middle" x="420" y="52">
+15
+</text>
+<line stroke="#666" stroke-width="1" x1="500" x2="500" y1="56" y2="64"/>
+<text font-size="10" text-anchor="middle" x="500" y="52">
+20
+</text>
+<line stroke="#666" stroke-width="1" x1="180" x2="500" y1="60" y2="60"/>
+<text font-size="13" x="28" y="109.33333333333333">
+Design
+</text>
+<rect fill="#6c8ebf" height="22" rx="3" stroke="#3d6aa0" stroke-width="1" width="80" x="180" y="94"/>
+<text font-size="13" x="28" y="145.33333333333334">
+Build
+</text>
+<rect fill="#6c8ebf" height="22" rx="3" stroke="#3d6aa0" stroke-width="1" width="160" x="260" y="130"/>
+<text font-size="13" x="28" y="181.33333333333334">
+Test
+</text>
+<rect fill="#6c8ebf" height="22" rx="3" stroke="#3d6aa0" stroke-width="1" width="64" x="420" y="166"/>
+<text font-size="13" x="28" y="217.33333333333334">
+Launch
+</text>
+<polygon fill="#b86e11" points="500,202 511,213 500,224 489,213" stroke="#7a4a0b" stroke-width="1.2"/>
+</svg>

@@ -83,9 +83,14 @@ fn expand_defines(source: &str) -> String {
 fn strip_comments(source: &str) -> String {
     let mut out = String::with_capacity(source.len());
     let mut chars = source.chars().peekable();
+    // `prev_was_boundary` is true when the last emitted char was either a
+    // newline or whitespace — i.e. `'` can legitimately start a comment.
+    // That excludes identifier-internal apostrophes like `[Design]'s` (Gantt)
+    // but still catches `Alice -> Bob ' comment` and line-start comments.
+    let mut prev_was_boundary = true;
 
     while let Some(ch) = chars.next() {
-        if ch == '\'' {
+        if ch == '\'' && prev_was_boundary {
             // Line comment — skip to end of line
             for c in chars.by_ref() {
                 if c == '\n' {
@@ -93,8 +98,9 @@ fn strip_comments(source: &str) -> String {
                     break;
                 }
             }
+            prev_was_boundary = true;
         } else if ch == '/' && chars.peek() == Some(&'\'') {
-            // Block comment /' ... '/
+            // Block comment `/' ... '/` — mid-line ok.
             chars.next(); // consume '
             let mut prev = ' ';
             for c in chars.by_ref() {
@@ -106,8 +112,10 @@ fn strip_comments(source: &str) -> String {
                 }
                 prev = c;
             }
+            prev_was_boundary = false;
         } else {
             out.push(ch);
+            prev_was_boundary = ch == '\n' || ch.is_whitespace();
         }
     }
     out

@@ -1,0 +1,48 @@
+// Gantt grammar (minimum viable)
+// Supported statements:
+//   [Task] lasts N days
+//   [Task] starts at N
+//   [Task] starts at [Other]'s end
+//   [Task] is a milestone
+// Absolute calendar dates are deferred — MVP uses integer day offsets.
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    " "* ~ (
+        title_stmt
+        | lasts_stmt
+        | starts_after_stmt
+        | starts_at_day_stmt
+        | milestone_stmt
+        | skinparam_stmt
+        | newline
+    )
+}
+
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+lasts_stmt = {
+    task_ref ~ " "+ ~ ^"lasts" ~ " "+ ~ duration ~ (" "+ ~ ^"days")? ~ line_tail
+}
+
+starts_after_stmt = {
+    task_ref ~ " "+ ~ ^"starts" ~ " "+ ~ ^"at" ~ " "+ ~ task_ref ~ "'s" ~ " "+ ~ ^"end" ~ line_tail
+}
+
+starts_at_day_stmt = {
+    task_ref ~ " "+ ~ ^"starts" ~ " "+ ~ ^"at" ~ " "+ ~ ^"day" ~ " "+ ~ duration ~ line_tail
+}
+
+milestone_stmt = {
+    task_ref ~ " "+ ~ ^"is" ~ " "+ ~ ^"a" ~ " "+ ~ ^"milestone" ~ line_tail
+}
+
+task_ref = { "[" ~ (!"]" ~ !NEWLINE ~ ANY)+ ~ "]" }
+duration = { ASCII_DIGIT+ }
+
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+rest_of_line = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+line_tail    = _{ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+newline      = _{ NEWLINE+ }
