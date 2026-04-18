@@ -1,0 +1,22 @@
+@startuml
+title Web Application Components
+
+component Browser
+component "API Gateway" as Gateway
+component AuthService
+component OrderService
+component PaymentService
+component InventoryService
+component Database
+component MessageBus
+
+Browser --> Gateway : HTTPS
+Gateway --> AuthService : verify token
+Gateway --> OrderService : /orders
+OrderService --> InventoryService : reserve
+OrderService --> PaymentService : charge
+OrderService --> MessageBus : order.created
+PaymentService --> Database : write ledger
+InventoryService --> Database : stock levels
+AuthService --> Database : sessions
+@enduml

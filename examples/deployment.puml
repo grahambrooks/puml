@@ -1,0 +1,25 @@
+@startuml
+title Production Deployment
+
+cloud "AWS us-east-1" as aws
+node "Edge CDN" as cdn
+node "Load Balancer" as lb
+node "API Server 1" as api1
+node "API Server 2" as api2
+database "Primary DB" as primary
+database "Replica DB" as replica
+queue "Event Bus" as bus
+folder "Static Assets" as assets
+
+cdn --> assets : serve
+cdn --> lb : dynamic
+lb --> api1 : route
+lb --> api2 : route
+api1 --> primary : read/write
+api2 --> primary : read/write
+primary --> replica : replicate
+api1 --> bus : publish
+api2 --> bus : publish
+aws --> cdn : hosts
+aws --> lb : hosts
+@enduml

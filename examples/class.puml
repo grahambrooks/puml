@@ -1,0 +1,37 @@
+@startuml
+title Class Diagram Example
+
+interface Drawable {
+  +draw()
+  +bounds(): Rect
+}
+
+abstract class Shape {
+  #color: String
+  #strokeWidth: float
+  +{abstract} area(): double
+  +move(dx: int, dy: int)
+}
+
+class Circle {
+  +radius: double
+  +area(): double
+}
+
+class Rectangle {
+  +width: double
+  +height: double
+  +area(): double
+}
+
+class Canvas {
+  -shapes: List<Shape>
+  +add(s: Shape)
+  +render()
+}
+
+Shape ..|> Drawable : implements
+Circle --|> Shape : extends
+Rectangle --|> Shape : extends
+Canvas "1" o-- "*" Shape : contains
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+title Connection Lifecycle
+
+[*] --> Disconnected
+
+Disconnected --> Connecting : connect()
+Connecting --> Connected : handshake ok
+Connecting --> Disconnected : timeout
+
+state Connected {
+  [*] --> Idle
+  Idle --> Sending : send(msg)
+  Sending --> Idle : ack
+  Idle --> Receiving : incoming
+  Receiving --> Idle : delivered
+}
+
+Connected --> Disconnected : close()
+Disconnected --> [*]
+@enduml

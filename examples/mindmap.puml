@@ -1,0 +1,20 @@
+@startuml(mindmap)
+title Release Checklist
+
+* Ship
+** Code
+*** Tests pass
+*** Clippy clean
+*** fmt-check clean
+** Release
+*** Tag YYYY.M.D
+*** Build artifacts
+**** Linux x86_64
+**** macOS x86_64
+**** macOS aarch64
+*** GitHub release
+*** Homebrew formula
+** Comms
+*** Changelog
+*** Announcement
+@enduml

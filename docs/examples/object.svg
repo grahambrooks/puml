@@ -1,0 +1,138 @@
+<svg height="302" viewBox="0 0 1067 302" width="1067" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arr-hollow" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 0, 10 5, 0 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arr-diamond-f" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 5, 5 0, 10 5, 5 10"/>
+</marker>
+<marker id="arr-diamond-h" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 5, 5 0, 10 5, 5 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="533.5" y="30">
+Object Diagram — Example Order
+</text>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="234" x2="274" y1="141" y2="141"/>
+<text font-size="11" text-anchor="middle" x="254" y="137">
+placed
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="465.5" y1="141" y2="141"/>
+<text font-size="11" text-anchor="middle" x="445.5" y="137">
+contains
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="645.5" y1="141" y2="141"/>
+<text font-size="11" text-anchor="middle" x="535.5" y="137">
+contains
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="825.5" y1="141" y2="141"/>
+<text font-size="11" text-anchor="middle" x="625.5" y="137">
+ships to
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="204" x="30" y="90"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="204" x="30" y="90"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="132" y="112">
+customer
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="30" x2="234" y1="126" y2="126"/>
+<text font-style="normal" text-decoration="none" x="38" y="140">
+id: 42
+</text>
+<text font-style="normal" text-decoration="none" x="38" y="160">
+name: "Ada Lovelace"
+</text>
+<text font-style="normal" text-decoration="none" x="38" y="180">
+email: "ada@example.com"
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="151.5" x="274" y="90"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="151.5" x="274" y="90"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="349.75" y="112">
+order
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="274" x2="425.5" y1="126" y2="126"/>
+<text font-style="normal" text-decoration="none" x="282" y="140">
+id: 1001
+</text>
+<text font-style="normal" text-decoration="none" x="282" y="160">
+status: "shipped"
+</text>
+<text font-style="normal" text-decoration="none" x="282" y="180">
+total: 129.50
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="465.5" y="90"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="465.5" y="90"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="535.5" y="112">
+lineItem1
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="465.5" x2="605.5" y1="126" y2="126"/>
+<text font-style="normal" text-decoration="none" x="473.5" y="140">
+sku: "BOOK-001"
+</text>
+<text font-style="normal" text-decoration="none" x="473.5" y="160">
+qty: 2
+</text>
+<text font-style="normal" text-decoration="none" x="473.5" y="180">
+price: 29.50
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="645.5" y="90"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="645.5" y="90"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="715.5" y="112">
+lineItem2
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="645.5" x2="785.5" y1="126" y2="126"/>
+<text font-style="normal" text-decoration="none" x="653.5" y="140">
+sku: "PEN-042"
+</text>
+<text font-style="normal" text-decoration="none" x="653.5" y="160">
+qty: 1
+</text>
+<text font-style="normal" text-decoration="none" x="653.5" y="180">
+price: 70.50
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="211.5" x="825.5" y="90"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="211.5" x="825.5" y="90"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="931.25" y="112">
+address
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="825.5" x2="1037" y1="126" y2="126"/>
+<text font-style="normal" text-decoration="none" x="833.5" y="140">
+street: "1 Analytical St"
+</text>
+<text font-style="normal" text-decoration="none" x="833.5" y="160">
+city: "London"
+</text>
+<text font-style="normal" text-decoration="none" x="833.5" y="180">
+country: "UK"
+</text>
+</g>
+</svg>

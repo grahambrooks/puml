@@ -1,0 +1,110 @@
+<svg height="462" viewBox="0 0 560 462" width="560" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="state-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="280" y="20">
+Connection Lifecycle
+</text>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="280" x2="280" y1="84" y2="306"/>
+</g>
+<g>
+<path class="arrow" d="M280,342 C320,362 140,114 100,134" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="196" y="238">
+connect()
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="190" y1="170" y2="220"/>
+<text font-size="11" x="151" y="195">
+handshake ok
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="280" y1="170" y2="306"/>
+<text font-size="11" x="196" y="238">
+timeout
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="280" x2="370" y1="84" y2="220"/>
+</g>
+<g>
+<path class="arrow" d="M370,256 C410,276 320,114 280,134" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="331" y="195">
+send(msg)
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="280" x2="370" y1="170" y2="220"/>
+<text font-size="11" x="331" y="195">
+ack
+</text>
+</g>
+<g>
+<path class="arrow" d="M370,256 C410,276 500,114 460,134" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="421" y="195">
+incoming
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="460" x2="370" y1="170" y2="220"/>
+<text font-size="11" x="421" y="195">
+delivered
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#state-arrow)" x1="190" x2="280" y1="256" y2="306"/>
+<text font-size="11" x="241" y="281">
+close()
+</text>
+</g>
+<g>
+<path class="arrow" d="M280,342 C320,362 320,40 280,60" marker-end="url(#state-arrow)"/>
+</g>
+<g>
+<circle cx="280" cy="72" fill="#181818" r="12"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="306"/>
+<text font-size="13" text-anchor="middle" x="280" y="328.3333333333333">
+Disconnected
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="134"/>
+<text font-size="13" text-anchor="middle" x="100" y="156.33333333333334">
+Connecting
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="130" y="220"/>
+<text font-size="13" text-anchor="middle" x="190" y="242.33333333333334">
+Connected
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="310" y="220"/>
+<text font-size="13" text-anchor="middle" x="370" y="242.33333333333334">
+Idle
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="134"/>
+<text font-size="13" text-anchor="middle" x="280" y="156.33333333333334">
+Sending
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="400" y="134"/>
+<text font-size="13" text-anchor="middle" x="460" y="156.33333333333334">
+Receiving
+</text>
+</g>
+</svg>

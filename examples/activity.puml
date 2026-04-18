@@ -1,0 +1,24 @@
+@startuml
+title Order Processing
+
+start
+:Receive order;
+if (items in stock?) then (yes)
+  :Reserve inventory;
+  if (payment authorized?) then (yes)
+    :Charge card;
+    :Ship order;
+    :Send confirmation email;
+  else (no)
+    :Notify customer;
+    :Release inventory;
+    stop
+  endif
+else (no)
+  :Notify customer;
+  :Offer backorder;
+  stop
+endif
+:Record completion;
+stop
+@enduml

@@ -1,0 +1,150 @@
+<svg height="372" viewBox="0 0 1030.5 372" width="1030.5" xmlns="http://www.w3.org/2000/svg">
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="515.25" y="20">
+Release Checklist
+</text>
+<g>
+<path d="M676,208 C701,208 701,120 726,120" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M806,120 C831,120 831,76 856,76" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M806,120 C831,120 831,120 856,120" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M806,120 C831,120 831,164 856,164" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M596,208 C571,208 571,186 546,186" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M461.5,186 C436.5,186 436.5,76 411.5,76" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M461.5,186 C436.5,186 436.5,164 411.5,164" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M267,164 C242,164 242,120 217,120" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M267,164 C242,164 242,164 217,164" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M267,164 C242,164 242,208 217,208" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M461.5,186 C436.5,186 436.5,252 411.5,252" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M461.5,186 C436.5,186 436.5,296 411.5,296" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M676,208 C701,208 701,230 726,230" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M806,230 C831,230 831,208 856,208" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M806,230 C831,230 831,252 856,252" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<rect fill="#6c8ebf" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="596" y="192"/>
+<text fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" x="636" y="212.33333333333334">
+Ship
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="726" y="104"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="766" y="124.33333333333333">
+Code
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="107" x="856" y="60"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="909.5" y="80.33333333333333">
+Tests pass
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="122" x="856" y="104"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="917" y="124.33333333333333">
+Clippy clean
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="144.5" x="856" y="148"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="928.25" y="168.33333333333334">
+fmt-check clean
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="84.5" x="461.5" y="170"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="503.75" y="190.33333333333334">
+Release
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="122" x="289.5" y="60"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="350.5" y="80.33333333333333">
+Tag YYYY.M.D
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="144.5" x="267" y="148"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="339.25" y="168.33333333333334">
+Build artifacts
+</text>
+</g>
+<g>
+<rect fill="#eaf2fa" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="122" x="95" y="104"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="156" y="124.33333333333333">
+Linux x86_64
+</text>
+</g>
+<g>
+<rect fill="#eaf2fa" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="122" x="95" y="148"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="156" y="168.33333333333334">
+macOS x86_64
+</text>
+</g>
+<g>
+<rect fill="#eaf2fa" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="129.5" x="87.5" y="192"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="152.25" y="212.33333333333334">
+macOS aarch64
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="137" x="274.5" y="236"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="343" y="256.3333333333333">
+GitHub release
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="152" x="259.5" y="280"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="335.5" y="300.3333333333333">
+Homebrew formula
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="726" y="214"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="766" y="234.33333333333334">
+Comms
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="99.5" x="856" y="192"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="905.75" y="212.33333333333334">
+Changelog
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="122" x="856" y="236"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="917" y="256.3333333333333">
+Announcement
+</text>
+</g>
+</svg>

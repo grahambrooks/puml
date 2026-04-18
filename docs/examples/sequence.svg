@@ -1,0 +1,131 @@
+<svg height="539" viewBox="0 0 460 539" width="460" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="230" y="25">
+Basic Sequence Example
+</text>
+<g>
+<circle cx="80" cy="60" fill="#dae8fc" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="80" y1="68" y2="80"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="68" x2="92" y1="72.8" y2="72.8"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="70" y1="80" y2="90"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="90" y1="80" y2="90"/>
+<text text-anchor="middle" x="80" y="103">
+User
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
+<text text-anchor="middle" x="230" y="74.5">
+WS
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="50"/>
+<text text-anchor="middle" x="380" y="74.5">
+DB
+</text>
+</g>
+<line class="lifeline" x1="80" x2="80" y1="90" y2="469"/>
+<line class="lifeline" x1="230" x2="230" y1="90" y2="469"/>
+<line class="lifeline" x1="380" x2="380" y1="90" y2="469"/>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="100" y2="100"/>
+<text text-anchor="middle" x="155" y="95">
+GET /login
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="380" y1="140" y2="140"/>
+<text text-anchor="middle" x="305" y="135">
+SELECT user WHERE email=?
+</text>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="380" x2="230" y1="180" y2="180"/>
+<text text-anchor="middle" x="305" y="175">
+user record
+</text>
+</g>
+<g>
+<rect class="activation" height="40" width="10" x="375" y="180"/>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="220" y2="220"/>
+<text text-anchor="middle" x="155" y="215">
+200 OK + token
+</text>
+</g>
+<g>
+<rect class="activation" height="120" width="10" x="225" y="140"/>
+</g>
+<g>
+<polygon class="note-box" points="90,260 227.5,260 237.5,270 237.5,289 90,289"/>
+<polyline fill="none" points="227.5,260 227.5,270 237.5,270" stroke="#bbbb00" stroke-width="1"/>
+<text x="96" y="276">
+User stores token
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="299" y2="299"/>
+<text text-anchor="middle" x="155" y="294">
+GET /data
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="380" y1="339" y2="339"/>
+<text text-anchor="middle" x="305" y="334">
+SELECT data WHERE user_id=?
+</text>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="380" x2="230" y1="379" y2="379"/>
+<text text-anchor="middle" x="305" y="374">
+rows
+</text>
+</g>
+<g>
+<rect class="activation" height="40" width="10" x="375" y="379"/>
+</g>
+<g>
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="419" y2="419"/>
+<text text-anchor="middle" x="155" y="414">
+200 OK + JSON
+</text>
+</g>
+<g>
+<rect class="activation" height="120" width="10" x="225" y="339"/>
+</g>
+<g>
+<circle cx="80" cy="479" fill="#dae8fc" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="80" y1="487" y2="499"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="68" x2="92" y1="491.8" y2="491.8"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="70" y1="499" y2="509"/>
+<line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="90" y1="499" y2="509"/>
+<text text-anchor="middle" x="80" y="522">
+User
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="469"/>
+<text text-anchor="middle" x="230" y="493.5">
+WS
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="469"/>
+<text text-anchor="middle" x="380" y="493.5">
+DB
+</text>
+</g>
+</svg>

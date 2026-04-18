@@ -1,0 +1,37 @@
+@startuml
+title HTTP Request Timing
+
+concise "Client" as C
+robust "Server" as S
+concise "Database" as D
+
+@0
+C is Idle
+S is Idle
+D is Idle
+
+@50
+C is Sending
+
+@100
+C is Waiting
+S is Parsing
+
+@150
+S is Querying
+D is Working
+
+@300
+D is Idle
+S is Rendering
+
+@400
+S is Responding
+
+@450
+C is Receiving
+S is Idle
+
+@500
+C is Idle
+@enduml

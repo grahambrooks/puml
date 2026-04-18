@@ -66,8 +66,6 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-          - target: x86_64-apple-darwin
-            os: macos-13
           - target: aarch64-apple-darwin
             os: macos-latest
     runs-on: ${{ matrix.os }}
@@ -117,8 +115,6 @@ jobs:
     outputs:
       url_linux_x86: ${{ steps.shas.outputs.url_linux_x86 }}
       sha_linux_x86: ${{ steps.shas.outputs.sha_linux_x86 }}
-      url_mac_x86: ${{ steps.shas.outputs.url_mac_x86 }}
-      sha_mac_x86: ${{ steps.shas.outputs.sha_mac_x86 }}
       url_mac_arm: ${{ steps.shas.outputs.url_mac_arm }}
       sha_mac_arm: ${{ steps.shas.outputs.sha_mac_arm }}
     steps:

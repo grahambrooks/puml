@@ -1,0 +1,107 @@
+<svg height="610" viewBox="0 0 385 610" width="385" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="uc-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="192.5" y="20">
+Online Banking Use Cases
+</text>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="202.5" y1="100" y2="85"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="202.5" y1="100" y2="165"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="195" y1="100" y2="245"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="198.75" y1="100" y2="325"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="202.5" y1="210" y2="85"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="198.75" y1="210" y2="325"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="180" y1="210" y2="405"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="202.5" y1="320" y2="85"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="320" y2="485"/>
+</g>
+<g>
+<circle cx="70" cy="70" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="78" y2="112"/>
+<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="91.6" y2="91.6"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="112" y2="126"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="112" y2="126"/>
+<text font-size="13" text-anchor="middle" x="70" y="138">
+Customer
+</text>
+</g>
+<g>
+<circle cx="70" cy="180" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="188" y2="222"/>
+<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="201.6" y2="201.6"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="222" y2="236"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="222" y2="236"/>
+<text font-size="13" text-anchor="middle" x="70" y="248">
+Teller
+</text>
+</g>
+<g>
+<circle cx="70" cy="290" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="298" y2="332"/>
+<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="311.6" y2="311.6"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="332" y2="346"/>
+<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="332" y2="346"/>
+<text font-size="13" text-anchor="middle" x="70" y="358">
+Auditor
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="85" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="89.33333333333333">
+Log In
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="165" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="169.33333333333334">
+View Balance
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="245" fill="#fff2cc" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="249.33333333333334">
+Transfer Funds
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="325" fill="#fff2cc" rx="63.75" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="329.3333333333333">
+Deposit Check
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="405" fill="#fff2cc" rx="82.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="409.3333333333333">
+Reconcile Accounts
+</text>
+</g>
+<g>
+<ellipse cx="262.5" cy="485" fill="#fff2cc" rx="75" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="262.5" y="489.3333333333333">
+View Audit Trail
+</text>
+</g>
+</svg>

@@ -1,0 +1,38 @@
+@startuml
+title Object Diagram — Example Order
+
+object customer {
+  id: 42
+  name: "Ada Lovelace"
+  email: "ada@example.com"
+}
+
+object order {
+  id: 1001
+  status: "shipped"
+  total: 129.50
+}
+
+object lineItem1 {
+  sku: "BOOK-001"
+  qty: 2
+  price: 29.50
+}
+
+object lineItem2 {
+  sku: "PEN-042"
+  qty: 1
+  price: 70.50
+}
+
+object address {
+  street: "1 Analytical St"
+  city: "London"
+  country: "UK"
+}
+
+customer --> order : placed
+order --> lineItem1 : contains
+order --> lineItem2 : contains
+order --> address : ships to
+@enduml

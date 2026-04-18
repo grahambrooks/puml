@@ -1,0 +1,26 @@
+@startuml
+title Online Banking Use Cases
+
+:Customer:
+:Teller:
+:Auditor:
+
+(Log In)
+(View Balance)
+(Transfer Funds)
+(Deposit Check)
+(Reconcile Accounts)
+(View Audit Trail)
+
+:Customer: --> (Log In)
+:Customer: --> (View Balance)
+:Customer: --> (Transfer Funds)
+:Customer: --> (Deposit Check)
+
+:Teller: --> (Log In)
+:Teller: --> (Deposit Check)
+:Teller: --> (Reconcile Accounts)
+
+:Auditor: --> (Log In)
+:Auditor: --> (View Audit Trail)
+@enduml

@@ -1,0 +1,173 @@
+<svg height="926" viewBox="0 0 695.5 926" width="695.5" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="act-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+<polygon fill="#181818" points="0 0, 8 4, 0 8"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="58" y2="88"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="124" y2="154"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="235.5" y1="210" y2="240"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="235.5" y1="276" y2="306"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="130.5" y1="362" y2="392"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="130.5" y1="428" y2="458"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="130.5" y1="494" y2="524"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="340.5" y1="362" y2="392"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="428" y2="458"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="494" y2="524"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="235.5" y1="560" y2="590"/>
+<text font-size="11" x="189" y="575">
+yes
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="235.5" y1="552" y2="590"/>
+<text font-size="11" x="294" y="571">
+no
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="445.5" y1="210" y2="240"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="445.5" y1="276" y2="306"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="445.5" y1="342" y2="372"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="340.5" y1="646" y2="676"/>
+<text font-size="11" x="294" y="661">
+yes
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="340.5" y1="400" y2="676"/>
+<text font-size="11" x="399" y="538">
+no
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="732" y2="762"/>
+</g>
+<g>
+<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="798" y2="828"/>
+</g>
+<g>
+<circle cx="340.5" cy="44" fill="#181818" r="14"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="88"/>
+<text text-anchor="middle" x="340.5" y="110.33333333333333">
+Receive order
+</text>
+</g>
+<g>
+<polygon fill="#fff2cc" points="340.5,154 368.5,182 340.5,210 312.5,182" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="340.5" y="186.33333333333334">
+items in stock?
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="155.5" y="240"/>
+<text text-anchor="middle" x="235.5" y="262.3333333333333">
+Reserve inventory
+</text>
+</g>
+<g>
+<polygon fill="#fff2cc" points="235.5,306 263.5,334 235.5,362 207.5,334" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="235.5" y="338.3333333333333">
+payment authorized?
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="392"/>
+<text text-anchor="middle" x="130.5" y="414.3333333333333">
+Charge card
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="458"/>
+<text text-anchor="middle" x="130.5" y="480.3333333333333">
+Ship order
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="181" x="40" y="524"/>
+<text text-anchor="middle" x="130.5" y="546.3333333333334">
+Send confirmation email
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="392"/>
+<text text-anchor="middle" x="340.5" y="414.3333333333333">
+Notify customer
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="458"/>
+<text text-anchor="middle" x="340.5" y="480.3333333333333">
+Release inventory
+</text>
+</g>
+<g>
+<circle cx="340.5" cy="538" fill="none" r="17" stroke="#181818" stroke-width="2"/>
+<circle cx="340.5" cy="538" fill="#181818" r="14"/>
+</g>
+<g>
+<polygon fill="#fff2cc" points="235.5,590 263.5,618 235.5,646 207.5,618" stroke="#d6b656" stroke-width="1.5"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="240"/>
+<text text-anchor="middle" x="445.5" y="262.3333333333333">
+Notify customer
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="306"/>
+<text text-anchor="middle" x="445.5" y="328.3333333333333">
+Offer backorder
+</text>
+</g>
+<g>
+<circle cx="445.5" cy="386" fill="none" r="17" stroke="#181818" stroke-width="2"/>
+<circle cx="445.5" cy="386" fill="#181818" r="14"/>
+</g>
+<g>
+<polygon fill="#fff2cc" points="340.5,676 368.5,704 340.5,732 312.5,704" stroke="#d6b656" stroke-width="1.5"/>
+</g>
+<g>
+<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="762"/>
+<text text-anchor="middle" x="340.5" y="784.3333333333334">
+Record completion
+</text>
+</g>
+<g>
+<circle cx="340.5" cy="842" fill="none" r="17" stroke="#181818" stroke-width="2"/>
+<circle cx="340.5" cy="842" fill="#181818" r="14"/>
+</g>
+</svg>
