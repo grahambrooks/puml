@@ -122,3 +122,22 @@ fn component_snapshot() {
     let svg = render_fixture("component_basic.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn deployment_renders() {
+    let svg = render_fixture("deployment_basic.puml");
+    // All four deployment container kinds land with their stereotype labels.
+    assert!(svg.contains("«node»"), "missing «node»: {svg}");
+    assert!(svg.contains("«cloud»"), "missing «cloud»");
+    assert!(svg.contains("«database»"), "missing «database»");
+    assert!(svg.contains("«folder»"), "missing «folder»");
+    assert!(svg.contains("«queue»"), "missing «queue»");
+    assert!(svg.contains("Web Server"));
+    assert!(svg.contains("UserDB"));
+}
+
+#[test]
+fn deployment_snapshot() {
+    let svg = render_fixture("deployment_basic.puml");
+    insta::assert_snapshot!(svg);
+}

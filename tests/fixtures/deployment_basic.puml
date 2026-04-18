@@ -1,0 +1,12 @@
+@startuml
+node "Web Server" as web
+cloud "AWS" as aws
+database "UserDB" as db
+folder Assets
+queue Messages
+
+web --> aws : deploy
+web --> db : query
+web --> Messages : publish
+aws --> Assets : serve
+@enduml

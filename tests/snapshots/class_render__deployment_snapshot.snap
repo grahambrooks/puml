@@ -1,0 +1,126 @@
+---
+source: tests/class_render.rs
+assertion_line: 142
+expression: svg
+---
+<svg height="182" viewBox="0 0 1460 182" width="1460" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arr-hollow" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 0, 10 5, 0 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arr-diamond-f" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 5, 5 0, 10 5, 5 10"/>
+</marker>
+<marker id="arr-diamond-h" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 5, 5 0, 10 5, 5 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="1070" x2="1110" y1="51" y2="51"/>
+<text font-size="11" text-anchor="middle" x="1090" y="47">
+deploy
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="1070" x2="1290" y1="51" y2="51"/>
+<text font-size="11" text-anchor="middle" x="1180" y="47">
+query
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="930" x2="890" y1="51" y2="51"/>
+<text font-size="11" text-anchor="middle" x="910" y="47">
+publish
+</text>
+</g>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="1110" x2="710" y1="51" y2="51"/>
+<text font-size="11" text-anchor="middle" x="910" y="47">
+serve
+</text>
+</g>
+<g>
+<rect fill="#eeeeee" height="42" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="30" y="30"/>
+<rect fill="#cccccc" height="36" rx="3" stroke="#444444" stroke-width="1.5" width="140" x="30" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="100" y="42">
+«node»
+</text>
+<text font-weight="bold" text-anchor="middle" x="100" y="56">
+Web Server
+</text>
+</g>
+<g>
+<rect fill="#f0f8ff" height="42" rx="3" stroke="#708090" stroke-width="1.5" width="140" x="210" y="30"/>
+<rect fill="#d0e4f5" height="36" rx="3" stroke="#708090" stroke-width="1.5" width="140" x="210" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="280" y="42">
+«cloud»
+</text>
+<text font-weight="bold" text-anchor="middle" x="280" y="56">
+AWS
+</text>
+</g>
+<g>
+<rect fill="#fff0f5" height="42" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="390" y="30"/>
+<rect fill="#f0cddf" height="36" rx="3" stroke="#8b5a8b" stroke-width="1.5" width="140" x="390" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="460" y="42">
+«database»
+</text>
+<text font-weight="bold" text-anchor="middle" x="460" y="56">
+UserDB
+</text>
+</g>
+<g>
+<rect fill="#fffacd" height="42" rx="3" stroke="#b8860b" stroke-width="1.5" width="140" x="570" y="30"/>
+<rect fill="#ffe4b5" height="36" rx="3" stroke="#b8860b" stroke-width="1.5" width="140" x="570" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="640" y="42">
+«folder»
+</text>
+<text font-weight="bold" text-anchor="middle" x="640" y="56">
+Assets
+</text>
+</g>
+<g>
+<rect fill="#f0f5ff" height="42" rx="3" stroke="#4682b4" stroke-width="1.5" width="140" x="750" y="30"/>
+<rect fill="#d0e0f0" height="36" rx="3" stroke="#4682b4" stroke-width="1.5" width="140" x="750" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="820" y="42">
+«queue»
+</text>
+<text font-weight="bold" text-anchor="middle" x="820" y="56">
+Messages
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="930" y="30"/>
+<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="930" y="30"/>
+<text font-weight="bold" text-anchor="middle" x="1000" y="52">
+web
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1110" y="30"/>
+<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1110" y="30"/>
+<text font-weight="bold" text-anchor="middle" x="1180" y="52">
+aws
+</text>
+</g>
+<g>
+<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1290" y="30"/>
+<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1290" y="30"/>
+<text font-weight="bold" text-anchor="middle" x="1360" y="52">
+db
+</text>
+</g>
+</svg>

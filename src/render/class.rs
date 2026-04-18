@@ -201,6 +201,16 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         ClassKind::Enum => ("#f5fff5", "#66bb66", "#ded"),
         ClassKind::Object => ("#fff9e6", "#b8a85a", "#f0e4b0"),
         ClassKind::Component => ("#e6f2ff", "#3d6aa0", "#b8d4f0"),
+        // Deployment kinds — distinct but muted palettes keep them visually
+        // grouped without competing with class content.
+        ClassKind::Node => ("#eeeeee", "#444444", "#cccccc"),
+        ClassKind::Cloud => ("#f0f8ff", "#708090", "#d0e4f5"),
+        ClassKind::Database => ("#fff0f5", "#8b5a8b", "#f0cddf"),
+        ClassKind::Folder => ("#fffacd", "#b8860b", "#ffe4b5"),
+        ClassKind::Frame => ("#f5f5f5", "#555555", "#e0e0e0"),
+        ClassKind::Rectangle => ("#f8f8f8", "#666666", "#e8e8e8"),
+        ClassKind::Artifact => ("#fffaf0", "#8b7355", "#f5deb3"),
+        ClassKind::Queue => ("#f0f5ff", "#4682b4", "#d0e0f0"),
         _ => ("#dae8fc", "#6c8ebf", "#c5d8f0"),
     };
 
@@ -238,15 +248,23 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         g = g.add(st);
     }
 
-    // Kind label for interface/abstract/enum/component — objects intentionally
-    // don't get a stereotype label; the underlined name signals instance-hood.
+    // Kind label for interface/abstract/enum/component and deployment kinds.
+    // Objects intentionally don't get one; the underlined name signals
+    // instance-hood. Plain Class and Rectangle are intentionally unlabelled.
     let kind_label = match node.kind {
         ClassKind::Interface => Some("«interface»"),
         ClassKind::Abstract => Some("«abstract»"),
         ClassKind::Enum => Some("«enum»"),
         ClassKind::Annotation => Some("«annotation»"),
         ClassKind::Component => Some("«component»"),
-        ClassKind::Object | ClassKind::Class => None,
+        ClassKind::Node => Some("«node»"),
+        ClassKind::Cloud => Some("«cloud»"),
+        ClassKind::Database => Some("«database»"),
+        ClassKind::Folder => Some("«folder»"),
+        ClassKind::Frame => Some("«frame»"),
+        ClassKind::Artifact => Some("«artifact»"),
+        ClassKind::Queue => Some("«queue»"),
+        ClassKind::Object | ClassKind::Class | ClassKind::Rectangle => None,
     };
     let name_y_adjust = if kind_label.is_some() || node.stereotype.is_some() {
         4.0

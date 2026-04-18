@@ -56,8 +56,8 @@ Multiple diagrams in one file produce multiple output files (`out-1.svg`, `out-2
 | Status | Diagram | Notes |
 |--------|---------|-------|
 | Shipping | Sequence, Class, Activity, State | Full parser + layout + renderer with fixture coverage |
-| Partial | Component, Object | Render via the class pipeline; some PlantUML syntax variants (`[Foo]` brackets, `attr = value` members) not yet accepted |
-| Planned | Deployment, Use Case, Timing, Mind Map, Gantt | Not started |
+| Partial | Component, Object, Deployment | Render via the class pipeline. Missing: `[Foo]` bracket components, `attr = value` object members, PlantUML's custom shapes for node/cloud/database/folder/frame/artifact/queue (currently drawn as labelled boxes) |
+| Planned | Use Case, Timing, Mind Map, Gantt | Not started |
 
 "Shipping" means: parses the common PlantUML idioms for that diagram, produces a readable SVG, has fixture + snapshot coverage. It does **not** yet mean byte-level parity with `plantuml.jar`.
 

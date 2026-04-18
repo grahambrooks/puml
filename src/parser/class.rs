@@ -125,6 +125,22 @@ fn parse_class(pair: Pair<Rule>) -> ClassNode {
                     ClassKind::Object
                 } else if kw.contains("component") {
                     ClassKind::Component
+                } else if kw.starts_with("node") {
+                    ClassKind::Node
+                } else if kw.starts_with("cloud") {
+                    ClassKind::Cloud
+                } else if kw.starts_with("database") {
+                    ClassKind::Database
+                } else if kw.starts_with("folder") {
+                    ClassKind::Folder
+                } else if kw.starts_with("frame") {
+                    ClassKind::Frame
+                } else if kw.starts_with("rectangle") {
+                    ClassKind::Rectangle
+                } else if kw.starts_with("artifact") {
+                    ClassKind::Artifact
+                } else if kw.starts_with("queue") {
+                    ClassKind::Queue
                 } else {
                     ClassKind::Class
                 };

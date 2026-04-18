@@ -7,6 +7,15 @@ pub enum ClassKind {
     Annotation,
     Object,    // `object Foo { ... }` — instance-style, name rendered underlined
     Component, // `component Foo` — box with two port tabs on the left edge
+    // Deployment containers — same layout as classes, different shapes.
+    Node,      // 3D box with slanted top
+    Cloud,     // cloud outline
+    Database,  // cylinder
+    Folder,    // folder tab
+    Frame,     // box with corner tab
+    Rectangle, // plain rectangle
+    Artifact,  // document page icon
+    Queue,     // elongated cylinder
 }
 
 #[derive(Debug, Clone, PartialEq)]

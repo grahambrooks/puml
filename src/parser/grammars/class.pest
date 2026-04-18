@@ -37,6 +37,16 @@ class_kw = {
     | ^"class"
     | ^"object"
     | ^"component"
+    // Deployment container keywords — parsed identically to `class`, rendered
+    // with a shape selected from the kind.
+    | ^"node"
+    | ^"cloud"
+    | ^"database"
+    | ^"folder"
+    | ^"frame"
+    | ^"rectangle"
+    | ^"artifact"
+    | ^"queue"
 }
 
 class_name = { quoted_string | class_bare_name }

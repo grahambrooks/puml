@@ -91,12 +91,22 @@ fn detect_type(source: &str) -> String {
         {
             has_activity = true;
         }
+        // Class-family markers. `database` and `queue` are intentionally NOT
+        // listed here — they're ambiguous with sequence participant types,
+        // and the class grammar still accepts them if the file carries other
+        // class/deployment markers that win routing.
         if t.starts_with("class ")
             || t.starts_with("interface ")
             || t.starts_with("abstract ")
             || t.starts_with("enum ")
             || t.starts_with("object ")
             || t.starts_with("component ")
+            || t.starts_with("node ")
+            || t.starts_with("cloud ")
+            || t.starts_with("folder ")
+            || t.starts_with("frame ")
+            || t.starts_with("rectangle ")
+            || t.starts_with("artifact ")
             || t.contains("--|>")
             || t.contains("<|--")
             || t.contains("--*")
