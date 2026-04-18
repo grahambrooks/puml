@@ -1,0 +1,76 @@
+README.md
+  d6aea5936d2aef15 58,60
+src/parser/grammars/gantt.pest
+  d6aea5936d2aef15 1-48
+src/layout/mod.rs
+  d6aea5936d2aef15 3
+src/ast/gantt.rs
+  d6aea5936d2aef15 1-27
+src/render/mod.rs
+  d6aea5936d2aef15 3,54-58
+src/parser/preprocessor.rs
+  d6aea5936d2aef15 86-90,93,101,103,115,118
+tests/fixtures/gantt_basic.puml
+  d6aea5936d2aef15 1-10
+tests/gantt_render.rs
+  d6aea5936d2aef15 1-33
+src/layout/gantt.rs
+  d6aea5936d2aef15 1-147
+src/render/gantt.rs
+  d6aea5936d2aef15 1-119
+src/parser/gantt.rs
+  d6aea5936d2aef15 1-156
+src/parser/mod.rs
+  d6aea5936d2aef15 3,54
+src/ast/mod.rs
+  d6aea5936d2aef15 3,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "16acd96daa771c745ca0b45ba711b1da0b17b9ae",
+  "prompts": {
+    "5a928d06b440090e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9c7dcf1-bea0-4254-b58f-b1c980cb8f60",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 30,
+      "total_deletions": 4,
+      "accepted_lines": 279,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/cb16b3284233c8509a3ce2155a40d9cd9d536414a3f63478056e7e468732c1a6"
+    },
+    "d6aea5936d2aef15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2a6ee1d-9534-4713-be22-dfed3b2329e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 585,
+      "total_deletions": 26,
+      "accepted_lines": 563,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/a787ff3ddacf182d8d790b8d1da1e569364a692bd2249f5966d5a8db9ca2554b"
+    },
+    "efb5cd870b515462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ac94be9-bf02-4f71-aaad-21af2a2745cb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 20,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/77caa4608029a2f3ca42d32a5c75f8491b433984f0dcb35784deef06be7a2701"
+    }
+  }
+}
