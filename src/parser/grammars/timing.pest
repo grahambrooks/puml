@@ -1,0 +1,43 @@
+// Timing diagram grammar
+// Lanes: `robust "Web" as W`, `concise "User" as U`, `clock "CLK" as C`
+// Time markers: `@0`, `@100` (integer offsets)
+// State assignments: `W is Idle`, `W is "Waiting for data"`
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    " "* ~ (
+        title_stmt
+        | lane_stmt
+        | time_stmt
+        | is_stmt
+        | skinparam_stmt
+        | newline
+    )
+}
+
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+lane_stmt = {
+    lane_kw ~ " "+ ~ (quoted_string | bare_name)
+    ~ (" "+ ~ ^"as" ~ " "+ ~ bare_name)?
+    ~ line_tail
+}
+lane_kw = { ^"robust" | ^"concise" | ^"clock" | ^"binary" }
+
+time_stmt = { "@" ~ time_value ~ line_tail }
+time_value = { ASCII_DIGIT+ }
+
+is_stmt = {
+    lane_ref ~ " "+ ~ ^"is" ~ " "+ ~ (quoted_string | state_name) ~ line_tail
+}
+lane_ref = { bare_name }
+state_name = { (!NEWLINE ~ ANY)+ }
+
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+bare_name     = { (ASCII_ALPHANUMERIC | "_" | ".")+ }
+rest_of_line  = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+line_tail     = _{ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+newline       = _{ NEWLINE+ }

@@ -2,6 +2,7 @@ pub mod activity;
 pub mod class;
 pub mod sequence;
 pub mod state;
+pub mod timing;
 pub mod usecase;
 
 pub use class::ClassDiagram;
@@ -14,4 +15,5 @@ pub enum DiagramAst {
     Activity(activity::ActivityDiagram),
     State(state::StateDiagram),
     UseCase(usecase::UseCaseDiagram),
+    Timing(timing::TimingDiagram),
 }

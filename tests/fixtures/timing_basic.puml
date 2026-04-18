@@ -1,0 +1,14 @@
+@startuml
+robust "Browser" as B
+concise "User" as U
+
+@0
+U is Idle
+B is Idle
+@100
+U is Waiting
+B is Processing
+@300
+U is Idle
+B is Idle
+@enduml

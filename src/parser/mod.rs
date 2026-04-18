@@ -3,6 +3,7 @@ pub mod class;
 pub mod preprocessor;
 pub mod sequence;
 pub mod state;
+pub mod timing;
 pub mod usecase;
 
 /// Parse a `skinparam key value` line (trailing newline ok) into `(key, value)`.
@@ -46,6 +47,7 @@ pub fn parse(source: &DiagramSource) -> Result<DiagramAst, PumlError> {
         "activity" => Ok(DiagramAst::Activity(activity::parse(&source.content)?)),
         "state" => Ok(DiagramAst::State(state::parse(&source.content)?)),
         "usecase" => Ok(DiagramAst::UseCase(usecase::parse(&source.content)?)),
+        "timing" => Ok(DiagramAst::Timing(timing::parse(&source.content)?)),
         "" => {
             // Auto-detect failed — try sequence first, then class
             sequence::parse(&source.content)
@@ -71,6 +73,7 @@ fn detect_type(source: &str) -> String {
     let mut has_sequence_strong = false;
     let mut has_arrow = false;
     let mut has_usecase = false;
+    let mut has_timing = false;
 
     for line in source.lines() {
         let t = line.trim();
@@ -145,9 +148,22 @@ fn detect_type(source: &str) -> String {
         {
             has_usecase = true;
         }
+        // Timing markers: lane-type keywords and `@N` time markers are
+        // unique to timing. `robust` is the strongest signal.
+        if t.starts_with("robust ")
+            || t.starts_with("concise ")
+            || t.starts_with("clock ")
+            || t.starts_with("binary ")
+            || (t.starts_with('@') && t.len() > 1 && t[1..].chars().all(|c| c.is_ascii_digit()))
+        {
+            has_timing = true;
+        }
     }
 
     // Priority: strong diagram-specific markers > arrow-only detection
+    if has_timing {
+        return "timing".to_string();
+    }
     if has_state {
         return "state".to_string();
     }
