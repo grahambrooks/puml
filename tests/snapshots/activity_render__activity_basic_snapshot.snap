@@ -50,7 +50,7 @@ Read input
 </text>
 </g>
 <g>
-<polygon fill="#fff2cc" points="225,154 253,182 225,210 197,182" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="225,154 253,182 225,210 197,182" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="225" y="186.33333333333334">
 valid?
 </text>
@@ -68,7 +68,7 @@ Show error
 </text>
 </g>
 <g>
-<polygon fill="#fff2cc" points="225,306 253,334 225,362 197,334" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="225,306 253,334 225,362 197,334" stroke="#d6b656" stroke-width="1.5"/>
 </g>
 <g>
 <circle cx="225" cy="406" fill="none" r="17" stroke="#181818" stroke-width="2"/>

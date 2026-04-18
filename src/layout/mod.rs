@@ -4,5 +4,6 @@ pub mod gantt;
 pub mod mindmap;
 pub mod sequence;
 pub mod state;
+pub mod sugiyama;
 pub mod timing;
 pub mod usecase;

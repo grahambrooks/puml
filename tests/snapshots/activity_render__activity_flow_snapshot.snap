@@ -59,7 +59,7 @@ Read request
 </text>
 </g>
 <g>
-<polygon fill="#fff2cc" points="225,154 253,182 225,210 197,182" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="225,154 253,182 225,210 197,182" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="225" y="186.33333333333334">
 authenticated?
 </text>
@@ -87,7 +87,7 @@ Reject
 <circle cx="330" cy="320" fill="#181818" r="14"/>
 </g>
 <g>
-<polygon fill="#fff2cc" points="225,372 253,400 225,428 197,400" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="225,372 253,400 225,428 197,400" stroke="#d6b656" stroke-width="1.5"/>
 </g>
 <g>
 <rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="145" y="458"/>

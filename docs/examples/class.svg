@@ -39,14 +39,14 @@ extends
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-diamond-h)" x1="387" x2="477" y1="374" y2="454"/>
-<text font-size="11" text-anchor="middle" x="432" y="410">
+<line class="class-line" marker-end="url(#arr-diamond-h)" x1="387" x2="297" y1="374" y2="454"/>
+<text font-size="11" text-anchor="middle" x="342" y="410">
 contains
 </text>
 <text font-size="11" x="393" y="370">
 1
 </text>
-<text font-size="11" x="483" y="450">
+<text font-size="11" x="303" y="450">
 *
 </text>
 </g>
@@ -102,34 +102,34 @@ Circle
 </text>
 </g>
 <g>
-<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="454"/>
-<text font-weight="bold" text-anchor="middle" x="280" y="476">
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="424" y="454"/>
+<text font-weight="bold" text-anchor="middle" x="494" y="476">
 Rectangle
 </text>
-<line stroke="#6c8ebf" stroke-width="1" x1="210" x2="350" y1="490" y2="490"/>
-<text font-style="normal" text-decoration="none" x="218" y="504">
+<line stroke="#6c8ebf" stroke-width="1" x1="424" x2="564" y1="490" y2="490"/>
+<text font-style="normal" text-decoration="none" x="432" y="504">
 +width: double
 </text>
-<text font-style="normal" text-decoration="none" x="218" y="524">
+<text font-style="normal" text-decoration="none" x="432" y="524">
 +height: double
 </text>
-<text font-style="normal" text-decoration="none" x="218" y="544">
+<text font-style="normal" text-decoration="none" x="432" y="544">
 +area(): double
 </text>
 </g>
 <g>
-<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="174" x="390" y="454"/>
-<text font-weight="bold" text-anchor="middle" x="477" y="476">
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="174" x="210" y="454"/>
+<text font-weight="bold" text-anchor="middle" x="297" y="476">
 Canvas
 </text>
-<line stroke="#6c8ebf" stroke-width="1" x1="390" x2="564" y1="490" y2="490"/>
-<text font-style="normal" text-decoration="none" x="398" y="504">
+<line stroke="#6c8ebf" stroke-width="1" x1="210" x2="384" y1="490" y2="490"/>
+<text font-style="normal" text-decoration="none" x="218" y="504">
 -shapes: List&lt;Shape&gt;
 </text>
-<text font-style="normal" text-decoration="none" x="398" y="524">
+<text font-style="normal" text-decoration="none" x="218" y="524">
 +add(s: Shape)
 </text>
-<text font-style="normal" text-decoration="none" x="398" y="544">
+<text font-style="normal" text-decoration="none" x="218" y="544">
 +render()
 </text>
 </g>

@@ -59,7 +59,7 @@ no
 <circle cx="140" cy="44" fill="#181818" r="14"/>
 </g>
 <g>
-<polygon fill="#fff2cc" points="140,88 168,116 140,144 112,116" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="140,88 168,116 140,144 112,116" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="140" y="120.33333333333333">
 more items?
 </text>
@@ -84,7 +84,7 @@ Poll queue
 </text>
 </g>
 <g>
-<polygon fill="#fff2cc" points="140,372 168,400 140,428 112,400" stroke="#d6b656" stroke-width="1.5"/>
+<polygon fill="none" points="140,372 168,400 140,428 112,400" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="140" y="404.3333333333333">
 queue empty?
 </text>

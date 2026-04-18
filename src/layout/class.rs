@@ -118,6 +118,8 @@ fn member_text(m: &Member) -> String {
     }
 }
 
+use super::sugiyama::reorder_barycentric;
+
 /// Assign each node a rank (layer) using a topological sort on Extension/Implementation edges.
 /// All other nodes default to rank 0.
 fn assign_ranks(diagram: &ClassDiagram) -> HashMap<String, usize> {
@@ -153,18 +155,44 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
     let ranks = assign_ranks(diagram);
     let max_rank = ranks.values().copied().max().unwrap_or(0);
 
-    // Group nodes by rank
-    let mut layers: Vec<Vec<&ClassNode>> = vec![Vec::new(); max_rank + 1];
-    for node in &diagram.classes {
+    // Group nodes by rank, carrying their *index* into `diagram.classes`
+    // rather than a borrow — the barycentric reorder below works on
+    // indices so it can return new per-layer orderings without fighting
+    // the borrow checker.
+    let mut layers: Vec<Vec<usize>> = vec![Vec::new(); max_rank + 1];
+    for (i, node) in diagram.classes.iter().enumerate() {
         let r = ranks.get(&node.name).copied().unwrap_or(0);
-        // Invert: rank 0 = root (top), higher rank = deeper (bottom)
+        // Invert: layer 0 (top of canvas) = max rank so children draw
+        // above their parents. Matches UML convention with `--|>` arrows
+        // pointing up from child to parent.
         let layer = max_rank.saturating_sub(r);
-        layers[layer].push(node);
+        layers[layer].push(i);
     }
 
-    // Build a center-x map for each node
-    let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
+    // Build an edge list over node indices — ALL relations participate,
+    // not just inheritance, so composition / aggregation / association
+    // also influence within-rank ordering.
+    let name_to_idx: HashMap<&str, usize> = diagram
+        .classes
+        .iter()
+        .enumerate()
+        .map(|(i, c)| (c.name.as_str(), i))
+        .collect();
+    let edge_pairs: Vec<(usize, usize)> = diagram
+        .relations
+        .iter()
+        .filter_map(|r| {
+            let a = name_to_idx.get(r.from.as_str()).copied()?;
+            let b = name_to_idx.get(r.to.as_str()).copied()?;
+            Some((a, b))
+        })
+        .collect();
 
+    // Reduce edge crossings before x-assignment. 6 sweeps is enough to
+    // converge for the diagrams we care about; any more is diminishing.
+    reorder_barycentric(&mut layers, &edge_pairs, 6);
+
+    let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
     let mut total_width: f64 = 0.0;
     let mut y = TOP_MARGIN + title_off;
 
@@ -172,19 +200,20 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         if layer.is_empty() {
             continue;
         }
-        let layer_h = layer
+        let nodes_in_layer: Vec<&ClassNode> = layer.iter().map(|&i| &diagram.classes[i]).collect();
+        let layer_h = nodes_in_layer
             .iter()
             .map(|n| node_height(n, diagram.hide_empty_members))
             .fold(0.0_f64, f64::max);
 
-        let layer_widths: Vec<f64> = layer.iter().map(|n| node_width(n)).collect();
+        let layer_widths: Vec<f64> = nodes_in_layer.iter().map(|n| node_width(n)).collect();
         let layer_total_w: f64 = layer_widths.iter().sum::<f64>()
             + NODE_H_GAP * (layer.len().saturating_sub(1)) as f64
             + SIDE_MARGIN * 2.0;
         total_width = total_width.max(layer_total_w);
 
         let mut x = SIDE_MARGIN;
-        for (i, node) in layer.iter().enumerate() {
+        for (i, node) in nodes_in_layer.iter().enumerate() {
             let w = layer_widths[i];
             let h = node_height(node, diagram.hide_empty_members);
 
@@ -212,16 +241,19 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
 
     let total_height = y + SIDE_MARGIN;
 
-    // Centre each layer within total_width
+    // Centre each layer within total_width.
     for layer in &layers {
         if layer.is_empty() {
             continue;
         }
-        let layer_w: f64 = layer.iter().map(|n| node_width(n)).sum::<f64>()
+        let layer_w: f64 = layer
+            .iter()
+            .map(|&i| node_width(&diagram.classes[i]))
+            .sum::<f64>()
             + NODE_H_GAP * (layer.len().saturating_sub(1)) as f64;
         let offset = (total_width - layer_w) / 2.0;
-        for node in layer {
-            if let Some(nl) = name_to_layout.get_mut(&node.name) {
+        for &i in layer {
+            if let Some(nl) = name_to_layout.get_mut(&diagram.classes[i].name) {
                 nl.x += offset - SIDE_MARGIN;
             }
         }

@@ -165,7 +165,7 @@ fn render_decision(g: Group, node: &LayoutNode) -> Group {
     );
     let diamond = Polygon::new()
         .set("points", points)
-        .set("fill", "#fff2cc")
+        .set("fill", "none")
         .set("stroke", "#d6b656")
         .set("stroke-width", 1.5);
 

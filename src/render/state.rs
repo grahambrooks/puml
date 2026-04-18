@@ -153,7 +153,7 @@ fn render_choice(node: &StateLayoutNode) -> Group {
     );
     let diamond = Polygon::new()
         .set("points", points)
-        .set("fill", "#fff2cc")
+        .set("fill", "none")
         .set("stroke", "#d6b656")
         .set("stroke-width", 1.5);
     Group::new().add(diamond)

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use super::sugiyama::reorder_barycentric;
 use crate::ast::state::*;
 
 const NODE_W: f64 = 120.0;
@@ -87,28 +88,40 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
         }
     }
 
-    // Group by rank
+    // Group by rank, carrying *indices* so barycentric reorder below can
+    // reshuffle within-rank order without borrow-checker grief.
     let final_max_rank = ranks.values().copied().max().unwrap_or(0);
-    let mut layers: Vec<Vec<&StateNode>> = vec![Vec::new(); final_max_rank + 2];
+    let mut layers: Vec<Vec<usize>> = vec![Vec::new(); final_max_rank + 2];
 
-    // [*] start nodes at rank 0
-    let start_nodes: Vec<&StateNode> = diagram
-        .states
-        .iter()
-        .filter(|s| s.name == "[*]" || s.kind == StateKind::Start)
-        .collect();
-    for sn in &start_nodes {
-        layers[0].push(sn);
-    }
-    for s in &diagram.states {
-        if s.name != "[*]" && s.kind != StateKind::Start {
+    for (i, s) in diagram.states.iter().enumerate() {
+        if s.name == "[*]" || s.kind == StateKind::Start {
+            layers[0].push(i);
+        } else {
             let r = ranks.get(s.name.as_str()).copied().unwrap_or(0);
             let layer_idx = (r + 1).min(layers.len() - 1);
-            layers[layer_idx].push(s);
+            layers[layer_idx].push(i);
         }
     }
 
-    // Position nodes layer by layer
+    // Reduce edge crossings: use every transition (not just [*]→x) so the
+    // within-layer order reflects actual connectivity.
+    let name_to_idx: HashMap<&str, usize> = diagram
+        .states
+        .iter()
+        .enumerate()
+        .map(|(i, s)| (s.name.as_str(), i))
+        .collect();
+    let edge_pairs: Vec<(usize, usize)> = diagram
+        .transitions
+        .iter()
+        .filter_map(|t| {
+            let a = name_to_idx.get(t.from.as_str()).copied()?;
+            let b = name_to_idx.get(t.to.as_str()).copied()?;
+            Some((a, b))
+        })
+        .collect();
+    reorder_barycentric(&mut layers, &edge_pairs, 6);
+
     let mut name_to_layout: HashMap<String, StateLayoutNode> = HashMap::new();
     let mut y = TOP_MARGIN + title_off;
     let mut total_width: f64 = 0.0;
@@ -118,14 +131,21 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
             continue;
         }
 
-        let layer_w: f64 = layer.iter().map(|s| node_width(s)).sum::<f64>()
+        let layer_w: f64 = layer
+            .iter()
+            .map(|&i| node_width(&diagram.states[i]))
+            .sum::<f64>()
             + H_GAP * (layer.len().saturating_sub(1)) as f64
             + SIDE_MARGIN * 2.0;
         total_width = total_width.max(layer_w);
 
-        let layer_h = layer.iter().map(|s| node_height(s)).fold(0.0_f64, f64::max);
+        let layer_h = layer
+            .iter()
+            .map(|&i| node_height(&diagram.states[i]))
+            .fold(0.0_f64, f64::max);
         let mut x = SIDE_MARGIN;
-        for s in layer {
+        for &i in layer {
+            let s = &diagram.states[i];
             let w = node_width(s);
             let h = node_height(s);
             name_to_layout.insert(
@@ -150,10 +170,14 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
         if layer.is_empty() {
             continue;
         }
-        let layer_w: f64 = layer.iter().map(|s| node_width(s)).sum::<f64>()
+        let layer_w: f64 = layer
+            .iter()
+            .map(|&i| node_width(&diagram.states[i]))
+            .sum::<f64>()
             + H_GAP * (layer.len().saturating_sub(1)) as f64;
         let offset = (total_width - SIDE_MARGIN * 2.0 - layer_w) / 2.0;
-        for s in layer {
+        for &i in layer {
+            let s = &diagram.states[i];
             if let Some(nl) = name_to_layout.get_mut(&s.name) {
                 nl.x += offset;
             }
