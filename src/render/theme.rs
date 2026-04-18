@@ -120,28 +120,30 @@ impl Theme {
     }
 
     fn plain() -> Self {
-        let mut t = Self::default();
-        t.class_background = "#ffffff".into();
-        t.class_border = "#333333".into();
-        t.sequence_participant_background = "#ffffff".into();
-        t.sequence_participant_border = "#333333".into();
-        t.sequence_lifeline_color = "#888888".into();
-        t
+        Self {
+            class_background: "#ffffff".into(),
+            class_border: "#333333".into(),
+            sequence_participant_background: "#ffffff".into(),
+            sequence_participant_border: "#333333".into(),
+            sequence_lifeline_color: "#888888".into(),
+            ..Self::default()
+        }
     }
 
     fn amiga() -> Self {
-        let mut t = Self::default();
-        t.background_color = "#000088".into();
-        t.font_color = "#ffffff".into();
-        t.arrow_color = "#ffffff".into();
-        t.class_background = "#000088".into();
-        t.class_border = "#ff8800".into();
-        t.sequence_participant_background = "#000088".into();
-        t.sequence_participant_border = "#ff8800".into();
-        t.sequence_lifeline_color = "#ff8800".into();
-        t.note_background = "#ffaa00".into();
-        t.note_border = "#ff8800".into();
-        t
+        Self {
+            background_color: "#000088".into(),
+            font_color: "#ffffff".into(),
+            arrow_color: "#ffffff".into(),
+            class_background: "#000088".into(),
+            class_border: "#ff8800".into(),
+            sequence_participant_background: "#000088".into(),
+            sequence_participant_border: "#ff8800".into(),
+            sequence_lifeline_color: "#ff8800".into(),
+            note_background: "#ffaa00".into(),
+            note_border: "#ff8800".into(),
+            ..Self::default()
+        }
     }
 }
 

@@ -125,7 +125,10 @@ fn skinparam_changes_background() {
         &svg[..svg.len().min(500)]
     );
     // Default white should no longer appear as the root background
-    assert!(!svg.contains("fill=\"#ffffff\""), "default bg still present");
+    assert!(
+        !svg.contains("fill=\"#ffffff\""),
+        "default bg still present"
+    );
 }
 
 #[test]
