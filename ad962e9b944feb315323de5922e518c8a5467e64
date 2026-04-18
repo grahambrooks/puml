@@ -1,0 +1,74 @@
+src/ast/class.rs
+  d6aea5936d2aef15 88
+src/render/state.rs
+  d6aea5936d2aef15 5,13,33
+src/parser/mod.rs
+  d6aea5936d2aef15 7-29
+tests/sequence_render.rs
+  d6aea5936d2aef15 117-152
+src/ast/state.rs
+  d6aea5936d2aef15 6
+src/render/sequence.rs
+  d6aea5936d2aef15 11,20,40
+src/parser/state.rs
+  d6aea5936d2aef15 42-47
+src/render/theme.rs
+  d6aea5936d2aef15 1-206
+src/render/activity.rs
+  d6aea5936d2aef15 7,14,34
+src/parser/class.rs
+  d6aea5936d2aef15 67-72
+src/ast/activity.rs
+  d6aea5936d2aef15 88
+src/parser/preprocessor.rs
+  d6aea5936d2aef15 62-65
+src/render/mod.rs
+  d6aea5936d2aef15 6,11,16,18,21,23,26,28,31,33,37-41
+src/render/class.rs
+  d6aea5936d2aef15 5,15,35
+tests/fixtures/sequence_themed.puml
+  d6aea5936d2aef15 1-8
+src/parser/activity.rs
+  d6aea5936d2aef15 28-33,91-92
+src/parser/sequence.rs
+  d6aea5936d2aef15 106-111
+tests/fixtures/sequence_amiga_theme.puml
+  d6aea5936d2aef15 1-5
+src/ast/sequence.rs
+  d6aea5936d2aef15 94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "ad962e9b944feb315323de5922e518c8a5467e64",
+  "prompts": {
+    "d6aea5936d2aef15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2a6ee1d-9534-4713-be22-dfed3b2329e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 385,
+      "total_deletions": 62,
+      "accepted_lines": 340,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/bf6b72eb691f8c0be53b111b0b9d155fafb3291e3aa8693faa2581c898d9a908"
+    },
+    "efb5cd870b515462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ac94be9-bf02-4f71-aaad-21af2a2745cb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Graham Brooks",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 20,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/77caa4608029a2f3ca42d32a5c75f8491b433984f0dcb35784deef06be7a2701"
+    }
+  }
+}
