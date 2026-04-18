@@ -1,4 +1,4 @@
-use svg::node::element::{Group, Line, Rectangle, Text};
+use svg::node::element::{Ellipse, Group, Line, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
 use super::primitives::{style_block, text_node};
@@ -189,11 +189,410 @@ fn class_defs() -> svg::node::element::Definitions {
         .add(arrowhead_open)
 }
 
+/// Build the shape geometry for one node. The class-family kinds get the
+/// classic two-rectangle (body + header) construction; deployment kinds get
+/// their UML-canonical shape — cylinder, cloud, folder tab, etc. The shape
+/// always fits inside the node's bounding box so downstream text and member
+/// positioning stay unchanged.
+fn draw_shape(node: &NodeLayout, y: f64, fill: &str, stroke: &str, header_fill: &str) -> Group {
+    let x = node.x;
+    let w = node.width;
+    let h = node.height;
+
+    match node.kind {
+        ClassKind::Database => cylinder_shape(x, y, w, h, fill, stroke),
+        ClassKind::Queue => queue_shape(x, y, w, h, fill, stroke),
+        ClassKind::Cloud => cloud_shape(x, y, w, h, fill, stroke),
+        ClassKind::Folder => folder_shape(x, y, w, h, fill, stroke, header_fill),
+        ClassKind::Frame => frame_shape(x, y, w, h, fill, stroke, header_fill),
+        ClassKind::Artifact => artifact_shape(x, y, w, h, fill, stroke),
+        ClassKind::Node => node3d_shape(x, y, w, h, fill, stroke),
+        _ => {
+            // Default class-family rendering: body + header rect.
+            let border = Rectangle::new()
+                .set("x", x)
+                .set("y", y)
+                .set("width", w)
+                .set("height", h)
+                .set("fill", fill)
+                .set("stroke", stroke)
+                .set("stroke-width", "1.5")
+                .set("rx", "3");
+
+            let header_rect = Rectangle::new()
+                .set("x", x)
+                .set("y", y)
+                .set("width", w)
+                .set("height", node.header_h)
+                .set("fill", header_fill)
+                .set("stroke", stroke)
+                .set("stroke-width", "1.5")
+                .set("rx", "3");
+
+            Group::new().add(border).add(header_rect)
+        }
+    }
+}
+
+/// Vertical cylinder: elliptical cap on top, rectangular body, elliptical
+/// arc at the bottom. Text lands inside the body.
+fn cylinder_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
+    let cap_ry = 8.0_f64.min(h * 0.18);
+    let body_top = y + cap_ry;
+    let body_bot = y + h - cap_ry;
+
+    // Body: a rectangle capped by the top ellipse and bottom arc.
+    let body = Rectangle::new()
+        .set("x", x)
+        .set("y", body_top)
+        .set("width", w)
+        .set("height", body_bot - body_top)
+        .set("fill", fill)
+        .set("stroke", "none");
+    let left = Line::new()
+        .set("x1", x)
+        .set("y1", body_top)
+        .set("x2", x)
+        .set("y2", body_bot)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let right = Line::new()
+        .set("x1", x + w)
+        .set("y1", body_top)
+        .set("x2", x + w)
+        .set("y2", body_bot)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let top = Ellipse::new()
+        .set("cx", x + w / 2.0)
+        .set("cy", body_top)
+        .set("rx", w / 2.0)
+        .set("ry", cap_ry)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    // Bottom: just the visible front arc.
+    let bottom_arc = Path::new()
+        .set(
+            "d",
+            format!(
+                "M{},{} A{},{} 0 0 0 {},{}",
+                x,
+                body_bot,
+                w / 2.0,
+                cap_ry,
+                x + w,
+                body_bot
+            ),
+        )
+        .set("fill", "none")
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+
+    Group::new()
+        .add(body)
+        .add(left)
+        .add(right)
+        .add(bottom_arc)
+        .add(top)
+}
+
+/// Horizontal cylinder / queue: cap on the left, body, arc on the right.
+fn queue_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
+    let cap_rx = 10.0_f64.min(w * 0.15);
+    let body_left = x + cap_rx;
+    let body_right = x + w - cap_rx;
+
+    let body = Rectangle::new()
+        .set("x", body_left)
+        .set("y", y)
+        .set("width", body_right - body_left)
+        .set("height", h)
+        .set("fill", fill)
+        .set("stroke", "none");
+    let top = Line::new()
+        .set("x1", body_left)
+        .set("y1", y)
+        .set("x2", body_right)
+        .set("y2", y)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let bot = Line::new()
+        .set("x1", body_left)
+        .set("y1", y + h)
+        .set("x2", body_right)
+        .set("y2", y + h)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let left_cap = Ellipse::new()
+        .set("cx", body_left)
+        .set("cy", y + h / 2.0)
+        .set("rx", cap_rx)
+        .set("ry", h / 2.0)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    // Right-side arc indicating the far end of the cylinder.
+    let right_arc = Path::new()
+        .set(
+            "d",
+            format!(
+                "M{},{} A{},{} 0 0 1 {},{}",
+                body_right,
+                y,
+                cap_rx,
+                h / 2.0,
+                body_right,
+                y + h,
+            ),
+        )
+        .set("fill", "none")
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+
+    Group::new()
+        .add(body)
+        .add(top)
+        .add(bot)
+        .add(left_cap)
+        .add(right_arc)
+}
+
+/// Cloud outline: a chain of circular arcs sketching a lobed cloud. The path
+/// is parameterised by the node's bounding box so labels still centre inside.
+fn cloud_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
+    let cx = x + w / 2.0;
+    let cy = y + h / 2.0;
+    let rx = w / 2.0;
+    let ry = h / 2.0;
+    // Six lobes evenly distributed around the ellipse; each lobe is an arc
+    // that bulges outward from the ellipse surface.
+    let mut d = String::new();
+    let lobes = 8;
+    let bulge = (w.min(h) * 0.15).max(6.0);
+    for i in 0..lobes {
+        let theta0 = (i as f64 / lobes as f64) * std::f64::consts::TAU;
+        let theta1 = ((i + 1) as f64 / lobes as f64) * std::f64::consts::TAU;
+        let x0 = cx + rx * theta0.cos();
+        let y0 = cy + ry * theta0.sin();
+        let x1 = cx + rx * theta1.cos();
+        let y1 = cy + ry * theta1.sin();
+        if i == 0 {
+            d.push_str(&format!("M{:.2},{:.2}", x0, y0));
+        }
+        // A clockwise arc with a radius slightly bigger than the lobe chord
+        // gives the puffed-out cloud look.
+        let chord = ((x1 - x0).powi(2) + (y1 - y0).powi(2)).sqrt();
+        let r = chord / 1.6 + bulge;
+        d.push_str(&format!(" A{:.2},{:.2} 0 0 1 {:.2},{:.2}", r, r, x1, y1));
+    }
+    d.push_str(" Z");
+    let path = Path::new()
+        .set("d", d)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    Group::new().add(path)
+}
+
+/// Folder: a small tab on the upper-left corner, body beneath.
+fn folder_shape(
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+    fill: &str,
+    stroke: &str,
+    header_fill: &str,
+) -> Group {
+    let tab_w = (w * 0.35).min(60.0);
+    let tab_h = 10.0;
+    // The folder outline: tab trapezoid flowing into the body rectangle.
+    let d = format!(
+        "M{x0},{ty} L{tx1},{ty} L{tx2},{by} L{x1},{by} L{x1},{yb} L{x0},{yb} Z",
+        x0 = x,
+        ty = y,
+        tx1 = x + tab_w,
+        tx2 = x + tab_w + tab_h,
+        by = y + tab_h,
+        x1 = x + w,
+        yb = y + h,
+    );
+    let outline = Path::new()
+        .set("d", d)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    // Divider below the tab so the tab reads as a distinct region.
+    let tab_divider = Line::new()
+        .set("x1", x)
+        .set("y1", y + tab_h)
+        .set("x2", x + tab_w + tab_h)
+        .set("y2", y + tab_h)
+        .set("stroke", stroke)
+        .set("stroke-width", "1");
+    // Subtle tab-fill accent — reuse header_fill so the palette is consistent.
+    let tab_shade = Path::new()
+        .set(
+            "d",
+            format!(
+                "M{},{} L{},{} L{},{} L{},{} Z",
+                x,
+                y,
+                x + tab_w,
+                y,
+                x + tab_w + tab_h,
+                y + tab_h,
+                x,
+                y + tab_h,
+            ),
+        )
+        .set("fill", header_fill)
+        .set("stroke", "none");
+    Group::new().add(outline).add(tab_shade).add(tab_divider)
+}
+
+/// Frame: full rectangle with a small labelled tab in the top-left corner.
+fn frame_shape(
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+    fill: &str,
+    stroke: &str,
+    header_fill: &str,
+) -> Group {
+    let tab_w = 42.0;
+    let tab_h = 14.0;
+    let border = Rectangle::new()
+        .set("x", x)
+        .set("y", y)
+        .set("width", w)
+        .set("height", h)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5")
+        .set("rx", "2");
+    // A notched tab: the corner beneath it gets a small diagonal cut.
+    let tab = Path::new()
+        .set(
+            "d",
+            format!(
+                "M{x0},{y0} L{x1},{y0} L{x2},{y1} L{x0},{y1} Z",
+                x0 = x,
+                y0 = y,
+                x1 = x + tab_w,
+                x2 = x + tab_w + tab_h / 2.0,
+                y1 = y + tab_h,
+            ),
+        )
+        .set("fill", header_fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    Group::new().add(border).add(tab)
+}
+
+/// Artifact: a document outline with a folded top-right corner.
+fn artifact_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
+    let fold = 14.0;
+    let body = Path::new()
+        .set(
+            "d",
+            format!(
+                "M{},{} L{},{} L{},{} L{},{} L{},{} Z",
+                x,
+                y,
+                x + w - fold,
+                y,
+                x + w,
+                y + fold,
+                x + w,
+                y + h,
+                x,
+                y + h,
+            ),
+        )
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    // Folded corner triangle, rendered with a slightly darker shade via a
+    // simple polygon outline.
+    let fold_poly = Polygon::new()
+        .set(
+            "points",
+            format!(
+                "{},{} {},{} {},{}",
+                x + w - fold,
+                y,
+                x + w,
+                y + fold,
+                x + w - fold,
+                y + fold,
+            ),
+        )
+        .set("fill", "#ffffff")
+        .set("stroke", stroke)
+        .set("stroke-width", "1");
+    Group::new().add(body).add(fold_poly)
+}
+
+/// Deployment node: 3D perspective box — front face plus two skewed
+/// parallelograms suggesting the top and right sides.
+fn node3d_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
+    // Depth offset shrinks with smaller nodes to stop the perspective from
+    // crowding the text area.
+    let depth = (w.min(h) * 0.12).clamp(6.0, 14.0);
+    let front = Rectangle::new()
+        .set("x", x)
+        .set("y", y + depth)
+        .set("width", w - depth)
+        .set("height", h - depth)
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let top = Polygon::new()
+        .set(
+            "points",
+            format!(
+                "{},{} {},{} {},{} {},{}",
+                x,
+                y + depth,
+                x + depth,
+                y,
+                x + w,
+                y,
+                x + w - depth,
+                y + depth,
+            ),
+        )
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    let right = Polygon::new()
+        .set(
+            "points",
+            format!(
+                "{},{} {},{} {},{} {},{}",
+                x + w - depth,
+                y + depth,
+                x + w,
+                y,
+                x + w,
+                y + h - depth,
+                x + w - depth,
+                y + h,
+            ),
+        )
+        .set("fill", fill)
+        .set("stroke", stroke)
+        .set("stroke-width", "1.5");
+    Group::new().add(top).add(right).add(front)
+}
+
 fn render_node(node: &NodeLayout, y_off: f64) -> Group {
     let x = node.x;
     let y = node.y + y_off;
     let w = node.width;
-    let h = node.height;
 
     let (fill, stroke, header_fill) = match node.kind {
         ClassKind::Interface => ("#f5f5ff", "#6666bb", "#dde"),
@@ -214,27 +613,7 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         _ => ("#dae8fc", "#6c8ebf", "#c5d8f0"),
     };
 
-    let border = Rectangle::new()
-        .set("x", x)
-        .set("y", y)
-        .set("width", w)
-        .set("height", h)
-        .set("fill", fill)
-        .set("stroke", stroke)
-        .set("stroke-width", "1.5")
-        .set("rx", "3");
-
-    let header_rect = Rectangle::new()
-        .set("x", x)
-        .set("y", y)
-        .set("width", w)
-        .set("height", node.header_h)
-        .set("fill", header_fill)
-        .set("stroke", stroke)
-        .set("stroke-width", "1.5")
-        .set("rx", "3");
-
-    let mut g = Group::new().add(border).add(header_rect);
+    let mut g = draw_shape(node, y, fill, stroke, header_fill);
 
     // Stereotype label
     if let Some(ref stereo) = node.stereotype {
