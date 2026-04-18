@@ -59,8 +59,7 @@ has
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="62" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="30" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="30" y="30"/>
+<rect fill="none" height="62" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="30" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="100" y="52">
 Company
 </text>
@@ -70,8 +69,7 @@ Company
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="30"/>
+<rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="280" y="52">
 Department
 </text>
@@ -84,8 +82,7 @@ Department
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="122" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="390" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="390" y="30"/>
+<rect fill="none" height="122" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="390" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="460" y="52">
 Employee
 </text>
@@ -104,8 +101,7 @@ Employee
 </text>
 </g>
 <g>
-<rect fill="#f5fff5" height="102" rx="3" stroke="#66bb66" stroke-width="1.5" width="140" x="570" y="30"/>
-<rect fill="#ded" height="36" rx="3" stroke="#66bb66" stroke-width="1.5" width="140" x="570" y="30"/>
+<rect fill="none" height="102" rx="3" stroke="#66bb66" stroke-width="1.5" width="140" x="570" y="30"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="640" y="42">
 «enum»
 </text>

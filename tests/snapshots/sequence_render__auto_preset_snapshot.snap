@@ -17,13 +17,13 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
 <text text-anchor="middle" x="80" y="44.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
 <text text-anchor="middle" x="230" y="44.5">
 Bob
 </text>
@@ -43,13 +43,13 @@ ack
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="160"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="160"/>
 <text text-anchor="middle" x="80" y="184.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="160"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="160"/>
 <text text-anchor="middle" x="230" y="184.5">
 Bob
 </text>

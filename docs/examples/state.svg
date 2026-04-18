@@ -72,37 +72,37 @@ close()
 <circle cx="280" cy="72" fill="#181818" r="12"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="306"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="306"/>
 <text font-size="13" text-anchor="middle" x="280" y="328.3333333333333">
 Disconnected
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="134"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="134"/>
 <text font-size="13" text-anchor="middle" x="100" y="156.33333333333334">
 Connecting
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="130" y="220"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="130" y="220"/>
 <text font-size="13" text-anchor="middle" x="190" y="242.33333333333334">
 Connected
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="310" y="220"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="310" y="220"/>
 <text font-size="13" text-anchor="middle" x="370" y="242.33333333333334">
 Idle
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="134"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="220" y="134"/>
 <text font-size="13" text-anchor="middle" x="280" y="156.33333333333334">
 Sending
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="400" y="134"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="400" y="134"/>
 <text font-size="13" text-anchor="middle" x="460" y="156.33333333333334">
 Receiving
 </text>

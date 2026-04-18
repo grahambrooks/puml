@@ -81,7 +81,7 @@ no
 <circle cx="340.5" cy="44" fill="#181818" r="14"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="88"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="88"/>
 <text text-anchor="middle" x="340.5" y="110.33333333333333">
 Receive order
 </text>
@@ -93,7 +93,7 @@ items in stock?
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="155.5" y="240"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="155.5" y="240"/>
 <text text-anchor="middle" x="235.5" y="262.3333333333333">
 Reserve inventory
 </text>
@@ -105,31 +105,31 @@ payment authorized?
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="392"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="392"/>
 <text text-anchor="middle" x="130.5" y="414.3333333333333">
 Charge card
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="458"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="50.5" y="458"/>
 <text text-anchor="middle" x="130.5" y="480.3333333333333">
 Ship order
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="181" x="40" y="524"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="181" x="40" y="524"/>
 <text text-anchor="middle" x="130.5" y="546.3333333333334">
 Send confirmation email
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="392"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="392"/>
 <text text-anchor="middle" x="340.5" y="414.3333333333333">
 Notify customer
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="458"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="458"/>
 <text text-anchor="middle" x="340.5" y="480.3333333333333">
 Release inventory
 </text>
@@ -142,13 +142,13 @@ Release inventory
 <polygon fill="#fff2cc" points="235.5,590 263.5,618 235.5,646 207.5,618" stroke="#d6b656" stroke-width="1.5"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="240"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="240"/>
 <text text-anchor="middle" x="445.5" y="262.3333333333333">
 Notify customer
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="306"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="365.5" y="306"/>
 <text text-anchor="middle" x="445.5" y="328.3333333333333">
 Offer backorder
 </text>
@@ -161,7 +161,7 @@ Offer backorder
 <polygon fill="#fff2cc" points="340.5,676 368.5,704 340.5,732 312.5,704" stroke="#d6b656" stroke-width="1.5"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="762"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="260.5" y="762"/>
 <text text-anchor="middle" x="340.5" y="784.3333333333334">
 Record completion
 </text>

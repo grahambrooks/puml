@@ -185,26 +185,36 @@ fn class_defs() -> svg::node::element::Definitions {
         .add(arrowhead_open)
 }
 
-/// Build the shape geometry for one node. The class-family kinds get the
-/// classic two-rectangle (body + header) construction; deployment kinds get
-/// their UML-canonical shape — cylinder, cloud, folder tab, etc. The shape
-/// always fits inside the node's bounding box so downstream text and member
-/// positioning stay unchanged.
-fn draw_shape(node: &NodeLayout, y: f64, fill: &str, stroke: &str, header_fill: &str) -> Group {
+/// Build the shape geometry for one node. Every shape is outline-only —
+/// `fill="none"` — so the canvas background shows through. That's what makes
+/// the rendering adapt naturally to light/dark viewers in `auto` mode
+/// without the renderer needing to know which one it's in.
+///
+/// Differentiation comes from stroke colour + stereotype label + (for
+/// deployment kinds) shape geometry. The `fill`/`header_fill` args are still
+/// threaded through so a future palette that does want accents can reclaim
+/// them without re-plumbing every call site.
+fn draw_shape(node: &NodeLayout, y: f64, _fill: &str, stroke: &str, _header_fill: &str) -> Group {
     let x = node.x;
     let w = node.width;
     let h = node.height;
+    // Outlines read against both light and dark canvases; shape bodies stay
+    // transparent so the rendering follows the viewer's background.
+    let fill = "none";
 
     match node.kind {
         ClassKind::Database => cylinder_shape(x, y, w, h, fill, stroke),
         ClassKind::Queue => queue_shape(x, y, w, h, fill, stroke),
         ClassKind::Cloud => cloud_shape(x, y, w, h, fill, stroke),
-        ClassKind::Folder => folder_shape(x, y, w, h, fill, stroke, header_fill),
-        ClassKind::Frame => frame_shape(x, y, w, h, fill, stroke, header_fill),
+        ClassKind::Folder => folder_shape(x, y, w, h, fill, stroke),
+        ClassKind::Frame => frame_shape(x, y, w, h, fill, stroke),
         ClassKind::Artifact => artifact_shape(x, y, w, h, fill, stroke),
         ClassKind::Node => node3d_shape(x, y, w, h, fill, stroke),
         _ => {
-            // Default class-family rendering: body + header rect.
+            // Class family: a single outlined rectangle. The separator line
+            // below the header (drawn elsewhere in render_node) gives the
+            // visual break between the name block and members — no coloured
+            // header band needed.
             let border = Rectangle::new()
                 .set("x", x)
                 .set("y", y)
@@ -215,36 +225,18 @@ fn draw_shape(node: &NodeLayout, y: f64, fill: &str, stroke: &str, header_fill: 
                 .set("stroke-width", "1.5")
                 .set("rx", "3");
 
-            let header_rect = Rectangle::new()
-                .set("x", x)
-                .set("y", y)
-                .set("width", w)
-                .set("height", node.header_h)
-                .set("fill", header_fill)
-                .set("stroke", stroke)
-                .set("stroke-width", "1.5")
-                .set("rx", "3");
-
-            Group::new().add(border).add(header_rect)
+            Group::new().add(border)
         }
     }
 }
 
-/// Vertical cylinder: elliptical cap on top, rectangular body, elliptical
-/// arc at the bottom. Text lands inside the body.
+/// Vertical cylinder: elliptical cap on top, front/side outlines, bottom
+/// arc. Body is transparent so the canvas shows through.
 fn cylinder_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
     let cap_ry = 8.0_f64.min(h * 0.18);
     let body_top = y + cap_ry;
     let body_bot = y + h - cap_ry;
 
-    // Body: a rectangle capped by the top ellipse and bottom arc.
-    let body = Rectangle::new()
-        .set("x", x)
-        .set("y", body_top)
-        .set("width", w)
-        .set("height", body_bot - body_top)
-        .set("fill", fill)
-        .set("stroke", "none");
     let left = Line::new()
         .set("x1", x)
         .set("y1", body_top)
@@ -285,12 +277,7 @@ fn cylinder_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> G
         .set("stroke", stroke)
         .set("stroke-width", "1.5");
 
-    Group::new()
-        .add(body)
-        .add(left)
-        .add(right)
-        .add(bottom_arc)
-        .add(top)
+    Group::new().add(left).add(right).add(bottom_arc).add(top)
 }
 
 /// Horizontal cylinder / queue: cap on the left, body, arc on the right.
@@ -299,13 +286,6 @@ fn queue_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Grou
     let body_left = x + cap_rx;
     let body_right = x + w - cap_rx;
 
-    let body = Rectangle::new()
-        .set("x", body_left)
-        .set("y", y)
-        .set("width", body_right - body_left)
-        .set("height", h)
-        .set("fill", fill)
-        .set("stroke", "none");
     let top = Line::new()
         .set("x1", body_left)
         .set("y1", y)
@@ -346,12 +326,7 @@ fn queue_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Grou
         .set("stroke", stroke)
         .set("stroke-width", "1.5");
 
-    Group::new()
-        .add(body)
-        .add(top)
-        .add(bot)
-        .add(left_cap)
-        .add(right_arc)
+    Group::new().add(top).add(bot).add(left_cap).add(right_arc)
 }
 
 /// Cloud outline: a chain of circular arcs sketching a lobed cloud. The path
@@ -391,19 +366,12 @@ fn cloud_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Grou
     Group::new().add(path)
 }
 
-/// Folder: a small tab on the upper-left corner, body beneath.
-fn folder_shape(
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
-    fill: &str,
-    stroke: &str,
-    header_fill: &str,
-) -> Group {
+/// Folder: outline with a small tab on the upper-left corner, transparent
+/// body so the canvas shows through.
+fn folder_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
     let tab_w = (w * 0.35).min(60.0);
     let tab_h = 10.0;
-    // The folder outline: tab trapezoid flowing into the body rectangle.
+    // Tab trapezoid flowing into the body rectangle.
     let d = format!(
         "M{x0},{ty} L{tx1},{ty} L{tx2},{by} L{x1},{by} L{x1},{yb} L{x0},{yb} Z",
         x0 = x,
@@ -419,7 +387,8 @@ fn folder_shape(
         .set("fill", fill)
         .set("stroke", stroke)
         .set("stroke-width", "1.5");
-    // Divider below the tab so the tab reads as a distinct region.
+    // Divider line under the tab so it reads as a distinct region even
+    // without a separate fill colour.
     let tab_divider = Line::new()
         .set("x1", x)
         .set("y1", y + tab_h)
@@ -427,37 +396,12 @@ fn folder_shape(
         .set("y2", y + tab_h)
         .set("stroke", stroke)
         .set("stroke-width", "1");
-    // Subtle tab-fill accent — reuse header_fill so the palette is consistent.
-    let tab_shade = Path::new()
-        .set(
-            "d",
-            format!(
-                "M{},{} L{},{} L{},{} L{},{} Z",
-                x,
-                y,
-                x + tab_w,
-                y,
-                x + tab_w + tab_h,
-                y + tab_h,
-                x,
-                y + tab_h,
-            ),
-        )
-        .set("fill", header_fill)
-        .set("stroke", "none");
-    Group::new().add(outline).add(tab_shade).add(tab_divider)
+    Group::new().add(outline).add(tab_divider)
 }
 
-/// Frame: full rectangle with a small labelled tab in the top-left corner.
-fn frame_shape(
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
-    fill: &str,
-    stroke: &str,
-    header_fill: &str,
-) -> Group {
+/// Frame: outlined rectangle with a small labelled tab in the top-left
+/// corner. Both the body and the tab interior stay transparent.
+fn frame_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> Group {
     let tab_w = 42.0;
     let tab_h = 14.0;
     let border = Rectangle::new()
@@ -469,7 +413,6 @@ fn frame_shape(
         .set("stroke", stroke)
         .set("stroke-width", "1.5")
         .set("rx", "2");
-    // A notched tab: the corner beneath it gets a small diagonal cut.
     let tab = Path::new()
         .set(
             "d",
@@ -482,7 +425,7 @@ fn frame_shape(
                 y1 = y + tab_h,
             ),
         )
-        .set("fill", header_fill)
+        .set("fill", fill)
         .set("stroke", stroke)
         .set("stroke-width", "1.5");
     Group::new().add(border).add(tab)
@@ -511,25 +454,25 @@ fn artifact_shape(x: f64, y: f64, w: f64, h: f64, fill: &str, stroke: &str) -> G
         .set("fill", fill)
         .set("stroke", stroke)
         .set("stroke-width", "1.5");
-    // Folded corner triangle, rendered with a slightly darker shade via a
-    // simple polygon outline.
-    let fold_poly = Polygon::new()
+    // The fold is communicated entirely through the outline — two extra
+    // stroke segments inside the bounding box tracing the diagonal crease.
+    let fold_outline = Path::new()
         .set(
-            "points",
+            "d",
             format!(
-                "{},{} {},{} {},{}",
+                "M{},{} L{},{} L{},{}",
                 x + w - fold,
                 y,
-                x + w,
-                y + fold,
                 x + w - fold,
+                y + fold,
+                x + w,
                 y + fold,
             ),
         )
-        .set("fill", "#ffffff")
+        .set("fill", "none")
         .set("stroke", stroke)
-        .set("stroke-width", "1");
-    Group::new().add(body).add(fold_poly)
+        .set("stroke-width", "1.2");
+    Group::new().add(body).add(fold_outline)
 }
 
 /// Deployment node: 3D perspective box — front face plus two skewed
@@ -590,24 +533,31 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
     let y = node.y + y_off;
     let w = node.width;
 
-    let (fill, stroke, header_fill) = match node.kind {
-        ClassKind::Interface => ("#f5f5ff", "#6666bb", "#dde"),
-        ClassKind::Abstract => ("#fff5f5", "#bb6666", "#edd"),
-        ClassKind::Enum => ("#f5fff5", "#66bb66", "#ded"),
-        ClassKind::Object => ("#fff9e6", "#b8a85a", "#f0e4b0"),
-        ClassKind::Component => ("#e6f2ff", "#3d6aa0", "#b8d4f0"),
-        // Deployment kinds — distinct but muted palettes keep them visually
-        // grouped without competing with class content.
-        ClassKind::Node => ("#eeeeee", "#444444", "#cccccc"),
-        ClassKind::Cloud => ("#f0f8ff", "#708090", "#d0e4f5"),
-        ClassKind::Database => ("#fff0f5", "#8b5a8b", "#f0cddf"),
-        ClassKind::Folder => ("#fffacd", "#b8860b", "#ffe4b5"),
-        ClassKind::Frame => ("#f5f5f5", "#555555", "#e0e0e0"),
-        ClassKind::Rectangle => ("#f8f8f8", "#666666", "#e8e8e8"),
-        ClassKind::Artifact => ("#fffaf0", "#8b7355", "#f5deb3"),
-        ClassKind::Queue => ("#f0f5ff", "#4682b4", "#d0e0f0"),
-        _ => ("#dae8fc", "#6c8ebf", "#c5d8f0"),
+    // Strokes only — shapes are outline-only now. Picked so each kind stays
+    // distinguishable and the mid-tone colours read on both light and dark
+    // canvases. Too-dark greys (#444, #555, #666) bumped to #888-ish so
+    // they stay visible against the dark-mode background.
+    let stroke = match node.kind {
+        ClassKind::Interface => "#6666bb",
+        ClassKind::Abstract => "#bb6666",
+        ClassKind::Enum => "#66bb66",
+        ClassKind::Object => "#b8a85a",
+        ClassKind::Component => "#6c8ebf",
+        ClassKind::Node => "#888888",
+        ClassKind::Cloud => "#8da0b0",
+        ClassKind::Database => "#a06ba0",
+        ClassKind::Folder => "#c89b2e",
+        ClassKind::Frame => "#888888",
+        ClassKind::Rectangle => "#888888",
+        ClassKind::Artifact => "#a68862",
+        ClassKind::Queue => "#5a92c4",
+        _ => "#6c8ebf",
     };
+    // Legacy fill/header_fill bindings — kept as placeholders because
+    // draw_shape still accepts them. All shapes currently ignore them and
+    // render as outline-only.
+    let fill = "none";
+    let header_fill = "none";
 
     let mut g = draw_shape(node, y, fill, stroke, header_fill);
 

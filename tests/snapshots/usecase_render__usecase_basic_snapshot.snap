@@ -26,39 +26,39 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="180" y2="215"/>
 </g>
 <g>
-<circle cx="70" cy="40" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="48" y2="82"/>
-<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="61.6" y2="61.6"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="82" y2="96"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="82" y2="96"/>
+<circle class="arrow" cx="70" cy="40" r="8"/>
+<line class="arrow" x1="70" x2="70" y1="48" y2="82"/>
+<line class="arrow" x1="56" x2="84" y1="61.6" y2="61.6"/>
+<line class="arrow" x1="70" x2="60" y1="82" y2="96"/>
+<line class="arrow" x1="70" x2="80" y1="82" y2="96"/>
 <text font-size="13" text-anchor="middle" x="70" y="108">
 User
 </text>
 </g>
 <g>
-<circle cx="70" cy="150" fill="#ffffff" r="8" stroke="#181818" stroke-width="1.5"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="70" y1="158" y2="192"/>
-<line stroke="#181818" stroke-width="1.5" x1="56" x2="84" y1="171.6" y2="171.6"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="60" y1="192" y2="206"/>
-<line stroke="#181818" stroke-width="1.5" x1="70" x2="80" y1="192" y2="206"/>
+<circle class="arrow" cx="70" cy="150" r="8"/>
+<line class="arrow" x1="70" x2="70" y1="158" y2="192"/>
+<line class="arrow" x1="56" x2="84" y1="171.6" y2="171.6"/>
+<line class="arrow" x1="70" x2="60" y1="192" y2="206"/>
+<line class="arrow" x1="70" x2="80" y1="192" y2="206"/>
 <text font-size="13" text-anchor="middle" x="70" y="218">
 Admin
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="55" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<ellipse cx="247.5" cy="55" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="247.5" y="59.333333333333336">
 Login
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="135" fill="#fff2cc" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<ellipse cx="247.5" cy="135" fill="none" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="247.5" y="139.33333333333334">
 View Dashboard
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="215" fill="#fff2cc" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<ellipse cx="247.5" cy="215" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
 <text font-size="13" text-anchor="middle" x="247.5" y="219.33333333333334">
 Manage Users
 </text>

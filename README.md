@@ -55,6 +55,13 @@ Multiple diagrams in one file produce multiple output files (`out-1.svg`, `out-2
 
 ### Themes & dark mode
 
+Shapes render as **outlines on a transparent body by default** (structurizr-style),
+so the canvas background shows through and the same SVG reads naturally on
+either a light or dark page. Differentiation between kinds comes from stroke
+colour, stereotype labels, and shape geometry — not filled rectangles. Users
+can still colour individual elements with `skinparam …BackgroundColor` or
+`[#color]` tags on mindmap / activity nodes; those overrides are respected.
+
 Every SVG `puml` emits **adapts to the viewer's OS theme by default** — light in
 light viewers, dark in dark viewers, via a `@media (prefers-color-scheme: dark)`
 rule inside the SVG itself. No opt-in, no separate light/dark files. Older

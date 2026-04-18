@@ -20,13 +20,13 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Internal Refresh
 </text>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="50"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="50"/>
 <text text-anchor="middle" x="80" y="74.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
 <text text-anchor="middle" x="230" y="74.5">
 Bob
 </text>
@@ -58,13 +58,13 @@ done
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="270"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="270"/>
 <text text-anchor="middle" x="80" y="294.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="270"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="270"/>
 <text text-anchor="middle" x="230" y="294.5">
 Bob
 </text>

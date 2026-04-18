@@ -53,9 +53,9 @@ serve
 </text>
 </g>
 <g>
-<polygon fill="#eeeeee" points="30,36 36,30 170,30 164,36" stroke="#444444" stroke-width="1.5"/>
-<polygon fill="#eeeeee" points="164,36 170,30 170,66 164,72" stroke="#444444" stroke-width="1.5"/>
-<rect fill="#eeeeee" height="36" stroke="#444444" stroke-width="1.5" width="134" x="30" y="36"/>
+<polygon fill="none" points="30,36 36,30 170,30 164,36" stroke="#888888" stroke-width="1.5"/>
+<polygon fill="none" points="164,36 170,30 170,66 164,72" stroke="#888888" stroke-width="1.5"/>
+<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="30" y="36"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="100" y="42">
 «node»
 </text>
@@ -64,7 +64,7 @@ Web Server
 </text>
 </g>
 <g>
-<path d="M350.00,51.00 A22.12,22.12 0 0 1 329.50,65.85 A37.47,37.47 0 0 1 280.00,72.00 A37.47,37.47 0 0 1 230.50,65.85 A22.12,22.12 0 0 1 210.00,51.00 A22.12,22.12 0 0 1 230.50,36.15 A37.47,37.47 0 0 1 280.00,30.00 A37.47,37.47 0 0 1 329.50,36.15 A22.12,22.12 0 0 1 350.00,51.00 Z" fill="#f0f8ff" stroke="#708090" stroke-width="1.5"/>
+<path d="M350.00,51.00 A22.12,22.12 0 0 1 329.50,65.85 A37.47,37.47 0 0 1 280.00,72.00 A37.47,37.47 0 0 1 230.50,65.85 A22.12,22.12 0 0 1 210.00,51.00 A22.12,22.12 0 0 1 230.50,36.15 A37.47,37.47 0 0 1 280.00,30.00 A37.47,37.47 0 0 1 329.50,36.15 A22.12,22.12 0 0 1 350.00,51.00 Z" fill="none" stroke="#8da0b0" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="280" y="42">
 «cloud»
 </text>
@@ -73,11 +73,10 @@ AWS
 </text>
 </g>
 <g>
-<rect fill="#fff0f5" height="26.879999999999995" stroke="none" width="140" x="390" y="37.56"/>
-<line stroke="#8b5a8b" stroke-width="1.5" x1="390" x2="390" y1="37.56" y2="64.44"/>
-<line stroke="#8b5a8b" stroke-width="1.5" x1="530" x2="530" y1="37.56" y2="64.44"/>
-<path d="M390,64.44 A70,7.56 0 0 0 530,64.44" fill="none" stroke="#8b5a8b" stroke-width="1.5"/>
-<ellipse cx="460" cy="37.56" fill="#fff0f5" rx="70" ry="7.56" stroke="#8b5a8b" stroke-width="1.5"/>
+<line stroke="#a06ba0" stroke-width="1.5" x1="390" x2="390" y1="37.56" y2="64.44"/>
+<line stroke="#a06ba0" stroke-width="1.5" x1="530" x2="530" y1="37.56" y2="64.44"/>
+<path d="M390,64.44 A70,7.56 0 0 0 530,64.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
+<ellipse cx="460" cy="37.56" fill="none" rx="70" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="460" y="42">
 «database»
 </text>
@@ -86,9 +85,8 @@ UserDB
 </text>
 </g>
 <g>
-<path d="M570,30 L619,30 L629,40 L710,40 L710,72 L570,72 Z" fill="#fffacd" stroke="#b8860b" stroke-width="1.5"/>
-<path d="M570,30 L619,30 L629,40 L570,40 Z" fill="#ffe4b5" stroke="none"/>
-<line stroke="#b8860b" stroke-width="1" x1="570" x2="629" y1="40" y2="40"/>
+<path d="M570,30 L619,30 L629,40 L710,40 L710,72 L570,72 Z" fill="none" stroke="#c89b2e" stroke-width="1.5"/>
+<line stroke="#c89b2e" stroke-width="1" x1="570" x2="629" y1="40" y2="40"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="640" y="42">
 «folder»
 </text>
@@ -97,11 +95,10 @@ Assets
 </text>
 </g>
 <g>
-<rect fill="#f0f5ff" height="42" stroke="none" width="120" x="760" y="30"/>
-<line stroke="#4682b4" stroke-width="1.5" x1="760" x2="880" y1="30" y2="30"/>
-<line stroke="#4682b4" stroke-width="1.5" x1="760" x2="880" y1="72" y2="72"/>
-<ellipse cx="760" cy="51" fill="#f0f5ff" rx="10" ry="21" stroke="#4682b4" stroke-width="1.5"/>
-<path d="M880,30 A10,21 0 0 1 880,72" fill="none" stroke="#4682b4" stroke-width="1.5"/>
+<line stroke="#5a92c4" stroke-width="1.5" x1="760" x2="880" y1="30" y2="30"/>
+<line stroke="#5a92c4" stroke-width="1.5" x1="760" x2="880" y1="72" y2="72"/>
+<ellipse cx="760" cy="51" fill="none" rx="10" ry="21" stroke="#5a92c4" stroke-width="1.5"/>
+<path d="M880,30 A10,21 0 0 1 880,72" fill="none" stroke="#5a92c4" stroke-width="1.5"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="820" y="42">
 «queue»
 </text>
@@ -110,22 +107,19 @@ Messages
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="930" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="930" y="30"/>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="930" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="1000" y="52">
 web
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1110" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1110" y="30"/>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1110" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="1180" y="52">
 aws
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1290" y="30"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1290" y="30"/>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1290" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="1360" y="52">
 db
 </text>

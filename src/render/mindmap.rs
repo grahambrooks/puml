@@ -66,19 +66,12 @@ fn render_edge(edge: &MindLayoutEdge) -> Group {
 }
 
 fn render_node(node: &MindLayoutNode) -> Group {
-    // Deeper nodes get progressively lighter fill to reinforce hierarchy.
-    let fill = node.color.clone().unwrap_or_else(|| match node.depth {
-        1 => "#6c8ebf".to_string(),
-        2 => "#a9c4e6".to_string(),
-        3 => "#d4e6f1".to_string(),
-        _ => "#eaf2fa".to_string(),
-    });
-    let text_fill = if node.depth == 1 {
-        "#ffffff"
-    } else {
-        "#181818"
-    };
-
+    // Outline-only nodes. Hierarchy is communicated by position (parent →
+    // children fan out left/right) and by the root's bolder label, not by
+    // filling colour. A user who wants a filled node can supply `[#color]`
+    // in the source — we still honour that.
+    let fill = node.color.as_deref().unwrap_or("none");
+    let stroke_width = if node.depth == 1 { "1.8" } else { "1.2" };
     let rect = Rectangle::new()
         .set("x", node.x)
         .set("y", node.y)
@@ -86,15 +79,14 @@ fn render_node(node: &MindLayoutNode) -> Group {
         .set("height", node.h)
         .set("rx", "14")
         .set("ry", "14")
-        .set("fill", fill.as_str())
+        .set("fill", fill)
         .set("stroke", "#3d6aa0")
-        .set("stroke-width", "1.2");
+        .set("stroke-width", stroke_width);
     let label = Text::new()
         .set("x", node.x + node.w / 2.0)
         .set("y", node.y + node.h / 2.0 + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
         .set("font-size", FONT_SIZE)
-        .set("fill", text_fill)
         .set(
             "font-weight",
             if node.depth == 1 { "bold" } else { "normal" },

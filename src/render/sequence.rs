@@ -104,7 +104,10 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
 
 fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {
     let x = p.x - PARTICIPANT_WIDTH / 2.0;
-    let color = p.color.as_deref().unwrap_or("#dae8fc");
+    // Per-participant colour (from `skinparam`/`color` in the source) still
+    // overrides the default — users who ask for a coloured box get one. The
+    // default is transparent so the box reads on any background.
+    let fill = p.color.as_deref().unwrap_or("none");
     let border = "#6c8ebf";
 
     match p.kind {
@@ -116,7 +119,7 @@ fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {
                 .set("width", PARTICIPANT_WIDTH)
                 .set("height", PARTICIPANT_HEIGHT)
                 .set("rx", "4")
-                .set("fill", color)
+                .set("fill", fill)
                 .set("stroke", border)
                 .set("stroke-width", "1.5");
             let text = Text::new()
@@ -142,7 +145,7 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
         .set("cx", cx)
         .set("cy", head_cy)
         .set("r", head_r)
-        .set("fill", "#dae8fc")
+        .set("fill", "none")
         .set("stroke", "#6c8ebf")
         .set("stroke-width", "1.5");
     let body = Line::new()
@@ -332,8 +335,8 @@ fn render_group(g: &GroupLayout, y_off: f64) -> Group {
                 y + tab_h
             ),
         )
-        .set("fill", "#eeeeee")
-        .set("stroke", "#888")
+        .set("fill", "none")
+        .set("stroke", "#888888")
         .set("stroke-width", "1.2");
 
     let tab_label = Text::new()

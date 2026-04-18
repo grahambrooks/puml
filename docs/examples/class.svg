@@ -51,8 +51,7 @@ contains
 </text>
 </g>
 <g>
-<rect fill="#f5f5ff" height="82" rx="3" stroke="#6666bb" stroke-width="1.5" width="140" x="30" y="454"/>
-<rect fill="#dde" height="36" rx="3" stroke="#6666bb" stroke-width="1.5" width="140" x="30" y="454"/>
+<rect fill="none" height="82" rx="3" stroke="#6666bb" stroke-width="1.5" width="140" x="30" y="454"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="100" y="466">
 «interface»
 </text>
@@ -68,8 +67,7 @@ Drawable
 </text>
 </g>
 <g>
-<rect fill="#fff5f5" height="122" rx="3" stroke="#bb6666" stroke-width="1.5" width="196.5" x="288.75" y="252"/>
-<rect fill="#edd" height="36" rx="3" stroke="#bb6666" stroke-width="1.5" width="196.5" x="288.75" y="252"/>
+<rect fill="none" height="122" rx="3" stroke="#bb6666" stroke-width="1.5" width="196.5" x="288.75" y="252"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="387" y="264">
 «abstract»
 </text>
@@ -91,8 +89,7 @@ Shape
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="317" y="90"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="317" y="90"/>
+<rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="317" y="90"/>
 <text font-weight="bold" text-anchor="middle" x="387" y="112">
 Circle
 </text>
@@ -105,8 +102,7 @@ Circle
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="454"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="454"/>
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="454"/>
 <text font-weight="bold" text-anchor="middle" x="280" y="476">
 Rectangle
 </text>
@@ -122,8 +118,7 @@ Rectangle
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="174" x="390" y="454"/>
-<rect fill="#c5d8f0" height="36" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="174" x="390" y="454"/>
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="174" x="390" y="454"/>
 <text font-weight="bold" text-anchor="middle" x="477" y="476">
 Canvas
 </text>
@@ -139,8 +134,7 @@ Canvas
 </text>
 </g>
 <g>
-<rect fill="#f8f8f8" height="42" rx="3" stroke="#666666" stroke-width="1.5" width="140" x="604" y="454"/>
-<rect fill="#e8e8e8" height="36" rx="3" stroke="#666666" stroke-width="1.5" width="140" x="604" y="454"/>
+<rect fill="none" height="42" rx="3" stroke="#888888" stroke-width="1.5" width="140" x="604" y="454"/>
 <text font-weight="bold" text-anchor="middle" x="674" y="476">
 --
 </text>

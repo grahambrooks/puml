@@ -65,20 +65,20 @@ more items?
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="174"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="174"/>
 <text text-anchor="middle" x="140" y="196.33333333333334">
 Take item
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="240"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="240"/>
 <text text-anchor="middle" x="140" y="262.3333333333333">
 Process
 </text>
 </g>
 <g/>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="306"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="306"/>
 <text text-anchor="middle" x="140" y="328.3333333333333">
 Poll queue
 </text>
@@ -92,7 +92,7 @@ queue empty?
 <g/>
 <g/>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="458"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="60" y="458"/>
 <text text-anchor="middle" x="140" y="480.3333333333333">
 Shutdown
 </text>

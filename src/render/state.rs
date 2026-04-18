@@ -115,13 +115,15 @@ fn render_history(node: &StateLayoutNode) -> Group {
     let r = node.w.max(node.h) / 2.0;
     let label = if node.name == "[H*]" { "H*" } else { "H" };
 
+    // History marker: outline-only circle with the H/H* glyph inside. The
+    // stroke uses the theme-driven arrow colour via the `.arrow` class so
+    // it adapts on dark. Text colour comes from the root `text` rule.
     let circle = Circle::new()
         .set("cx", cx)
         .set("cy", cy)
         .set("r", r)
-        .set("fill", "#ffffff")
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("fill", "none")
+        .set("class", "arrow");
     let text = Text::new()
         .set("x", cx)
         .set("y", cy + FONT_SIZE / 3.0)
@@ -176,7 +178,7 @@ fn render_state_box(node: &StateLayoutNode) -> Group {
         .set("height", node.h)
         .set("rx", 10.0)
         .set("ry", 10.0)
-        .set("fill", "#dae8fc")
+        .set("fill", "none")
         .set("stroke", "#6c8ebf")
         .set("stroke-width", 1.5);
 

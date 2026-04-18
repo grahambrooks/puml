@@ -123,7 +123,9 @@ fn render_start_end(g: Group, node: &LayoutNode) -> Group {
 }
 
 fn render_action(g: Group, node: &LayoutNode) -> Group {
-    let fill = node.color.as_deref().unwrap_or("#dae8fc");
+    // Per-action colour (e.g. `:task; #aabbcc`) still lands if supplied;
+    // default is transparent so the rounded box reads on either canvas.
+    let fill = node.color.as_deref().unwrap_or("none");
     let rect = Rectangle::new()
         .set("x", node.x)
         .set("y", node.y)

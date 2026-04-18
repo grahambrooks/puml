@@ -15,7 +15,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Basic Sequence Example
 </text>
 <g>
-<circle cx="80" cy="60" fill="#dae8fc" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
+<circle cx="80" cy="60" fill="none" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="80" y1="68" y2="80"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="68" x2="92" y1="72.8" y2="72.8"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="70" y1="80" y2="90"/>
@@ -25,13 +25,13 @@ User
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
 <text text-anchor="middle" x="230" y="74.5">
 WS
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="50"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="50"/>
 <text text-anchor="middle" x="380" y="74.5">
 DB
 </text>
@@ -107,7 +107,7 @@ rows
 <rect class="activation" height="120" width="10" x="225" y="339"/>
 </g>
 <g>
-<circle cx="80" cy="479" fill="#dae8fc" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
+<circle cx="80" cy="479" fill="none" r="8" stroke="#6c8ebf" stroke-width="1.5"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="80" y1="487" y2="499"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="68" x2="92" y1="491.8" y2="491.8"/>
 <line stroke="#6c8ebf" stroke-width="1.5" x1="80" x2="70" y1="499" y2="509"/>
@@ -117,13 +117,13 @@ User
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="469"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="469"/>
 <text text-anchor="middle" x="230" y="493.5">
 WS
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="469"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="320" y="469"/>
 <text text-anchor="middle" x="380" y="493.5">
 DB
 </text>

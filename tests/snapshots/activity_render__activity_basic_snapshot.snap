@@ -44,7 +44,7 @@ no
 <circle cx="225" cy="44" fill="#181818" r="14"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="145" y="88"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="145" y="88"/>
 <text text-anchor="middle" x="225" y="110.33333333333333">
 Read input
 </text>
@@ -56,13 +56,13 @@ valid?
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="40" y="240"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="40" y="240"/>
 <text text-anchor="middle" x="120" y="262.3333333333333">
 Process data
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="250" y="240"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="250" y="240"/>
 <text text-anchor="middle" x="330" y="262.3333333333333">
 Show error
 </text>

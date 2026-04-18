@@ -89,41 +89,37 @@ fn render_actor(node: &UseCaseLayoutNode) -> Group {
     let body_bot = top + node.h * 0.65;
     let arm_y = body_top + (body_bot - body_top) * 0.4;
 
+    // Stroke colour flows from the theme-aware `.arrow` CSS class so the
+    // actor stays visible on both light and dark backgrounds.
     let head = Circle::new()
         .set("cx", cx)
         .set("cy", head_cy)
         .set("r", head_r)
-        .set("fill", "#ffffff")
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("class", "arrow");
     let body = Line::new()
         .set("x1", cx)
         .set("y1", body_top)
         .set("x2", cx)
         .set("y2", body_bot)
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("class", "arrow");
     let arms = Line::new()
         .set("x1", cx - 14.0)
         .set("y1", arm_y)
         .set("x2", cx + 14.0)
         .set("y2", arm_y)
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("class", "arrow");
     let leg_l = Line::new()
         .set("x1", cx)
         .set("y1", body_bot)
         .set("x2", cx - 10.0)
         .set("y2", body_bot + 14.0)
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("class", "arrow");
     let leg_r = Line::new()
         .set("x1", cx)
         .set("y1", body_bot)
         .set("x2", cx + 10.0)
         .set("y2", body_bot + 14.0)
-        .set("stroke", "#181818")
-        .set("stroke-width", "1.5");
+        .set("class", "arrow");
     let label = Text::new()
         .set("x", cx)
         .set("y", top + node.h - 2.0)
@@ -151,7 +147,7 @@ fn render_usecase(node: &UseCaseLayoutNode) -> Group {
         .set("cy", cy)
         .set("rx", rx)
         .set("ry", ry)
-        .set("fill", "#fff2cc")
+        .set("fill", "none")
         .set("stroke", "#d6b656")
         .set("stroke-width", "1.5");
     let label = Text::new()

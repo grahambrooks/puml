@@ -53,7 +53,7 @@ go
 <circle cx="142" cy="42" fill="#181818" r="12"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="104"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="104"/>
 <text font-size="13" text-anchor="middle" x="142" y="126.33333333333333">
 Idle
 </text>
@@ -62,19 +62,19 @@ Idle
 <polygon fill="#fff2cc" points="142,190 158,206 142,222 126,206" stroke="#d6b656" stroke-width="1.5"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="358"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="358"/>
 <text font-size="13" text-anchor="middle" x="100" y="380.3333333333333">
 Active
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="272"/>
+<rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="82" y="272"/>
 <text font-size="13" text-anchor="middle" x="142" y="294.3333333333333">
 Paused
 </text>
 </g>
 <g>
-<circle cx="232" cy="370" fill="#ffffff" r="12" stroke="#181818" stroke-width="1.5"/>
+<circle class="arrow" cx="232" cy="370" fill="none" r="12"/>
 <text font-size="11" font-weight="bold" text-anchor="middle" x="232" y="374.3333333333333">
 H
 </text>

@@ -51,8 +51,7 @@ ships to
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="204" x="30" y="90"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="204" x="30" y="90"/>
+<rect fill="none" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="204" x="30" y="90"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="132" y="112">
 customer
 </text>
@@ -68,8 +67,7 @@ email: "ada@example.com"
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="151.5" x="274" y="90"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="151.5" x="274" y="90"/>
+<rect fill="none" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="151.5" x="274" y="90"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="349.75" y="112">
 order
 </text>
@@ -85,8 +83,7 @@ total: 129.50
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="465.5" y="90"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="465.5" y="90"/>
+<rect fill="none" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="465.5" y="90"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="535.5" y="112">
 lineItem1
 </text>
@@ -102,8 +99,7 @@ price: 29.50
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="645.5" y="90"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="645.5" y="90"/>
+<rect fill="none" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="645.5" y="90"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="715.5" y="112">
 lineItem2
 </text>
@@ -119,8 +115,7 @@ price: 70.50
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="211.5" x="825.5" y="90"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="211.5" x="825.5" y="90"/>
+<rect fill="none" height="102" rx="3" stroke="#b8a85a" stroke-width="1.5" width="211.5" x="825.5" y="90"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="931.25" y="112">
 address
 </text>

@@ -47,7 +47,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <circle cx="380" cy="44" fill="#181818" r="14"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="88"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="88"/>
 <text text-anchor="middle" x="380" y="110.33333333333333">
 Accept request
 </text>
@@ -56,19 +56,19 @@ Accept request
 <rect fill="#181818" height="8" width="680" x="40" y="154"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="65" y="192"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="65" y="192"/>
 <text text-anchor="middle" x="145" y="214.33333333333334">
 Validate headers
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="275" y="192"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="275" y="192"/>
 <text text-anchor="middle" x="355" y="214.33333333333334">
 Validate body
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="485" y="192"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="485" y="192"/>
 <text text-anchor="middle" x="565" y="214.33333333333334">
 Log request
 </text>
@@ -77,7 +77,7 @@ Log request
 <rect fill="#181818" height="8" width="680" x="40" y="258"/>
 </g>
 <g>
-<rect fill="#dae8fc" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="296"/>
+<rect fill="none" height="36" rx="8" ry="8" stroke="#6c8ebf" stroke-width="1.5" width="160" x="300" y="296"/>
 <text text-anchor="middle" x="380" y="318.3333333333333">
 Dispatch handler
 </text>

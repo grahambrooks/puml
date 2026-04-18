@@ -35,8 +35,7 @@ knows
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
+<rect fill="none" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="100" y="52">
 alice
 </text>
@@ -49,8 +48,7 @@ age: 30
 </text>
 </g>
 <g>
-<rect fill="#fff9e6" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
-<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
+<rect fill="none" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="280" y="52">
 bob
 </text>

@@ -17,13 +17,13 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
 <text text-anchor="middle" x="80" y="44.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
 <text text-anchor="middle" x="230" y="44.5">
 Bob
 </text>
@@ -32,7 +32,7 @@ Bob
 <line class="lifeline" x1="230" x2="230" y1="60" y2="332"/>
 <g>
 <rect fill="none" height="136" stroke="#888" stroke-width="1.2" width="270" x="20" y="178"/>
-<polygon fill="#eeeeee" points="20,178 60,178 68,186 60,194 20,194" stroke="#888" stroke-width="1.2"/>
+<polygon fill="none" points="20,178 60,178 68,186 60,194 20,194" stroke="#888888" stroke-width="1.2"/>
 <text font-size="11" font-weight="bold" x="28" y="190">
 alt
 </text>
@@ -46,7 +46,7 @@ alt
 </g>
 <g>
 <rect fill="none" height="212" stroke="#888" stroke-width="1.2" width="270" x="20" y="110"/>
-<polygon fill="#eeeeee" points="20,110 68,110 76,118 68,126 20,126" stroke="#888" stroke-width="1.2"/>
+<polygon fill="none" points="20,110 68,110 76,118 68,126 20,126" stroke="#888888" stroke-width="1.2"/>
 <text font-size="11" font-weight="bold" x="28" y="122">
 loop
 </text>
@@ -79,13 +79,13 @@ retry
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="332"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="332"/>
 <text text-anchor="middle" x="80" y="356.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="#dae8fc" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="332"/>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="332"/>
 <text text-anchor="middle" x="230" y="356.5">
 Bob
 </text>
