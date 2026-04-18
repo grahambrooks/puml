@@ -113,6 +113,42 @@ fn strip_comments(source: &str) -> String {
     out
 }
 
+/// Recognise every PlantUML start marker we support and return
+/// `(type_hint, true)` on a match. A diagram-type-specific marker like
+/// `@startmindmap` yields `Some("mindmap")`; the generic `@startuml` yields
+/// either the explicit hint (`@startuml(sequence)`) or `None`.
+fn parse_start_marker(line: &str) -> Option<(Option<String>, bool)> {
+    if let Some(rest) = line.strip_prefix("@startuml") {
+        let rest = rest.trim();
+        let hint = if rest.starts_with('(') && rest.ends_with(')') {
+            Some(rest[1..rest.len() - 1].trim().to_string())
+        } else {
+            None
+        };
+        return Some((hint, true));
+    }
+    for (marker, diag_type) in [
+        ("@startmindmap", "mindmap"),
+        ("@startgantt", "gantt"),
+        ("@startwbs", "wbs"),
+        ("@startsalt", "salt"),
+        ("@startjson", "json"),
+        ("@startyaml", "yaml"),
+    ] {
+        if line.starts_with(marker) {
+            return Some((Some(diag_type.to_string()), true));
+        }
+    }
+    None
+}
+
+fn is_end_marker(line: &str) -> bool {
+    matches!(
+        line,
+        "@enduml" | "@endmindmap" | "@endgantt" | "@endwbs" | "@endsalt" | "@endjson" | "@endyaml"
+    )
+}
+
 fn split_diagrams(source: &str) -> Vec<DiagramSource> {
     let cleaned = strip_comments(source);
     let mut diagrams: Vec<DiagramSource> = Vec::new();
@@ -122,25 +158,23 @@ fn split_diagrams(source: &str) -> Vec<DiagramSource> {
 
     for line in cleaned.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("@startuml") {
-            has_markers = true;
-            let type_hint = trimmed.strip_prefix("@startuml").and_then(|s| {
-                let s = s.trim();
-                if s.starts_with('(') && s.ends_with(')') {
-                    Some(s[1..s.len() - 1].trim().to_string())
-                } else {
-                    None
-                }
-            });
-            current = Some((type_hint, String::new()));
-        } else if trimmed == "@enduml" {
+        if let Some((hint, is_start)) = parse_start_marker(trimmed) {
+            if is_start {
+                has_markers = true;
+                current = Some((hint, String::new()));
+                continue;
+            }
+        }
+        if is_end_marker(trimmed) {
             if let Some((hint, content)) = current.take() {
                 diagrams.push(DiagramSource {
                     content,
                     type_hint: hint,
                 });
             }
-        } else if let Some((_, ref mut content)) = current {
+            continue;
+        }
+        if let Some((_, ref mut content)) = current {
             content.push_str(line);
             content.push('\n');
         } else if !has_markers {

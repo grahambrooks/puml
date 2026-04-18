@@ -1,5 +1,6 @@
 pub mod activity;
 pub mod class;
+pub mod mindmap;
 pub mod sequence;
 pub mod state;
 pub mod timing;
@@ -16,4 +17,5 @@ pub enum DiagramAst {
     State(state::StateDiagram),
     UseCase(usecase::UseCaseDiagram),
     Timing(timing::TimingDiagram),
+    MindMap(mindmap::MindMapDiagram),
 }

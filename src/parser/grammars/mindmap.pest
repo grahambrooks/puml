@@ -1,0 +1,43 @@
+// Mind Map grammar
+// Nodes are lines beginning with `*`, `+`, or `-` markers; repetition count
+// indicates depth. Text after the markers is the node label.
+//   * Root
+//   ** Child
+//   *** Grandchild
+// The `+`/`-` variants force right-/left-side placement; `*` is auto.
+
+diagram = { SOI ~ element* ~ EOI }
+
+element = _{
+    " "* ~ (
+        title_stmt
+        | node_stmt
+        | skinparam_stmt
+        | newline
+    )
+}
+
+title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
+
+node_stmt = {
+    depth_marker ~ (" "* ~ color_tag)? ~ " "* ~ node_label ~ NEWLINE?
+}
+
+// Markers: one or more of the same character — tracked by character for
+// side-placement semantics.
+depth_marker = {
+    (ASTERISK+) | (PLUS+) | (MINUS+)
+}
+
+ASTERISK = { "*" }
+PLUS     = { "+" }
+MINUS    = { "-" }
+
+color_tag = { "[" ~ "#" ~ (ASCII_ALPHANUMERIC | "_")+ ~ "]" }
+
+node_label = { (!NEWLINE ~ ANY)+ }
+
+skinparam_stmt = { ^"skinparam" ~ " "+ ~ rest_of_line }
+
+rest_of_line = { (!NEWLINE ~ ANY)+ ~ NEWLINE? }
+newline      = _{ NEWLINE+ }

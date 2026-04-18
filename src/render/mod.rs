@@ -1,5 +1,6 @@
 pub mod activity;
 pub mod class;
+pub mod mindmap;
 pub mod primitives;
 pub mod sequence;
 pub mod state;
@@ -43,6 +44,11 @@ pub fn render(ast: &DiagramAst) -> Document {
             let theme = build_theme(&tm.skinparams);
             let layout = layout::timing::layout(tm);
             timing::render(&layout, &theme)
+        }
+        DiagramAst::MindMap(mm) => {
+            let theme = build_theme(&mm.skinparams);
+            let layout = layout::mindmap::layout(mm);
+            mindmap::render(&layout, &theme)
         }
     }
 }

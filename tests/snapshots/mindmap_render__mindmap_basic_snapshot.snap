@@ -1,0 +1,98 @@
+---
+source: tests/mindmap_render.rs
+assertion_line: 27
+expression: svg
+---
+<svg height="224" viewBox="0 0 753.5 224" width="753.5" xmlns="http://www.w3.org/2000/svg">
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<path d="M436.5,134 C461.5,134 461.5,68 486.5,68" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M571,68 C596,68 596,46 621,46" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M571,68 C596,68 596,90 621,90" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M352,134 C327,134 327,68 302,68" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M210,68 C185,68 185,46 160,46" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M210,68 C185,68 185,90 160,90" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M436.5,134 C461.5,134 461.5,156 486.5,156" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M566.5,156 C591.5,156 591.5,134 616.5,134" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<path d="M566.5,156 C591.5,156 591.5,178 616.5,178" fill="none" stroke="#888" stroke-width="1.2"/>
+</g>
+<g>
+<rect fill="#6c8ebf" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="84.5" x="352" y="118"/>
+<text fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" x="394.25" y="138.33333333333334">
+Project
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="84.5" x="486.5" y="52"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="528.75" y="72.33333333333333">
+Backend
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="621" y="30"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="661" y="50.333333333333336">
+API
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="92" x="621" y="74"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="667" y="94.33333333333333">
+Database
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="92" x="210" y="52"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="256" y="72.33333333333333">
+Frontend
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="80" y="30"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="120" y="50.333333333333336">
+Web UI
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="80" y="74"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="120" y="94.33333333333333">
+Mobile
+</text>
+</g>
+<g>
+<rect fill="#a9c4e6" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="486.5" y="140"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="526.5" y="160.33333333333334">
+DevOps
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="80" x="616.5" y="118"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="656.5" y="138.33333333333334">
+CI/CD
+</text>
+</g>
+<g>
+<rect fill="#d4e6f1" height="32" rx="14" ry="14" stroke="#3d6aa0" stroke-width="1.2" width="107" x="616.5" y="162"/>
+<text fill="#181818" font-size="13" font-weight="normal" text-anchor="middle" x="670" y="182.33333333333334">
+Monitoring
+</text>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+@startmindmap
+* Project
+** Backend
+*** API
+*** Database
+** Frontend
+*** Web UI
+*** Mobile
+** DevOps
+*** CI/CD
+*** Monitoring
+@endmindmap

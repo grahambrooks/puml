@@ -1,5 +1,6 @@
 pub mod activity;
 pub mod class;
+pub mod mindmap;
 pub mod preprocessor;
 pub mod sequence;
 pub mod state;
@@ -48,6 +49,7 @@ pub fn parse(source: &DiagramSource) -> Result<DiagramAst, PumlError> {
         "state" => Ok(DiagramAst::State(state::parse(&source.content)?)),
         "usecase" => Ok(DiagramAst::UseCase(usecase::parse(&source.content)?)),
         "timing" => Ok(DiagramAst::Timing(timing::parse(&source.content)?)),
+        "mindmap" => Ok(DiagramAst::MindMap(mindmap::parse(&source.content)?)),
         "" => {
             // Auto-detect failed — try sequence first, then class
             sequence::parse(&source.content)
@@ -74,6 +76,7 @@ fn detect_type(source: &str) -> String {
     let mut has_arrow = false;
     let mut has_usecase = false;
     let mut has_timing = false;
+    let mut has_mindmap = false;
 
     for line in source.lines() {
         let t = line.trim();
@@ -158,9 +161,19 @@ fn detect_type(source: &str) -> String {
         {
             has_timing = true;
         }
+        // Mind-map markers: lines starting with `*`, `+`, or `-` followed by
+        // text (not whitespace-only). Must guard against class/state
+        // separators (just `--` or `==`); here we require the marker run to
+        // be followed by a space and at least one non-space char.
+        if is_mindmap_marker_line(t) {
+            has_mindmap = true;
+        }
     }
 
     // Priority: strong diagram-specific markers > arrow-only detection
+    if has_mindmap {
+        return "mindmap".to_string();
+    }
     if has_timing {
         return "timing".to_string();
     }
@@ -182,6 +195,41 @@ fn detect_type(source: &str) -> String {
         return "sequence".to_string();
     }
     "sequence".to_string()
+}
+
+/// Mind-map node lines are a run of identical markers (`*`, `+`, or `-`)
+/// followed by *at least one space* and a non-empty alphanumeric label —
+/// e.g. `** Some child`. The explicit space requirement distinguishes a
+/// mindmap node from a class visibility marker (`-priv`, `+pub`), a separator
+/// (`--`), or a sequence arrow fragment.
+fn is_mindmap_marker_line(t: &str) -> bool {
+    let first = match t.chars().next() {
+        Some(c) if c == '*' || c == '+' || c == '-' => c,
+        _ => return false,
+    };
+    let mut run = 0;
+    for c in t.chars() {
+        if c == first {
+            run += 1;
+        } else {
+            break;
+        }
+    }
+    if run == 0 {
+        return false;
+    }
+    let after_run = &t[run..];
+    // Must be followed by a literal space — no other char can sit directly
+    // against the marker run.
+    let remainder = match after_run.strip_prefix(' ') {
+        Some(r) => r,
+        None => return false,
+    };
+    let label = remainder.trim_start();
+    label
+        .chars()
+        .next()
+        .is_some_and(|c| c.is_alphanumeric() || c == '"' || c == '_')
 }
 
 /// True if `t` is `<open><inner><close>` with `inner` non-empty and containing
