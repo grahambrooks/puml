@@ -1,0 +1,65 @@
+---
+source: tests/class_render.rs
+assertion_line: 105
+expression: svg
+---
+<svg height="222" viewBox="0 0 380 222" width="380" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arr-hollow" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 0, 10 5, 0 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arr-diamond-f" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 5, 5 0, 10 5, 5 10"/>
+</marker>
+<marker id="arr-diamond-h" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 5, 5 0, 10 5, 5 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}
+</style>
+<rect fill="#ffffff" height="100%" width="100%"/>
+<g>
+<line class="class-line" marker-end="url(#arrowhead)" x1="170" x2="210" y1="71" y2="71"/>
+<text font-size="11" text-anchor="middle" x="190" y="67">
+knows
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="100" y="52">
+alice
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="30" x2="170" y1="66" y2="66"/>
+<text font-style="normal" text-decoration="none" x="38" y="80">
+name: "Alice"
+</text>
+<text font-style="normal" text-decoration="none" x="38" y="100">
+age: 30
+</text>
+</g>
+<g>
+<rect fill="#fff9e6" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
+<rect fill="#f0e4b0" height="36" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="280" y="52">
+bob
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="210" x2="350" y1="66" y2="66"/>
+<text font-style="normal" text-decoration="none" x="218" y="80">
+name: "Bob"
+</text>
+<text font-style="normal" text-decoration="none" x="218" y="100">
+age: 25
+</text>
+</g>
+</svg>

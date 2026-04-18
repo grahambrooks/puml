@@ -95,6 +95,8 @@ fn detect_type(source: &str) -> String {
             || t.starts_with("interface ")
             || t.starts_with("abstract ")
             || t.starts_with("enum ")
+            || t.starts_with("object ")
+            || t.starts_with("component ")
             || t.contains("--|>")
             || t.contains("<|--")
             || t.contains("--*")

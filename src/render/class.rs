@@ -199,6 +199,8 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         ClassKind::Interface => ("#f5f5ff", "#6666bb", "#dde"),
         ClassKind::Abstract => ("#fff5f5", "#bb6666", "#edd"),
         ClassKind::Enum => ("#f5fff5", "#66bb66", "#ded"),
+        ClassKind::Object => ("#fff9e6", "#b8a85a", "#f0e4b0"),
+        ClassKind::Component => ("#e6f2ff", "#3d6aa0", "#b8d4f0"),
         _ => ("#dae8fc", "#6c8ebf", "#c5d8f0"),
     };
 
@@ -236,13 +238,15 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         g = g.add(st);
     }
 
-    // Kind label for interface/abstract/enum
+    // Kind label for interface/abstract/enum/component — objects intentionally
+    // don't get a stereotype label; the underlined name signals instance-hood.
     let kind_label = match node.kind {
         ClassKind::Interface => Some("«interface»"),
         ClassKind::Abstract => Some("«abstract»"),
         ClassKind::Enum => Some("«enum»"),
         ClassKind::Annotation => Some("«annotation»"),
-        ClassKind::Class => None,
+        ClassKind::Component => Some("«component»"),
+        ClassKind::Object | ClassKind::Class => None,
     };
     let name_y_adjust = if kind_label.is_some() || node.stereotype.is_some() {
         4.0
@@ -263,7 +267,7 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         }
     }
 
-    let name_el = Text::new()
+    let mut name_el = Text::new()
         .set("x", x + w / 2.0)
         .set("y", y + HEADER_TEXT_Y_OFF + name_y_adjust)
         .set("text-anchor", "middle")
@@ -276,7 +280,30 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
             },
         )
         .add(text_node(node.display_name.clone()));
+    if matches!(node.kind, ClassKind::Object) {
+        // UML convention: object instance names are underlined.
+        name_el = name_el.set("text-decoration", "underline");
+    }
     g = g.add(name_el);
+
+    // Component adornment: two small port tabs on the left edge.
+    if matches!(node.kind, ClassKind::Component) {
+        let port_w = 12.0;
+        let port_h = 8.0;
+        let port_y1 = y + node.header_h / 2.0 - port_h - 2.0;
+        let port_y2 = y + node.header_h / 2.0 + 2.0;
+        for py in [port_y1, port_y2] {
+            let port = Rectangle::new()
+                .set("x", x - port_w / 2.0)
+                .set("y", py)
+                .set("width", port_w)
+                .set("height", port_h)
+                .set("fill", header_fill)
+                .set("stroke", stroke)
+                .set("stroke-width", "1.5");
+            g = g.add(port);
+        }
+    }
 
     // Separator line below header
     if !node.member_sections.iter().all(|s| s.members.is_empty()) {

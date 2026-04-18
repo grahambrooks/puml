@@ -86,3 +86,39 @@ fn associations_snapshot() {
     let svg = render_fixture("class_associations.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn object_renders() {
+    let svg = render_fixture("object_basic.puml");
+    // Both object instances appear, and names are underlined (UML convention).
+    assert!(svg.contains("alice"));
+    assert!(svg.contains("bob"));
+    assert!(
+        svg.contains("text-decoration=\"underline\""),
+        "object name should be underlined"
+    );
+}
+
+#[test]
+fn object_snapshot() {
+    let svg = render_fixture("object_basic.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
+fn component_renders() {
+    let svg = render_fixture("component_basic.puml");
+    assert!(svg.contains("WebServer"));
+    assert!(svg.contains("AuthService"));
+    assert!(svg.contains("Database"));
+    assert!(
+        svg.contains("«component»"),
+        "component should carry «component» stereotype"
+    );
+}
+
+#[test]
+fn component_snapshot() {
+    let svg = render_fixture("component_basic.puml");
+    insta::assert_snapshot!(svg);
+}

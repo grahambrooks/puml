@@ -5,6 +5,8 @@ pub enum ClassKind {
     Interface,
     Enum,
     Annotation,
+    Object,    // `object Foo { ... }` — instance-style, name rendered underlined
+    Component, // `component Foo` — box with two port tabs on the left edge
 }
 
 #[derive(Debug, Clone, PartialEq)]

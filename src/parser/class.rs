@@ -121,6 +121,10 @@ fn parse_class(pair: Pair<Rule>) -> ClassNode {
                     ClassKind::Enum
                 } else if kw.contains("annotation") {
                     ClassKind::Annotation
+                } else if kw.contains("object") {
+                    ClassKind::Object
+                } else if kw.contains("component") {
+                    ClassKind::Component
                 } else {
                     ClassKind::Class
                 };

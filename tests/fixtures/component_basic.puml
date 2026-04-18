@@ -1,0 +1,8 @@
+@startuml
+component WebServer
+component AuthService
+component Database
+WebServer --> AuthService : authenticate
+WebServer --> Database : query
+AuthService --> Database : lookup
+@enduml

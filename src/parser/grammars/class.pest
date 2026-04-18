@@ -35,6 +35,8 @@ class_kw = {
     | ^"annotation"
     | ^"enum"
     | ^"class"
+    | ^"object"
+    | ^"component"
 }
 
 class_name = { quoted_string | class_bare_name }
