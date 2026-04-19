@@ -100,6 +100,136 @@ fn reorder_by_neighbours(layer: &mut Vec<usize>, neighbours: &[Vec<usize>], refe
     *layer = with_bary.into_iter().map(|(_, _, idx)| idx).collect();
 }
 
+/// Assign x-coordinates that place each node as close as possible to the
+/// median x-center of its predecessors in the layer above.
+///
+/// This is the single-pass, one-direction variant of Brandes & Köpf's
+/// horizontal coordinate assignment (2001) — enough to pull children under
+/// their parents in an inheritance tree or a state transition chain without
+/// the cost of the full 4-variant balance. Within each layer we enforce a
+/// minimum horizontal gap so nodes never overlap: when a node's median
+/// target would push it into its left neighbour, it pins against that
+/// neighbour + `min_gap` instead.
+///
+/// Inputs:
+///
+/// - `layers`: node indices, top to bottom, already ordered (call
+///   `reorder_barycentric` first).
+/// - `edges`: global (a, b) pairs. Only adjacent-layer edges influence
+///   placement.
+/// - `widths`: width of each node, indexed by global id. Nodes referenced
+///   by `layers` must be present.
+/// - `min_gap`: minimum horizontal gap between adjacent node boxes.
+/// - `side_margin`: left padding applied to the final leftmost node.
+///
+/// Returns a map from node id to left-x coordinate.
+pub fn assign_x_median(
+    layers: &[Vec<usize>],
+    edges: &[(usize, usize)],
+    widths: &[f64],
+    min_gap: f64,
+    side_margin: f64,
+) -> HashMap<usize, f64> {
+    let mut x: HashMap<usize, f64> = HashMap::new();
+    if layers.is_empty() {
+        return x;
+    }
+
+    // Layer index per node so we can filter edges to adjacent-layer pairs.
+    let mut layer_of: HashMap<usize, usize> = HashMap::new();
+    for (li, layer) in layers.iter().enumerate() {
+        for &idx in layer {
+            layer_of.insert(idx, li);
+        }
+    }
+
+    // `up[node]` = list of predecessors (in layer-1). Only adjacent-layer
+    // edges participate — longer edges would need virtual nodes to matter.
+    let max_node = layer_of.keys().copied().max().unwrap_or(0);
+    let mut up: Vec<Vec<usize>> = vec![Vec::new(); max_node + 1];
+    for &(a, b) in edges {
+        let (la, lb) = match (layer_of.get(&a), layer_of.get(&b)) {
+            (Some(&la), Some(&lb)) => (la, lb),
+            _ => continue,
+        };
+        if la + 1 == lb {
+            up[b].push(a);
+        } else if lb + 1 == la {
+            up[a].push(b);
+        }
+    }
+
+    // Top layer: pack left-to-right starting at `side_margin`.
+    if let Some(top) = layers.first() {
+        let mut cursor = side_margin;
+        for &n in top {
+            x.insert(n, cursor);
+            cursor += widths.get(n).copied().unwrap_or(0.0) + min_gap;
+        }
+    }
+
+    // Remaining layers: each node aims for the median x-center of its
+    // predecessors, but can't cross or overlap its left neighbour in the
+    // current layer.
+    for layer in layers.iter().skip(1) {
+        let mut cursor = side_margin;
+        for (pos, &n) in layer.iter().enumerate() {
+            let w = widths.get(n).copied().unwrap_or(0.0);
+            let target_left = if let Some(preds) = up.get(n) {
+                median_center(preds, &x, widths).map(|c| c - w / 2.0)
+            } else {
+                None
+            };
+
+            // Rough default: keep pushing right from the previous node.
+            let default_left = if pos == 0 { side_margin } else { cursor };
+            // Honour median when it doesn't collide with the neighbour to
+            // the left.
+            let placed = match target_left {
+                Some(t) if t >= cursor => t,
+                _ => default_left,
+            };
+
+            x.insert(n, placed);
+            cursor = placed + w + min_gap;
+        }
+
+        // Right-to-left pull: within the same layer, walk backward and let
+        // each node slide right if its median target is higher than the
+        // current placement AND the next node has room. Skipped for
+        // simplicity on the first pass — compaction above is enough to
+        // prevent overlaps and this extra pass matters only when median
+        // targets diverge sharply from left-to-right cursor placement.
+    }
+
+    x
+}
+
+/// Median of the x-centres of `nodes` according to the current `x`
+/// left-coords and `widths`. `None` if no predecessor has been placed yet.
+fn median_center(nodes: &[usize], x: &HashMap<usize, f64>, widths: &[f64]) -> Option<f64> {
+    let mut centers: Vec<f64> = nodes
+        .iter()
+        .filter_map(|&p| {
+            let lx = x.get(&p).copied()?;
+            let w = widths.get(p).copied()?;
+            Some(lx + w / 2.0)
+        })
+        .collect();
+    if centers.is_empty() {
+        return None;
+    }
+    centers.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let mid = centers.len() / 2;
+    Some(if centers.len() % 2 == 1 {
+        centers[mid]
+    } else {
+        // Even count: use the lower median so results line up more
+        // predictably with the leftmost parent in two-parent cases.
+        centers[mid - 1]
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -134,5 +264,54 @@ mod tests {
         // 99's barycenter = its index (0), so it stays at front; 3 has
         // bary 0, 2 has bary 1 → result preserves tie-break by original idx.
         assert!(layers[1].contains(&99));
+    }
+
+    #[test]
+    fn x_assignment_aligns_child_under_parent() {
+        // Single-column inheritance:  [Parent]  -> [Child]
+        // Child should land centered under Parent.
+        let layers = vec![vec![0], vec![1]];
+        let widths = vec![100.0, 80.0];
+        let edges = vec![(1, 0)]; // child 1 extends parent 0
+        let x = assign_x_median(&layers, &edges, &widths, 20.0, 10.0);
+        let parent_center = x[&0] + widths[0] / 2.0;
+        let child_center = x[&1] + widths[1] / 2.0;
+        assert!(
+            (parent_center - child_center).abs() < 0.001,
+            "child centre {} should match parent centre {}",
+            child_center,
+            parent_center
+        );
+    }
+
+    #[test]
+    fn x_assignment_preserves_min_gap() {
+        // Two children of the same parent. They shouldn't overlap even if
+        // both would nominally want the parent's centre.
+        let layers = vec![vec![0], vec![1, 2]];
+        let widths = vec![120.0, 80.0, 80.0];
+        let edges = vec![(1, 0), (2, 0)]; // both children extend the parent
+        let x = assign_x_median(&layers, &edges, &widths, 20.0, 10.0);
+        let left_end = x[&1] + widths[1];
+        let right_start = x[&2];
+        assert!(
+            right_start >= left_end + 20.0 - 0.001,
+            "children overlap: left ends at {}, right starts at {}",
+            left_end,
+            right_start
+        );
+    }
+
+    #[test]
+    fn x_assignment_handles_orphans() {
+        // A layer with a mix of connected and unconnected nodes should still
+        // produce a non-overlapping sequence.
+        let layers = vec![vec![0], vec![1, 2, 3]];
+        let widths = vec![100.0, 60.0, 60.0, 60.0];
+        let edges = vec![(2, 0)]; // only the middle child is connected
+        let x = assign_x_median(&layers, &edges, &widths, 15.0, 10.0);
+        // All three children placed with at least min_gap between them.
+        assert!(x[&2] >= x[&1] + widths[1] + 15.0 - 0.001);
+        assert!(x[&3] >= x[&2] + widths[2] + 15.0 - 0.001);
     }
 }

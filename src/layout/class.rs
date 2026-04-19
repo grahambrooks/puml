@@ -118,7 +118,7 @@ fn member_text(m: &Member) -> String {
     }
 }
 
-use super::sugiyama::reorder_barycentric;
+use super::sugiyama::{assign_x_median, reorder_barycentric};
 
 /// Assign each node a rank (layer) using a topological sort on Extension/Implementation edges.
 /// All other nodes default to rank 0.
@@ -192,6 +192,23 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
     // converge for the diagrams we care about; any more is diminishing.
     reorder_barycentric(&mut layers, &edge_pairs, 6);
 
+    // Per-node widths, indexed by global class index — the x-assignment
+    // helper needs a flat vector.
+    let mut global_widths: Vec<f64> = vec![0.0; diagram.classes.len()];
+    for (i, c) in diagram.classes.iter().enumerate() {
+        global_widths[i] = node_width(c);
+    }
+
+    // Run the median-parent x-assignment. Output is in a coordinate system
+    // anchored at SIDE_MARGIN; we'll recenter the whole graph afterwards.
+    let xs = assign_x_median(
+        &layers,
+        &edge_pairs,
+        &global_widths,
+        NODE_H_GAP,
+        SIDE_MARGIN,
+    );
+
     let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
     let mut total_width: f64 = 0.0;
     let mut y = TOP_MARGIN + title_off;
@@ -206,16 +223,13 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
             .map(|n| node_height(n, diagram.hide_empty_members))
             .fold(0.0_f64, f64::max);
 
-        let layer_widths: Vec<f64> = nodes_in_layer.iter().map(|n| node_width(n)).collect();
-        let layer_total_w: f64 = layer_widths.iter().sum::<f64>()
-            + NODE_H_GAP * (layer.len().saturating_sub(1)) as f64
-            + SIDE_MARGIN * 2.0;
-        total_width = total_width.max(layer_total_w);
-
-        let mut x = SIDE_MARGIN;
-        for (i, node) in nodes_in_layer.iter().enumerate() {
-            let w = layer_widths[i];
+        for (i, &class_idx) in layer.iter().enumerate() {
+            let node = nodes_in_layer[i];
+            let w = global_widths[class_idx];
             let h = node_height(node, diagram.hide_empty_members);
+            let x = xs.get(&class_idx).copied().unwrap_or(SIDE_MARGIN);
+
+            total_width = total_width.max(x + w + SIDE_MARGIN);
 
             let member_sections = build_member_sections(node);
 
@@ -234,28 +248,27 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
                     member_sections,
                 },
             );
-            x += w + NODE_H_GAP;
         }
         y += layer_h + RANK_V_GAP;
     }
 
     let total_height = y + SIDE_MARGIN;
 
-    // Centre each layer within total_width.
-    for layer in &layers {
-        if layer.is_empty() {
-            continue;
-        }
-        let layer_w: f64 = layer
-            .iter()
-            .map(|&i| node_width(&diagram.classes[i]))
-            .sum::<f64>()
-            + NODE_H_GAP * (layer.len().saturating_sub(1)) as f64;
-        let offset = (total_width - layer_w) / 2.0;
-        for &i in layer {
-            if let Some(nl) = name_to_layout.get_mut(&diagram.classes[i].name) {
-                nl.x += offset - SIDE_MARGIN;
-            }
+    // Centre the whole graph: compute the overall content span, then shift
+    // every node so the content is centred inside total_width. Per-layer
+    // centering isn't needed any more — the median-alignment pass already
+    // stacks parents and children, so pushing individual layers to their
+    // own centre would undo that alignment.
+    let (min_x, max_right) = name_to_layout.values().fold(
+        (f64::INFINITY, f64::NEG_INFINITY),
+        |(min_x, max_right), nl| (min_x.min(nl.x), max_right.max(nl.x + nl.width)),
+    );
+    if min_x.is_finite() {
+        let content_w = max_right - min_x;
+        let target_left = (total_width - content_w) / 2.0;
+        let shift = target_left - min_x;
+        for nl in name_to_layout.values_mut() {
+            nl.x += shift;
         }
     }
 

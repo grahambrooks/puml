@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::sugiyama::reorder_barycentric;
+use super::sugiyama::{assign_x_median, reorder_barycentric};
 use crate::ast::state::*;
 
 const NODE_W: f64 = 120.0;
@@ -122,6 +122,13 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
         .collect();
     reorder_barycentric(&mut layers, &edge_pairs, 6);
 
+    // Global widths indexed by state index for the x-assignment helper.
+    let mut global_widths: Vec<f64> = vec![0.0; diagram.states.len()];
+    for (i, s) in diagram.states.iter().enumerate() {
+        global_widths[i] = node_width(s);
+    }
+    let xs = assign_x_median(&layers, &edge_pairs, &global_widths, H_GAP, SIDE_MARGIN);
+
     let mut name_to_layout: HashMap<String, StateLayoutNode> = HashMap::new();
     let mut y = TOP_MARGIN + title_off;
     let mut total_width: f64 = 0.0;
@@ -130,24 +137,16 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
         if layer.is_empty() {
             continue;
         }
-
-        let layer_w: f64 = layer
-            .iter()
-            .map(|&i| node_width(&diagram.states[i]))
-            .sum::<f64>()
-            + H_GAP * (layer.len().saturating_sub(1)) as f64
-            + SIDE_MARGIN * 2.0;
-        total_width = total_width.max(layer_w);
-
         let layer_h = layer
             .iter()
             .map(|&i| node_height(&diagram.states[i]))
             .fold(0.0_f64, f64::max);
-        let mut x = SIDE_MARGIN;
         for &i in layer {
             let s = &diagram.states[i];
-            let w = node_width(s);
+            let w = global_widths[i];
             let h = node_height(s);
+            let x = xs.get(&i).copied().unwrap_or(SIDE_MARGIN);
+            total_width = total_width.max(x + w + SIDE_MARGIN);
             name_to_layout.insert(
                 s.name.clone(),
                 StateLayoutNode {
@@ -160,27 +159,22 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
                     label: s.label.clone(),
                 },
             );
-            x += w + H_GAP;
         }
         y += layer_h + V_GAP;
     }
 
-    // Centre layers
-    for layer in &layers {
-        if layer.is_empty() {
-            continue;
-        }
-        let layer_w: f64 = layer
-            .iter()
-            .map(|&i| node_width(&diagram.states[i]))
-            .sum::<f64>()
-            + H_GAP * (layer.len().saturating_sub(1)) as f64;
-        let offset = (total_width - SIDE_MARGIN * 2.0 - layer_w) / 2.0;
-        for &i in layer {
-            let s = &diagram.states[i];
-            if let Some(nl) = name_to_layout.get_mut(&s.name) {
-                nl.x += offset;
-            }
+    // Recentre the whole graph — parent/child alignment is preserved because
+    // every node shifts by the same amount.
+    let (min_x, max_right) = name_to_layout.values().fold(
+        (f64::INFINITY, f64::NEG_INFINITY),
+        |(min_x, max_right), nl| (min_x.min(nl.x), max_right.max(nl.x + nl.w)),
+    );
+    if min_x.is_finite() {
+        let content_w = max_right - min_x;
+        let target_left = (total_width - content_w) / 2.0;
+        let shift = target_left - min_x;
+        for nl in name_to_layout.values_mut() {
+            nl.x += shift;
         }
     }
 
