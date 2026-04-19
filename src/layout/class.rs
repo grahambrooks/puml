@@ -49,10 +49,10 @@ pub struct RenderedMember {
 }
 
 pub struct EdgeLayout {
-    pub from_x: f64,
-    pub from_y: f64,
-    pub to_x: f64,
-    pub to_y: f64,
+    /// Polyline waypoints, first point on the source boundary, last on the
+    /// target boundary. Orthogonal (horizontal/vertical only) in the
+    /// common case; may be a two-point straight line when endpoints align.
+    pub points: Vec<(f64, f64)>,
     pub kind: RelationKind,
     pub label: Option<String>,
     pub from_label: Option<String>,
@@ -118,7 +118,7 @@ fn member_text(m: &Member) -> String {
     }
 }
 
-use super::sugiyama::{assign_x_median, reorder_barycentric};
+use super::sugiyama::{assign_x_median, orthogonal_route, reorder_barycentric};
 
 /// Assign each node a rank (layer) using a topological sort on Extension/Implementation edges.
 /// All other nodes default to rank 0.
@@ -272,7 +272,10 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         }
     }
 
-    // Build edges — connect bottom-center of source to top-center of target
+    // Build edges — orthogonal polylines via the sugiyama router. For
+    // parent-child chains where nodes share an x-centre the router
+    // collapses to a straight vertical line; when they don't it emits a
+    // two-bend elbow (out of the source, across, into the target).
     let edges: Vec<EdgeLayout> = diagram
         .relations
         .iter()
@@ -280,13 +283,12 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
             let from_nl = name_to_layout.get(&rel.from)?;
             let to_nl = name_to_layout.get(&rel.to)?;
 
-            let (from_x, from_y, to_x, to_y) = connect_nodes(from_nl, to_nl);
+            let from_box = (from_nl.x, from_nl.y, from_nl.width, from_nl.height);
+            let to_box = (to_nl.x, to_nl.y, to_nl.width, to_nl.height);
+            let points = orthogonal_route(from_box, to_box);
 
             Some(EdgeLayout {
-                from_x,
-                from_y,
-                to_x,
-                to_y,
+                points,
                 kind: rel.kind.clone(),
                 label: rel.label.clone(),
                 from_label: rel.from_label.clone(),
@@ -393,33 +395,6 @@ fn build_member_sections(node: &ClassNode) -> Vec<MemberSection> {
     }]
 }
 
-/// Pick the best attachment points between two nodes (closest edges).
-fn connect_nodes(from: &NodeLayout, to: &NodeLayout) -> (f64, f64, f64, f64) {
-    let from_cx = from.x + from.width / 2.0;
-    let to_cx = to.x + to.width / 2.0;
-
-    // If from is above to, use bottom/top
-    if from.y + from.height <= to.y {
-        return (from_cx, from.y + from.height, to_cx, to.y);
-    }
-    // If to is above from, use top/bottom
-    if to.y + to.height <= from.y {
-        return (from_cx, from.y, to_cx, to.y + to.height);
-    }
-    // Side connections
-    if from_cx < to_cx {
-        (
-            from.x + from.width,
-            from.y + from.height / 2.0,
-            to.x,
-            to.y + to.height / 2.0,
-        )
-    } else {
-        (
-            from.x,
-            from.y + from.height / 2.0,
-            to.x + to.width,
-            to.y + to.height / 2.0,
-        )
-    }
-}
+// `connect_nodes` previously chose an attachment pair between two nodes;
+// the orthogonal router in `sugiyama::orthogonal_route` now owns that
+// decision and the bend-point generation, so the old helper is gone.

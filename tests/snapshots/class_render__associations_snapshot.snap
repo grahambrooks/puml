@@ -29,7 +29,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="none" x1="390" x2="170" y1="61" y2="71"/>
+<path class="class-line" d="M390,61 L280,61 L280,71 L170,71" marker-end="none"/>
 <text font-size="11" text-anchor="middle" x="280" y="62">
 places
 </text>
@@ -41,7 +41,7 @@ places
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-diamond-f)" x1="210" x2="170" y1="71" y2="71"/>
+<path class="class-line" d="M210,71 L170,71" marker-end="url(#arr-diamond-f)"/>
 <text font-size="11" text-anchor="middle" x="190" y="67">
 contains
 </text>
@@ -53,7 +53,7 @@ contains
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="170" x2="390" y1="71" y2="61"/>
+<path class="class-line" d="M170,71 L280,71 L280,61 L390,61" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="280" y="62">
 owner
 </text>

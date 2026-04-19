@@ -27,19 +27,19 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Class Diagram Example
 </text>
 <g>
-<line class="class-line-dashed" marker-end="url(#arr-hollow)" x1="128.25" x2="128.25" y1="374" y2="454"/>
+<path class="class-line-dashed" d="M128.25,374 L128.25,454" marker-end="url(#arr-hollow)"/>
 <text font-size="11" text-anchor="middle" x="128.25" y="410">
 implements
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-hollow)" x1="100" x2="128.25" y1="172" y2="252"/>
+<path class="class-line" d="M100,172 L100,212 L128.25,212 L128.25,252" marker-end="url(#arr-hollow)"/>
 <text font-size="11" text-anchor="middle" x="114.125" y="208">
 extends
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-diamond-h)" x1="128.25" x2="325.25" y1="374" y2="454"/>
+<path class="class-line" d="M128.25,374 L128.25,414 L325.25,414 L325.25,454" marker-end="url(#arr-diamond-h)"/>
 <text font-size="11" text-anchor="middle" x="226.75" y="410">
 contains
 </text>

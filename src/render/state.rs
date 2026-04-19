@@ -1,10 +1,11 @@
-use svg::node::element::{Circle, Definitions, Group, Line, Marker, Polygon, Rectangle, Text};
+use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
 use super::primitives::{background_rect, style_block, text_node};
 use super::theme::Theme;
 use crate::ast::state::StateKind;
 use crate::layout::state::{StateLayout, StateLayoutEdge, StateLayoutNode};
+use crate::layout::sugiyama::orthogonal_route;
 
 const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
@@ -193,58 +194,35 @@ fn render_state_box(node: &StateLayoutNode) -> Group {
     Group::new().add(rect).add(text)
 }
 
-fn attach_bottom(n: &StateLayoutNode) -> (f64, f64) {
-    (node_cx(n), n.y + n.h)
-}
-
-fn attach_top(n: &StateLayoutNode) -> (f64, f64) {
-    (node_cx(n), n.y)
-}
-
 fn render_edge(edge: &StateLayoutEdge, from: &StateLayoutNode, to: &StateLayoutNode) -> Group {
-    let (x1, y1) = attach_bottom(from);
-    let (x2, y2) = attach_top(to);
+    // Orthogonal route handles forward, backward (loop-back), and sibling
+    // transitions with the same call — it picks source/target ports and
+    // bend points from the two bounding boxes.
+    let points = orthogonal_route((from.x, from.y, from.w, from.h), (to.x, to.y, to.w, to.h));
 
     let mut g = Group::new();
-
-    let is_back = y2 < y1 - 5.0;
-
-    if is_back {
-        let offset_x = 40.0;
-        use svg::node::element::Path;
-        let d = format!(
-            "M{},{} C{},{} {},{} {},{}",
-            x1,
-            y1,
-            x1 + offset_x,
-            y1 + 20.0,
-            x2 + offset_x,
-            y2 - 20.0,
-            x2,
-            y2
-        );
-        let path = Path::new()
-            .set("d", d)
-            .set("class", "arrow")
-            .set("marker-end", "url(#state-arrow)");
-        g = g.add(path);
-    } else {
-        let line = Line::new()
-            .set("x1", x1)
-            .set("y1", y1)
-            .set("x2", x2)
-            .set("y2", y2)
-            .set("class", "arrow")
-            .set("marker-end", "url(#state-arrow)");
-        g = g.add(line);
+    if points.len() < 2 {
+        return g;
     }
+
+    let mut d = String::new();
+    for (i, (x, y)) in points.iter().enumerate() {
+        let cmd = if i == 0 { "M" } else { " L" };
+        d.push_str(&format!("{}{},{}", cmd, x, y));
+    }
+    let path = Path::new()
+        .set("d", d)
+        .set("class", "arrow")
+        .set("marker-end", "url(#state-arrow)");
+    g = g.add(path);
 
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
-            let mx = (x1 + x2) / 2.0 + 6.0;
-            let my = (y1 + y2) / 2.0;
+            // Label at the path midpoint, offset slightly right of the line
+            // so it doesn't sit on the stroke itself.
+            let (mx, my) = polyline_midpoint(&points);
             let text = Text::new()
-                .set("x", mx)
+                .set("x", mx + 6.0)
                 .set("y", my)
                 .set("font-size", 11.0)
                 .add(text_node(lbl.clone()));
@@ -253,4 +231,31 @@ fn render_edge(edge: &StateLayoutEdge, from: &StateLayoutNode, to: &StateLayoutN
     }
 
     g
+}
+
+fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
+    if points.len() < 2 {
+        return points.first().copied().unwrap_or((0.0, 0.0));
+    }
+    let seg_lens: Vec<f64> = points
+        .windows(2)
+        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
+        .collect();
+    let total: f64 = seg_lens.iter().sum();
+    let half = total / 2.0;
+    let mut travelled = 0.0;
+    for (i, &len) in seg_lens.iter().enumerate() {
+        if travelled + len >= half {
+            let t = if len > 0.0 {
+                (half - travelled) / len
+            } else {
+                0.0
+            };
+            let (x0, y0) = points[i];
+            let (x1, y1) = points[i + 1];
+            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+        }
+        travelled += len;
+    }
+    *points.last().unwrap()
 }

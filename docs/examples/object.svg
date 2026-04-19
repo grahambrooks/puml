@@ -27,25 +27,25 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Object Diagram — Example Order
 </text>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="234" x2="274" y1="141" y2="141"/>
+<path class="class-line" d="M234,141 L274,141" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="254" y="137">
 placed
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="465.5" y1="141" y2="141"/>
+<path class="class-line" d="M425.5,141 L465.5,141" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="445.5" y="137">
 contains
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="645.5" y1="141" y2="141"/>
+<path class="class-line" d="M425.5,141 L645.5,141" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="535.5" y="137">
 contains
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="425.5" x2="825.5" y1="141" y2="141"/>
+<path class="class-line" d="M425.5,141 L825.5,141" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="625.5" y="137">
 ships to
 </text>

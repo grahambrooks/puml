@@ -704,8 +704,9 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
 }
 
 fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
-    let (x1, y1) = (edge.from_x, edge.from_y + y_off);
-    let (x2, y2) = (edge.to_x, edge.to_y + y_off);
+    if edge.points.is_empty() {
+        return Group::new();
+    }
 
     let (stroke_class, marker_end) = match edge.kind {
         RelationKind::Extension => ("class-line", "url(#arr-hollow)"),
@@ -718,22 +719,27 @@ fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
         RelationKind::Association => ("class-line", "none"),
     };
 
-    let line = Line::new()
-        .set("x1", x1)
-        .set("y1", y1)
-        .set("x2", x2)
-        .set("y2", y2)
+    let d = path_from_points(&edge.points, y_off);
+    let path = Path::new()
+        .set("d", d)
         .set("class", stroke_class)
         .set("marker-end", marker_end);
 
-    let mut g = Group::new().add(line);
+    let mut g = Group::new().add(path);
+
+    // Labels: the main edge label sits at the path's midpoint; from/to
+    // labels sit near the respective endpoints. Orthogonal paths may have
+    // multiple bends so we compute the geometric midpoint along the
+    // polyline, which lands on (or near) the middle waypoint for typical
+    // 3/4-point routes.
+    let (first_x, first_y) = edge.points.first().copied().unwrap_or((0.0, 0.0));
+    let (last_x, last_y) = edge.points.last().copied().unwrap_or((0.0, 0.0));
 
     if let Some(ref lbl) = edge.label {
-        let mx = (x1 + x2) / 2.0;
-        let my = (y1 + y2) / 2.0 - 4.0;
+        let (mx, my) = polyline_midpoint(&edge.points);
         let t = Text::new()
             .set("x", mx)
-            .set("y", my)
+            .set("y", my + y_off - 4.0)
             .set("text-anchor", "middle")
             .set("font-size", "11")
             .add(text_node(lbl.clone()));
@@ -742,8 +748,8 @@ fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
 
     if let Some(ref lbl) = edge.from_label {
         let t = Text::new()
-            .set("x", x1 + 6.0)
-            .set("y", y1 - 4.0)
+            .set("x", first_x + 6.0)
+            .set("y", first_y + y_off - 4.0)
             .set("font-size", "11")
             .add(text_node(lbl.clone()));
         g = g.add(t);
@@ -751,12 +757,53 @@ fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
 
     if let Some(ref lbl) = edge.to_label {
         let t = Text::new()
-            .set("x", x2 + 6.0)
-            .set("y", y2 - 4.0)
+            .set("x", last_x + 6.0)
+            .set("y", last_y + y_off - 4.0)
             .set("font-size", "11")
             .add(text_node(lbl.clone()));
         g = g.add(t);
     }
 
     g
+}
+
+/// Build an SVG `d` attribute from a polyline. First point is `M`, the rest
+/// are `L` segments; `y_off` lifts the whole thing to account for the
+/// diagram title offset.
+fn path_from_points(points: &[(f64, f64)], y_off: f64) -> String {
+    let mut d = String::new();
+    for (i, (x, y)) in points.iter().enumerate() {
+        let cmd = if i == 0 { "M" } else { " L" };
+        d.push_str(&format!("{}{},{}", cmd, x, y + y_off));
+    }
+    d
+}
+
+/// Geometric midpoint along a polyline: walks the segments, finds the one
+/// that contains the path's half-length mark, and interpolates.
+fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
+    if points.len() < 2 {
+        return points.first().copied().unwrap_or((0.0, 0.0));
+    }
+    let seg_lens: Vec<f64> = points
+        .windows(2)
+        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
+        .collect();
+    let total: f64 = seg_lens.iter().sum();
+    let half = total / 2.0;
+    let mut travelled = 0.0;
+    for (i, &len) in seg_lens.iter().enumerate() {
+        if travelled + len >= half {
+            let t = if len > 0.0 {
+                (half - travelled) / len
+            } else {
+                0.0
+            };
+            let (x0, y0) = points[i];
+            let (x1, y1) = points[i + 1];
+            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+        }
+        travelled += len;
+    }
+    *points.last().unwrap()
 }

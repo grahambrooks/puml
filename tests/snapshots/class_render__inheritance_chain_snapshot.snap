@@ -29,16 +29,16 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="url(#arr-hollow)" x1="100" x2="100" y1="132" y2="212"/>
+<path class="class-line" d="M100,132 L100,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-hollow)" x1="280" x2="100" y1="132" y2="212"/>
+<path class="class-line" d="M280,132 L280,172 L100,172 L100,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
-<line class="class-line-dashed" marker-end="url(#arr-hollow)" x1="100" x2="280" y1="132" y2="212"/>
+<path class="class-line-dashed" d="M100,132 L100,172 L280,172 L280,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
-<line class="class-line-dashed" marker-end="url(#arr-hollow)" x1="280" x2="280" y1="132" y2="212"/>
+<path class="class-line-dashed" d="M280,132 L280,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
 <rect fill="none" height="82" rx="3" stroke="#bb6666" stroke-width="1.5" width="140" x="30" y="212"/>

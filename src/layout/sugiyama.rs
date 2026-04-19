@@ -230,6 +230,92 @@ fn median_center(nodes: &[usize], x: &HashMap<usize, f64>, widths: &[f64]) -> Op
     })
 }
 
+/// Compute an orthogonal (90°-angle) route between two rectangular nodes.
+///
+/// Returns a polyline of waypoints, first point on the source boundary, last
+/// on the target boundary, with one or two bends between them. Segments run
+/// strictly horizontal or vertical — no diagonals. That's what makes the
+/// resulting diagram read like a Mermaid / Lucidchart / Excalidraw output
+/// instead of a hand-drawn sketch.
+///
+/// Bounding boxes are passed as `(x, y, width, height)` with `(x, y)` the
+/// top-left corner.
+///
+/// Routing cases:
+///
+/// 1. Source clearly above target (gap between bottom of source and top of
+///    target): route out the bottom, across, in the top. If source and
+///    target centres already line up horizontally, collapse to a straight
+///    vertical segment.
+/// 2. Source clearly below target: mirror of case 1, routing out the top.
+/// 3. Source clearly left/right of target (no vertical overlap): route out
+///    the side, across, in the opposite side.
+/// 4. Bounding boxes overlap vertically AND horizontally: fall back to a
+///    two-point segment connecting the nearest boundary points. In practice
+///    this only triggers when the layout placed overlapping nodes — a bug
+///    worth fixing upstream rather than papering over here.
+pub fn orthogonal_route(from: (f64, f64, f64, f64), to: (f64, f64, f64, f64)) -> Vec<(f64, f64)> {
+    let (fx, fy, fw, fh) = from;
+    let (tx, ty, tw, th) = to;
+    let fcx = fx + fw / 2.0;
+    let fcy = fy + fh / 2.0;
+    let tcx = tx + tw / 2.0;
+    let tcy = ty + th / 2.0;
+
+    // Tolerance for "already aligned" — two centres within this distance
+    // collapse to a straight line.
+    const ALIGN_EPS: f64 = 0.75;
+
+    // Case 1: source strictly above target.
+    if fy + fh <= ty {
+        let src = (fcx, fy + fh);
+        let dst = (tcx, ty);
+        if (fcx - tcx).abs() < ALIGN_EPS {
+            return vec![src, dst];
+        }
+        let mid_y = (fy + fh + ty) / 2.0;
+        return vec![src, (fcx, mid_y), (tcx, mid_y), dst];
+    }
+
+    // Case 2: source strictly below target.
+    if ty + th <= fy {
+        let src = (fcx, fy);
+        let dst = (tcx, ty + th);
+        if (fcx - tcx).abs() < ALIGN_EPS {
+            return vec![src, dst];
+        }
+        let mid_y = (ty + th + fy) / 2.0;
+        return vec![src, (fcx, mid_y), (tcx, mid_y), dst];
+    }
+
+    // Case 3a: source strictly left of target.
+    if fx + fw <= tx {
+        let src = (fx + fw, fcy);
+        let dst = (tx, tcy);
+        if (fcy - tcy).abs() < ALIGN_EPS {
+            return vec![src, dst];
+        }
+        let mid_x = (fx + fw + tx) / 2.0;
+        return vec![src, (mid_x, fcy), (mid_x, tcy), dst];
+    }
+
+    // Case 3b: source strictly right of target.
+    if tx + tw <= fx {
+        let src = (fx, fcy);
+        let dst = (tx + tw, tcy);
+        if (fcy - tcy).abs() < ALIGN_EPS {
+            return vec![src, dst];
+        }
+        let mid_x = (fx + tx + tw) / 2.0;
+        return vec![src, (mid_x, fcy), (mid_x, tcy), dst];
+    }
+
+    // Case 4: overlap — clamp each endpoint to its box perimeter and hope.
+    let src = (fcx.clamp(fx, fx + fw), fcy.clamp(fy, fy + fh));
+    let dst = (tcx.clamp(tx, tx + tw), tcy.clamp(ty, ty + th));
+    vec![src, dst]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -313,5 +399,46 @@ mod tests {
         // All three children placed with at least min_gap between them.
         assert!(x[&2] >= x[&1] + widths[1] + 15.0 - 0.001);
         assert!(x[&3] >= x[&2] + widths[2] + 15.0 - 0.001);
+    }
+
+    #[test]
+    fn orthogonal_route_straight_line_when_aligned() {
+        // Two boxes vertically aligned (same center-x); expect a 2-point
+        // straight line, no bends.
+        let from = (40.0, 0.0, 80.0, 30.0); // centre x = 80
+        let to = (40.0, 80.0, 80.0, 30.0); // centre x = 80
+        let pts = orthogonal_route(from, to);
+        assert_eq!(pts.len(), 2);
+        assert_eq!(pts[0], (80.0, 30.0)); // source bottom-centre
+        assert_eq!(pts[1], (80.0, 80.0)); // target top-centre
+    }
+
+    #[test]
+    fn orthogonal_route_bends_for_offset_child() {
+        // Source above-left, target below-right. Expect 4 points: source
+        // bottom, bend, bend, target top.
+        let from = (0.0, 0.0, 60.0, 30.0); // centre x = 30
+        let to = (200.0, 80.0, 60.0, 30.0); // centre x = 230
+        let pts = orthogonal_route(from, to);
+        assert_eq!(pts.len(), 4);
+        assert_eq!(pts[0], (30.0, 30.0));
+        assert_eq!(pts[3], (230.0, 80.0));
+        // Interior points share y = midway, and x steps at the corners.
+        assert!((pts[1].1 - pts[2].1).abs() < 0.001);
+        assert_eq!(pts[1].0, 30.0);
+        assert_eq!(pts[2].0, 230.0);
+    }
+
+    #[test]
+    fn orthogonal_route_side_attach_when_same_row() {
+        // Two boxes in the same row (vertically overlapping), source left.
+        // Expect routing out the right side, across, in the left side.
+        let from = (0.0, 0.0, 60.0, 40.0);
+        let to = (200.0, 5.0, 60.0, 40.0);
+        let pts = orthogonal_route(from, to);
+        // At least 2 points, first on the right boundary of `from`.
+        assert!(!pts.is_empty());
+        assert_eq!(pts[0].0, 60.0); // from right edge
+        assert_eq!(pts.last().unwrap().0, 200.0); // to left edge
     }
 }

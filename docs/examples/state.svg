@@ -12,61 +12,61 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Connection Lifecycle
 </text>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="52" x2="100" y1="84" y2="306"/>
+<path class="arrow" d="M52,84 L52,195 L100,195 L100,306" marker-end="url(#state-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M100,342 C140,362 140,114 100,134" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M100,306 L100,170" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="238">
 connect()
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="170" y2="220"/>
+<path class="arrow" d="M100,170 L100,220" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="195">
 handshake ok
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="170" y2="306"/>
+<path class="arrow" d="M100,170 L100,306" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="238">
 timeout
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="52" x2="280" y1="84" y2="220"/>
+<path class="arrow" d="M52,84 L52,152 L280,152 L280,220" marker-end="url(#state-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M280,256 C320,276 320,114 280,134" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M280,220 L280,170" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="286" y="195">
 send(msg)
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="280" x2="280" y1="170" y2="220"/>
+<path class="arrow" d="M280,170 L280,220" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="286" y="195">
 ack
 </text>
 </g>
 <g>
-<path class="arrow" d="M280,256 C320,276 500,114 460,134" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M280,220 L280,195 L460,195 L460,170" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="376" y="195">
 incoming
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="460" x2="280" y1="170" y2="220"/>
+<path class="arrow" d="M460,170 L460,195 L280,195 L280,220" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="376" y="195">
 delivered
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="256" y2="306"/>
+<path class="arrow" d="M100,256 L100,306" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="281">
 close()
 </text>
 </g>
 <g>
-<path class="arrow" d="M100,342 C140,362 92,40 52,60" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M100,306 L100,195 L52,195 L52,84" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <circle cx="52" cy="72" fill="#181818" r="12"/>

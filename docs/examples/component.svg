@@ -27,55 +27,55 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Web Application Components
 </text>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="170" x2="1474" y1="111" y2="111"/>
+<path class="class-line" d="M170,111 L1474,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="822" y="107">
 HTTPS
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1474" x2="530" y1="111" y2="111"/>
+<path class="class-line" d="M1474,111 L530,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1002" y="107">
 verify token
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1474" x2="710" y1="111" y2="111"/>
+<path class="class-line" d="M1474,111 L710,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1092" y="107">
 /orders
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="710" x2="930" y1="111" y2="111"/>
+<path class="class-line" d="M710,111 L930,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="820" y="107">
 reserve
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="710" x2="750" y1="111" y2="111"/>
+<path class="class-line" d="M710,111 L750,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="730" y="107">
 charge
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="710" x2="1294" y1="111" y2="111"/>
+<path class="class-line" d="M710,111 L1294,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1002" y="107">
 order.created
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="890" x2="1114" y1="111" y2="111"/>
+<path class="class-line" d="M890,111 L1114,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1002" y="107">
 write ledger
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1074" x2="1114" y1="111" y2="111"/>
+<path class="class-line" d="M1074,111 L1114,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1094" y="107">
 stock levels
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="530" x2="1114" y1="111" y2="111"/>
+<path class="class-line" d="M530,111 L1114,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="822" y="107">
 sessions
 </text>

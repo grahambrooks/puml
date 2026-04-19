@@ -29,7 +29,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="170" x2="210" y1="71" y2="71"/>
+<path class="class-line" d="M170,71 L210,71" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="190" y="67">
 knows
 </text>

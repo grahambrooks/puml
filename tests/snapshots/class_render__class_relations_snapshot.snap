@@ -29,7 +29,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="url(#arr-diamond-f)" x1="210" x2="170" y1="71" y2="61"/>
+<path class="class-line" d="M210,71 L190,71 L190,61 L170,61" marker-end="url(#arr-diamond-f)"/>
 <text font-size="11" text-anchor="middle" x="190" y="62">
 contains
 </text>
@@ -41,7 +41,7 @@ many
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arr-diamond-h)" x1="390" x2="350" y1="91" y2="71"/>
+<path class="class-line" d="M390,91 L370,91 L370,71 L350,71" marker-end="url(#arr-diamond-h)"/>
 <text font-size="11" text-anchor="middle" x="370" y="77">
 employs
 </text>
@@ -53,7 +53,7 @@ many
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="none" x1="530" x2="570" y1="91" y2="81"/>
+<path class="class-line" d="M530,91 L550,91 L550,81 L570,81" marker-end="none"/>
 <text font-size="11" text-anchor="middle" x="550" y="82">
 has
 </text>

@@ -27,67 +27,67 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Production Deployment
 </text>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1790" x2="1830" y1="111" y2="111"/>
+<path class="class-line" d="M1790,111 L1830,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1810" y="107">
 serve
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1790" x2="2010" y1="111" y2="111"/>
+<path class="class-line" d="M1790,111 L2010,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1900" y="107">
 dynamic
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2150" x2="2190" y1="111" y2="111"/>
+<path class="class-line" d="M2150,111 L2190,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2170" y="107">
 route
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2150" x2="2370" y1="111" y2="111"/>
+<path class="class-line" d="M2150,111 L2370,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2260" y="107">
 route
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2330" x2="2550" y1="111" y2="111"/>
+<path class="class-line" d="M2330,111 L2550,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2440" y="107">
 read/write
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2510" x2="2550" y1="111" y2="111"/>
+<path class="class-line" d="M2510,111 L2550,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2530" y="107">
 read/write
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2690" x2="2730" y1="111" y2="111"/>
+<path class="class-line" d="M2690,111 L2730,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2710" y="107">
 replicate
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2330" x2="2910" y1="111" y2="111"/>
+<path class="class-line" d="M2330,111 L2910,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2620" y="107">
 publish
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="2510" x2="2910" y1="111" y2="111"/>
+<path class="class-line" d="M2510,111 L2910,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2710" y="107">
 publish
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="3090" x2="1790" y1="111" y2="111"/>
+<path class="class-line" d="M3090,111 L1790,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2440" y="107">
 hosts
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="3090" x2="2150" y1="111" y2="111"/>
+<path class="class-line" d="M3090,111 L2150,111" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="2620" y="107">
 hosts
 </text>

@@ -29,25 +29,25 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1070" x2="1110" y1="51" y2="51"/>
+<path class="class-line" d="M1070,51 L1110,51" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1090" y="47">
 deploy
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1070" x2="1290" y1="51" y2="51"/>
+<path class="class-line" d="M1070,51 L1290,51" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="1180" y="47">
 query
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="930" x2="890" y1="51" y2="51"/>
+<path class="class-line" d="M930,51 L890,51" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="910" y="47">
 publish
 </text>
 </g>
 <g>
-<line class="class-line" marker-end="url(#arrowhead)" x1="1110" x2="710" y1="51" y2="51"/>
+<path class="class-line" d="M1110,51 L710,51" marker-end="url(#arrowhead)"/>
 <text font-size="11" text-anchor="middle" x="910" y="47">
 serve
 </text>

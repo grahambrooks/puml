@@ -14,40 +14,40 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="52" x2="100" y1="54" y2="104"/>
+<path class="arrow" d="M52,54 L52,79 L100,79 L100,104" marker-end="url(#state-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="140" y2="190"/>
+<path class="arrow" d="M100,140 L100,190" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="165">
 poll
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="222" y2="358"/>
+<path class="arrow" d="M100,222 L100,358" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="290">
 ready
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="222" y2="272"/>
+<path class="arrow" d="M100,222 L100,272" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="247">
 wait
 </text>
 </g>
 <g>
-<path class="arrow" d="M100,394 C140,414 272,338 232,358" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="172" y="376">
+<path class="arrow" d="M160,376 L190,376 L190,370 L220,370" marker-end="url(#state-arrow)"/>
+<text font-size="11" x="196" y="373">
 resume
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#state-arrow)" x1="100" x2="100" y1="308" y2="358"/>
+<path class="arrow" d="M100,308 L100,358" marker-end="url(#state-arrow)"/>
 <text font-size="11" x="106" y="333">
 go
 </text>
 </g>
 <g>
-<path class="arrow" d="M100,394 C140,414 92,10 52,30" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M100,358 L100,206 L52,206 L52,54" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <circle cx="52" cy="42" fill="#181818" r="12"/>

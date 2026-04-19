@@ -29,7 +29,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="class-line" marker-end="url(#arr-hollow)" x1="113.25" x2="132" y1="132" y2="212"/>
+<path class="class-line" d="M113.25,132 L113.25,172 L132,172 L132,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
 <rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="166.5" x="30" y="30"/>
