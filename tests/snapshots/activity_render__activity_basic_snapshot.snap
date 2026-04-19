@@ -14,31 +14,31 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="225" x2="225" y1="58" y2="88"/>
+<path class="arrow" d="M225,58 L225,88" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="225" x2="225" y1="124" y2="154"/>
+<path class="arrow" d="M225,124 L225,154" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="225" x2="120" y1="210" y2="240"/>
+<path class="arrow" d="M197,182 L198.5,182 L198.5,258 L200,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="225" x2="330" y1="210" y2="240"/>
+<path class="arrow" d="M253,182 L251.5,182 L251.5,258 L250,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="120" x2="225" y1="276" y2="306"/>
-<text font-size="11" x="178.5" y="291">
+<path class="arrow" d="M200,258 L198.5,258 L198.5,334 L197,334" marker-end="url(#act-arrow)"/>
+<text font-size="11" x="204.5" y="296">
 yes
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="330" x2="225" y1="276" y2="306"/>
-<text font-size="11" x="283.5" y="291">
+<path class="arrow" d="M250,258 L251.5,258 L251.5,334 L253,334" marker-end="url(#act-arrow)"/>
+<text font-size="11" x="257.5" y="296">
 no
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="225" x2="225" y1="362" y2="392"/>
+<path class="arrow" d="M225,362 L225,392" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <circle cx="225" cy="44" fill="#181818" r="14"/>

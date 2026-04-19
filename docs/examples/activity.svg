@@ -9,73 +9,73 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="58" y2="88"/>
+<path class="arrow" d="M340.5,58 L340.5,88" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="124" y2="154"/>
+<path class="arrow" d="M340.5,124 L340.5,154" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="235.5" y1="210" y2="240"/>
+<path class="arrow" d="M312.5,182 L314,182 L314,258 L315.5,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="235.5" y1="276" y2="306"/>
+<path class="arrow" d="M235.5,276 L235.5,306" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="130.5" y1="362" y2="392"/>
+<path class="arrow" d="M207.5,334 L209,334 L209,410 L210.5,410" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="130.5" y1="428" y2="458"/>
+<path class="arrow" d="M130.5,428 L130.5,458" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="130.5" y1="494" y2="524"/>
+<path class="arrow" d="M130.5,494 L130.5,524" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="340.5" y1="362" y2="392"/>
+<path class="arrow" d="M263.5,334 L262,334 L262,410 L260.5,410" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="428" y2="458"/>
+<path class="arrow" d="M340.5,428 L340.5,458" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="494" y2="524"/>
+<path class="arrow" d="M340.5,494 L340.5,524" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="130.5" x2="235.5" y1="560" y2="590"/>
-<text font-size="11" x="189" y="575">
+<path class="arrow" d="M221,542 L214.25,542 L214.25,618 L207.5,618" marker-end="url(#act-arrow)"/>
+<text font-size="11" x="220.25" y="580">
 yes
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="235.5" y1="552" y2="590"/>
-<text font-size="11" x="294" y="571">
+<path class="arrow" d="M326.5,538 L295,538 L295,618 L263.5,618" marker-end="url(#act-arrow)"/>
+<text font-size="11" x="301" y="578">
 no
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="445.5" y1="210" y2="240"/>
+<path class="arrow" d="M368.5,182 L367,182 L367,258 L365.5,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="445.5" y1="276" y2="306"/>
+<path class="arrow" d="M445.5,276 L445.5,306" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="445.5" y1="342" y2="372"/>
+<path class="arrow" d="M445.5,342 L445.5,372" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="235.5" x2="340.5" y1="646" y2="676"/>
+<path class="arrow" d="M263.5,618 L288,618 L288,704 L312.5,704" marker-end="url(#act-arrow)"/>
 <text font-size="11" x="294" y="661">
 yes
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="445.5" x2="340.5" y1="400" y2="676"/>
+<path class="arrow" d="M445.5,400 L445.5,538 L340.5,538 L340.5,676" marker-end="url(#act-arrow)"/>
 <text font-size="11" x="399" y="538">
 no
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="732" y2="762"/>
+<path class="arrow" d="M340.5,732 L340.5,762" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="340.5" x2="340.5" y1="798" y2="828"/>
+<path class="arrow" d="M340.5,798 L340.5,828" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <circle cx="340.5" cy="44" fill="#181818" r="14"/>

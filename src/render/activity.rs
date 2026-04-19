@@ -1,11 +1,10 @@
-use svg::node::element::{
-    Circle, Definitions, Group, Line, Marker, Path, Polygon, Rectangle, Text,
-};
+use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
 use super::primitives::{background_rect, style_block, text_node};
 use super::theme::Theme;
 use crate::layout::activity::{ActivityLayout, LayoutEdge, LayoutNode, Shape};
+use crate::layout::sugiyama::{orthogonal_through_ports, Side};
 
 const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
@@ -256,68 +255,69 @@ fn render_note_shape(g: Group, node: &LayoutNode) -> Group {
 }
 
 /// Attachment point on a node for a given direction (top/bottom/center).
-fn attach_bottom(n: &LayoutNode) -> (f64, f64) {
-    match n.shape {
-        Shape::StartEnd | Shape::Decision => (node_cx(n), n.y + n.h),
-        Shape::MergeBar => (node_cx(n), n.y + n.h),
-        _ => (node_cx(n), n.y + n.h),
-    }
-}
-
-fn attach_top(n: &LayoutNode) -> (f64, f64) {
-    match n.shape {
-        Shape::StartEnd | Shape::Decision => (node_cx(n), n.y),
-        Shape::MergeBar => (node_cx(n), n.y),
-        _ => (node_cx(n), n.y),
+/// Pick the edge attachment point on `node` facing a position `toward`.
+///
+/// A decision diamond's four corner points coincide with the bounding-box
+/// edge midpoints, so the same "which side does the other node sit on?"
+/// logic that works for rectangles also picks the right diamond corner.
+/// For diamonds this yields the top point for incoming edges and the
+/// left/right points for branch exits — exactly the shared-entry /
+/// side-exit convention you'd draw by hand.
+fn pick_port(node: &LayoutNode, toward: (f64, f64)) -> ((f64, f64), Side) {
+    let cx = node_cx(node);
+    let cy = node_cy(node);
+    let (tx, ty) = toward;
+    let dx = tx - cx;
+    let dy = ty - cy;
+    // Fork/join bars are thin rectangles — always attach top/bottom.
+    // For everything else, prefer whichever axis has the greater
+    // separation.
+    let vertical_dominates = match node.shape {
+        Shape::MergeBar => true,
+        _ => dy.abs() >= dx.abs(),
+    };
+    if vertical_dominates {
+        if dy < 0.0 {
+            ((cx, node.y), Side::Top)
+        } else {
+            ((cx, node.y + node.h), Side::Bottom)
+        }
+    } else if dx < 0.0 {
+        ((node.x, cy), Side::Left)
+    } else {
+        ((node.x + node.w, cy), Side::Right)
     }
 }
 
 fn render_edge(edge: &LayoutEdge, from: &LayoutNode, to: &LayoutNode) -> Group {
-    let (x1, y1) = attach_bottom(from);
-    let (x2, y2) = attach_top(to);
-
-    let is_back = y2 < y1; // back-edge for loops
+    let from_center = (node_cx(from), node_cy(from));
+    let to_center = (node_cx(to), node_cy(to));
+    let (src, src_side) = pick_port(from, to_center);
+    let (dst, dst_side) = pick_port(to, from_center);
+    let points = orthogonal_through_ports(src, src_side, dst, dst_side);
 
     let class = if edge.dashed { "arrow-dashed" } else { "arrow" };
 
     let mut g = Group::new();
-
-    if is_back {
-        // Draw as a curved path going left then up then right
-        let offset_x = 40.0;
-        let d = format!(
-            "M{},{} C{},{} {},{} {},{}",
-            x1,
-            y1,
-            x1 - offset_x,
-            y1 + 20.0,
-            x2 - offset_x,
-            y2 - 20.0,
-            x2,
-            y2
-        );
-        let path = Path::new()
-            .set("d", d)
-            .set("class", class)
-            .set("marker-end", "url(#act-arrow)");
-        g = g.add(path);
-    } else {
-        let line = Line::new()
-            .set("x1", x1)
-            .set("y1", y1)
-            .set("x2", x2)
-            .set("y2", y2)
-            .set("class", class)
-            .set("marker-end", "url(#act-arrow)");
-        g = g.add(line);
+    if points.len() < 2 {
+        return g;
     }
+    let mut d = String::new();
+    for (i, (x, y)) in points.iter().enumerate() {
+        let cmd = if i == 0 { "M" } else { " L" };
+        d.push_str(&format!("{}{},{}", cmd, x, y));
+    }
+    let path = Path::new()
+        .set("d", d)
+        .set("class", class)
+        .set("marker-end", "url(#act-arrow)");
+    g = g.add(path);
 
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
-            let mx = (x1 + x2) / 2.0 + 6.0;
-            let my = (y1 + y2) / 2.0;
+            let (mx, my) = polyline_midpoint(&points);
             let text = Text::new()
-                .set("x", mx)
+                .set("x", mx + 6.0)
                 .set("y", my)
                 .set("font-size", 11.0)
                 .add(text_node(lbl.clone()));
@@ -326,4 +326,31 @@ fn render_edge(edge: &LayoutEdge, from: &LayoutNode, to: &LayoutNode) -> Group {
     }
 
     g
+}
+
+fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
+    if points.len() < 2 {
+        return points.first().copied().unwrap_or((0.0, 0.0));
+    }
+    let seg_lens: Vec<f64> = points
+        .windows(2)
+        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
+        .collect();
+    let total: f64 = seg_lens.iter().sum();
+    let half = total / 2.0;
+    let mut travelled = 0.0;
+    for (i, &len) in seg_lens.iter().enumerate() {
+        if travelled + len >= half {
+            let t = if len > 0.0 {
+                (half - travelled) / len
+            } else {
+                0.0
+            };
+            let (x0, y0) = points[i];
+            let (x1, y1) = points[i + 1];
+            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+        }
+        travelled += len;
+    }
+    *points.last().unwrap()
 }

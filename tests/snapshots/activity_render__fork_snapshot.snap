@@ -14,34 +14,34 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="58" y2="88"/>
+<path class="arrow" d="M380,58 L380,88" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="124" y2="154"/>
+<path class="arrow" d="M380,124 L380,154" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="145" y1="162" y2="192"/>
+<path class="arrow" d="M380,162 L380,210 L225,210" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="355" y1="162" y2="192"/>
+<path class="arrow" d="M380,162 L380,177 L355,177 L355,192" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="565" y1="162" y2="192"/>
+<path class="arrow" d="M380,162 L380,210 L485,210" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="145" x2="380" y1="228" y2="258"/>
+<path class="arrow" d="M225,210 L380,210 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="355" x2="380" y1="228" y2="258"/>
+<path class="arrow" d="M355,228 L355,243 L380,243 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="565" x2="380" y1="228" y2="258"/>
+<path class="arrow" d="M485,210 L380,210 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="266" y2="296"/>
+<path class="arrow" d="M380,266 L380,296" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#act-arrow)" x1="380" x2="380" y1="332" y2="362"/>
+<path class="arrow" d="M380,332 L380,362" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <circle cx="380" cy="44" fill="#181818" r="14"/>

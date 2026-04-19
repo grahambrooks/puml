@@ -230,6 +230,83 @@ fn median_center(nodes: &[usize], x: &HashMap<usize, f64>, widths: &[f64]) -> Op
     })
 }
 
+/// Which side of a node an edge endpoint sits on. Determines whether the
+/// first (or last) segment of the orthogonal route leaves the node
+/// vertically (Top/Bottom) or horizontally (Left/Right).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Side {
+    Top,
+    Bottom,
+    Left,
+    Right,
+}
+
+impl Side {
+    /// True if the first segment leaving this port is vertical.
+    pub fn is_vertical(self) -> bool {
+        matches!(self, Side::Top | Side::Bottom)
+    }
+}
+
+/// Route an orthogonal polyline between two pre-selected ports.
+///
+/// Unlike `orthogonal_route` which takes bounding boxes and picks
+/// box-edge midpoints as ports, this variant is used when the caller knows
+/// exactly which side of each node the edge should attach to — typically
+/// because the shape demands it (a decision diamond wants its top point
+/// for entry and side points for branch exits, not its bounding-box
+/// midpoints).
+///
+/// The router picks the bend point(s) based on whether each port exits its
+/// node vertically or horizontally. Four combinations:
+///
+/// - Both vertical (top/bottom → top/bottom): one horizontal bend at the
+///   midway y. Collapses to a straight line if `src.x == dst.x`.
+/// - Both horizontal (left/right → left/right): one vertical bend at the
+///   midway x. Collapses if `src.y == dst.y`.
+/// - Vertical out, horizontal in: a single L-shaped bend at `(src.x, dst.y)`.
+/// - Horizontal out, vertical in: mirror, bend at `(dst.x, src.y)`.
+pub fn orthogonal_through_ports(
+    src: (f64, f64),
+    src_side: Side,
+    dst: (f64, f64),
+    dst_side: Side,
+) -> Vec<(f64, f64)> {
+    let (sx, sy) = src;
+    let (dx, dy) = dst;
+    const ALIGN_EPS: f64 = 0.75;
+
+    match (src_side.is_vertical(), dst_side.is_vertical()) {
+        (true, true) => {
+            if (sx - dx).abs() < ALIGN_EPS {
+                return vec![src, dst];
+            }
+            let my = (sy + dy) / 2.0;
+            vec![src, (sx, my), (dx, my), dst]
+        }
+        (false, false) => {
+            if (sy - dy).abs() < ALIGN_EPS {
+                return vec![src, dst];
+            }
+            let mx = (sx + dx) / 2.0;
+            vec![src, (mx, sy), (mx, dy), dst]
+        }
+        (true, false) => {
+            // Out the top/bottom, into the left/right — one L-bend.
+            if (sx - dx).abs() < ALIGN_EPS || (sy - dy).abs() < ALIGN_EPS {
+                return vec![src, dst];
+            }
+            vec![src, (sx, dy), dst]
+        }
+        (false, true) => {
+            if (sx - dx).abs() < ALIGN_EPS || (sy - dy).abs() < ALIGN_EPS {
+                return vec![src, dst];
+            }
+            vec![src, (dx, sy), dst]
+        }
+    }
+}
+
 /// Compute an orthogonal (90°-angle) route between two rectangular nodes.
 ///
 /// Returns a polyline of waypoints, first point on the source boundary, last
@@ -440,5 +517,35 @@ mod tests {
         assert!(!pts.is_empty());
         assert_eq!(pts[0].0, 60.0); // from right edge
         assert_eq!(pts.last().unwrap().0, 200.0); // to left edge
+    }
+
+    #[test]
+    fn ports_bottom_to_top_collapses_when_aligned() {
+        // Diamond top exit + child top entry, aligned x.
+        let pts = orthogonal_through_ports((100.0, 50.0), Side::Bottom, (100.0, 150.0), Side::Top);
+        assert_eq!(pts, vec![(100.0, 50.0), (100.0, 150.0)]);
+    }
+
+    #[test]
+    fn ports_bottom_to_top_bends_when_offset() {
+        let pts = orthogonal_through_ports((100.0, 50.0), Side::Bottom, (200.0, 150.0), Side::Top);
+        // Two bends at midway y, carrying the horizontal step.
+        assert_eq!(pts.len(), 4);
+        assert_eq!(pts[0], (100.0, 50.0));
+        assert_eq!(pts[3], (200.0, 150.0));
+        assert!((pts[1].1 - pts[2].1).abs() < 0.001);
+        assert_eq!(pts[1].0, 100.0);
+        assert_eq!(pts[2].0, 200.0);
+    }
+
+    #[test]
+    fn ports_right_to_top_is_single_bend() {
+        // Decision exits at its right point, target above-right enters at top.
+        // Expect one L-bend at (dst.x, src.y).
+        let pts = orthogonal_through_ports((100.0, 50.0), Side::Right, (250.0, 200.0), Side::Top);
+        assert_eq!(pts.len(), 3);
+        assert_eq!(pts[0], (100.0, 50.0));
+        assert_eq!(pts[1], (250.0, 50.0));
+        assert_eq!(pts[2], (250.0, 200.0));
     }
 }
