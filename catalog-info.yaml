@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: puml
+  description: |
+    PUML a rust implementation of a PlantUML diagram rendering tool.
+spec:
+  type: cli
+  lifecycle: experimental
+  owner: grahambrooks
+  memberOf: [guests]
