@@ -230,6 +230,90 @@ fn median_center(nodes: &[usize], x: &HashMap<usize, f64>, widths: &[f64]) -> Op
     })
 }
 
+/// Assign every node an integer column index so the diagram lays out on a
+/// strict uniform grid.
+///
+/// Intended for diagrams where every node has the same width (e.g. a class
+/// diagram with all boxes sized to the largest class). On that grid an
+/// edge between a parent and a child in the same column collapses to a
+/// single straight vertical line; edges that cross columns pick up a clean
+/// L-bend at the midway y because every rail aligns to a grid multiple.
+///
+/// Top layer is packed 0, 1, 2, …. Each subsequent layer places its nodes
+/// using the *median column* of their predecessors, then enforces a strictly
+/// increasing column sequence so no two nodes in the same layer share a
+/// column. Orphans with no adjacent-layer neighbour advance by one column
+/// past the previous node.
+///
+/// `edges` references global node indices; only adjacent-layer edges are
+/// considered — longer edges need virtual nodes to influence placement.
+pub fn assign_grid_columns(
+    layers: &[Vec<usize>],
+    edges: &[(usize, usize)],
+) -> HashMap<usize, usize> {
+    let mut col: HashMap<usize, usize> = HashMap::new();
+    if layers.is_empty() {
+        return col;
+    }
+
+    // Top layer: pack left-to-right.
+    if let Some(top) = layers.first() {
+        for (i, &n) in top.iter().enumerate() {
+            col.insert(n, i);
+        }
+    }
+
+    // Layer index and adjacent-layer predecessor lists.
+    let mut layer_of: HashMap<usize, usize> = HashMap::new();
+    for (li, layer) in layers.iter().enumerate() {
+        for &idx in layer {
+            layer_of.insert(idx, li);
+        }
+    }
+    let max_node = layer_of.keys().copied().max().unwrap_or(0);
+    let mut up: Vec<Vec<usize>> = vec![Vec::new(); max_node + 1];
+    for &(a, b) in edges {
+        let (la, lb) = match (layer_of.get(&a), layer_of.get(&b)) {
+            (Some(&la), Some(&lb)) => (la, lb),
+            _ => continue,
+        };
+        if la + 1 == lb {
+            up[b].push(a);
+        } else if lb + 1 == la {
+            up[a].push(b);
+        }
+    }
+
+    // Walk each subsequent layer left-to-right, placing each node at the
+    // median column of its predecessors (or one past the previous node if
+    // the median target is already taken).
+    for layer in layers.iter().skip(1) {
+        let mut next_min_col = 0usize;
+        for &n in layer {
+            let target = up
+                .get(n)
+                .and_then(|preds| median_column(preds, &col))
+                .unwrap_or(next_min_col);
+            let placed = target.max(next_min_col);
+            col.insert(n, placed);
+            next_min_col = placed + 1;
+        }
+    }
+
+    col
+}
+
+/// Median column index of `nodes` according to the partially-filled `col`
+/// map. `None` if no predecessor has a column assigned yet.
+fn median_column(nodes: &[usize], col: &HashMap<usize, usize>) -> Option<usize> {
+    let mut cols: Vec<usize> = nodes.iter().filter_map(|p| col.get(p).copied()).collect();
+    if cols.is_empty() {
+        return None;
+    }
+    cols.sort();
+    Some(cols[cols.len() / 2])
+}
+
 /// Which side of a node an edge endpoint sits on. Determines whether the
 /// first (or last) segment of the orthogonal route leaves the node
 /// vertically (Top/Bottom) or horizontally (Left/Right).
@@ -547,5 +631,46 @@ mod tests {
         assert_eq!(pts[0], (100.0, 50.0));
         assert_eq!(pts[1], (250.0, 50.0));
         assert_eq!(pts[2], (250.0, 200.0));
+    }
+
+    #[test]
+    fn grid_columns_packs_top_layer() {
+        let layers = vec![vec![0, 1, 2], vec![]];
+        let col = assign_grid_columns(&layers, &[]);
+        assert_eq!(col[&0], 0);
+        assert_eq!(col[&1], 1);
+        assert_eq!(col[&2], 2);
+    }
+
+    #[test]
+    fn grid_columns_child_under_single_parent() {
+        // One parent at col 2, one child. Child should land at col 2.
+        let layers = vec![vec![10, 11, 12], vec![99]];
+        let col = assign_grid_columns(&layers, &[(99, 12)]);
+        assert_eq!(col[&12], 2);
+        assert_eq!(col[&99], 2);
+    }
+
+    #[test]
+    fn grid_columns_resolve_collision_via_bump() {
+        // Two siblings both want column 1 (their parent). The second gets
+        // bumped to column 2 to avoid sharing a column.
+        let layers = vec![vec![7, 8], vec![20, 21]];
+        let col = assign_grid_columns(&layers, &[(20, 8), (21, 8)]);
+        assert_eq!(col[&8], 1);
+        assert_eq!(col[&20], 1);
+        assert_eq!(col[&21], 2);
+    }
+
+    #[test]
+    fn grid_columns_median_of_two_parents() {
+        // Child with two parents at cols 1 and 3 → median column is 1
+        // (lower median by our sort convention). It doesn't have to be the
+        // arithmetic mean, just a consistent tie-break.
+        let layers = vec![vec![5, 6, 7, 8], vec![99]];
+        let col = assign_grid_columns(&layers, &[(99, 6), (99, 8)]);
+        assert_eq!(col[&6], 1);
+        assert_eq!(col[&8], 3);
+        assert!(col[&99] == 1 || col[&99] == 3);
     }
 }

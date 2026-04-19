@@ -118,7 +118,7 @@ fn member_text(m: &Member) -> String {
     }
 }
 
-use super::sugiyama::{assign_x_median, orthogonal_route, reorder_barycentric};
+use super::sugiyama::{assign_grid_columns, orthogonal_route, reorder_barycentric};
 
 /// Assign each node a rank (layer) using a topological sort on Extension/Implementation edges.
 /// All other nodes default to rank 0.
@@ -192,44 +192,38 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
     // converge for the diagrams we care about; any more is diminishing.
     reorder_barycentric(&mut layers, &edge_pairs, 6);
 
-    // Per-node widths, indexed by global class index — the x-assignment
-    // helper needs a flat vector.
-    let mut global_widths: Vec<f64> = vec![0.0; diagram.classes.len()];
-    for (i, c) in diagram.classes.iter().enumerate() {
-        global_widths[i] = node_width(c);
-    }
+    // Uniform sizing: every class box gets the dimensions of the largest
+    // one. Edges between grid-aligned parent/child collapse to straight
+    // vertical lines (no jogs), and the visual rhythm across the diagram is
+    // uniform. Cost: a little extra whitespace in small classes; worth it
+    // for the overall readability and consistent with the outline-first
+    // aesthetic.
+    let uniform_width = diagram
+        .classes
+        .iter()
+        .map(node_width)
+        .fold(CLASS_MIN_WIDTH, f64::max);
+    let uniform_height = diagram
+        .classes
+        .iter()
+        .map(|c| node_height(c, diagram.hide_empty_members))
+        .fold(HEADER_HEIGHT, f64::max);
 
-    // Run the median-parent x-assignment. Output is in a coordinate system
-    // anchored at SIDE_MARGIN; we'll recenter the whole graph afterwards.
-    let xs = assign_x_median(
-        &layers,
-        &edge_pairs,
-        &global_widths,
-        NODE_H_GAP,
-        SIDE_MARGIN,
-    );
+    // Integer column index per class via median-parent placement.
+    let columns = assign_grid_columns(&layers, &edge_pairs);
+    let col_step = uniform_width + NODE_H_GAP;
 
     let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
-    let mut total_width: f64 = 0.0;
     let mut y = TOP_MARGIN + title_off;
 
     for layer in &layers {
         if layer.is_empty() {
             continue;
         }
-        let nodes_in_layer: Vec<&ClassNode> = layer.iter().map(|&i| &diagram.classes[i]).collect();
-        let layer_h = nodes_in_layer
-            .iter()
-            .map(|n| node_height(n, diagram.hide_empty_members))
-            .fold(0.0_f64, f64::max);
-
-        for (i, &class_idx) in layer.iter().enumerate() {
-            let node = nodes_in_layer[i];
-            let w = global_widths[class_idx];
-            let h = node_height(node, diagram.hide_empty_members);
-            let x = xs.get(&class_idx).copied().unwrap_or(SIDE_MARGIN);
-
-            total_width = total_width.max(x + w + SIDE_MARGIN);
+        for &class_idx in layer {
+            let node = &diagram.classes[class_idx];
+            let col = columns.get(&class_idx).copied().unwrap_or(0);
+            let x = SIDE_MARGIN + col as f64 * col_step;
 
             let member_sections = build_member_sections(node);
 
@@ -240,8 +234,8 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
                     display_name: display_name(node),
                     x,
                     y,
-                    width: w,
-                    height: h,
+                    width: uniform_width,
+                    height: uniform_height,
                     kind: node.kind.clone(),
                     stereotype: node.stereotype.clone(),
                     header_h: HEADER_HEIGHT,
@@ -249,16 +243,16 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
                 },
             );
         }
-        y += layer_h + RANK_V_GAP;
+        y += uniform_height + RANK_V_GAP;
     }
 
+    // Canvas: span all occupied grid columns + side margins.
+    let max_col = columns.values().copied().max().unwrap_or(0);
+    let grid_width = uniform_width + max_col as f64 * col_step;
+    let mut total_width = grid_width + SIDE_MARGIN * 2.0;
     let total_height = y + SIDE_MARGIN;
 
-    // Centre the whole graph: compute the overall content span, then shift
-    // every node so the content is centred inside total_width. Per-layer
-    // centering isn't needed any more — the median-alignment pass already
-    // stacks parents and children, so pushing individual layers to their
-    // own centre would undo that alignment.
+    // Centre the graph horizontally inside the canvas.
     let (min_x, max_right) = name_to_layout.values().fold(
         (f64::INFINITY, f64::NEG_INFINITY),
         |(min_x, max_right), nl| (min_x.min(nl.x), max_right.max(nl.x + nl.width)),

@@ -3,7 +3,7 @@ source: tests/class_render.rs
 assertion_line: 58
 expression: svg
 ---
-<svg height="384" viewBox="0 0 593 384" width="593" xmlns="http://www.w3.org/2000/svg">
+<svg height="424" viewBox="0 0 630.5 424" width="630.5" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -29,17 +29,17 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<path class="class-line" d="M113.25,132 L113.25,172 L132,172 L132,212" marker-end="url(#arr-hollow)"/>
+<path class="class-line" d="M132,132 L132,212" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
-<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="166.5" x="30" y="30"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="113.25" y="44">
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="30" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="132" y="44">
 «data»
 </text>
-<text font-weight="bold" text-anchor="middle" x="113.25" y="56">
+<text font-weight="bold" text-anchor="middle" x="132" y="56">
 Container&lt;T&gt;
 </text>
-<line stroke="#6c8ebf" stroke-width="1" x1="30" x2="196.5" y1="66" y2="66"/>
+<line stroke="#6c8ebf" stroke-width="1" x1="30" x2="234" y1="66" y2="66"/>
 <text font-style="normal" text-decoration="none" x="38" y="80">
 +items: List&lt;T&gt;
 </text>
@@ -51,7 +51,7 @@ Container&lt;T&gt;
 </text>
 </g>
 <g>
-<rect fill="none" height="62" rx="3" stroke="#6666bb" stroke-width="1.5" width="204" x="30" y="212"/>
+<rect fill="none" height="102" rx="3" stroke="#6666bb" stroke-width="1.5" width="204" x="30" y="212"/>
 <text fill="#555" font-size="10" text-anchor="middle" x="132" y="224">
 «interface»
 </text>
@@ -64,10 +64,10 @@ Iterable&lt;T&gt;
 </text>
 </g>
 <g>
-<polygon class="note-box" points="216.5,67 553,67 563,77 563,95 216.5,95"/>
-<polyline fill="none" points="553,67 553,77 563,77" stroke="#bbbb00" stroke-width="1"/>
-<line stroke="#bbbb00" stroke-dasharray="3,2" stroke-width="1" x1="196.5" x2="216.5" y1="81" y2="81"/>
-<text font-size="12" x="224.5" y="83">
+<polygon class="note-box" points="254,67 590.5,67 600.5,77 600.5,95 254,95"/>
+<polyline fill="none" points="590.5,67 590.5,77 600.5,77" stroke="#bbbb00" stroke-width="1"/>
+<line stroke="#bbbb00" stroke-dasharray="3,2" stroke-width="1" x1="234" x2="254" y1="81" y2="81"/>
+<text font-size="12" x="262" y="83">
 Generic container\nholds elements of type T
 </text>
 </g>
