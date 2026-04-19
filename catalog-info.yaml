@@ -6,6 +6,7 @@ metadata:
     PUML a rust implementation of a PlantUML diagram rendering tool.
 spec:
   type: cli
+  system: developer-tools
   lifecycle: experimental
-  owner: grahambrooks
+  owner: user:grahambrooks
   memberOf: [guests]
