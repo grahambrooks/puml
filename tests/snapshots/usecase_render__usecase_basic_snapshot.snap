@@ -1,9 +1,8 @@
 ---
 source: tests/usecase_render.rs
-assertion_line: 33
 expression: svg
 ---
-<svg height="310" viewBox="0 0 355 310" width="355" xmlns="http://www.w3.org/2000/svg">
+<svg height="280" viewBox="0 0 395 280" width="395" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="uc-arrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
 <polygon fill="#181818" points="0 0, 8 4, 0 8"/>
@@ -14,16 +13,16 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="70" y2="55"/>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="227.5" y1="70" y2="135"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="180" y1="70" y2="135"/>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="220" y1="70" y2="55"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="180" y2="55"/>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="227.5" y1="180" y2="135"/>
 </g>
 <g>
-<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="187.5" y1="180" y2="215"/>
+<line class="arrow" marker-end="url(#uc-arrow)" x1="100" x2="227.5" y1="180" y2="215"/>
 </g>
 <g>
 <circle class="arrow" cx="70" cy="40" r="8"/>
@@ -46,20 +45,20 @@ Admin
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="55" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
-<text font-size="13" text-anchor="middle" x="247.5" y="59.333333333333336">
+<ellipse cx="287.5" cy="135" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="287.5" y="139.33333333333334">
 Login
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="135" fill="none" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
-<text font-size="13" text-anchor="middle" x="247.5" y="139.33333333333334">
+<ellipse cx="287.5" cy="55" fill="none" rx="67.5" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="287.5" y="59.333333333333336">
 View Dashboard
 </text>
 </g>
 <g>
-<ellipse cx="247.5" cy="215" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
-<text font-size="13" text-anchor="middle" x="247.5" y="219.33333333333334">
+<ellipse cx="287.5" cy="215" fill="none" rx="60" ry="25" stroke="#d6b656" stroke-width="1.5"/>
+<text font-size="13" text-anchor="middle" x="287.5" y="219.33333333333334">
 Manage Users
 </text>
 </g>

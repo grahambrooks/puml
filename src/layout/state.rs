@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::sugiyama::{assign_x_median, reorder_barycentric};
+use super::sugiyama::{assign_x_balanced, reorder_barycentric};
 use crate::ast::state::*;
 
 const NODE_W: f64 = 120.0;
@@ -127,7 +127,7 @@ pub fn layout(diagram: &StateDiagram) -> StateLayout {
     for (i, s) in diagram.states.iter().enumerate() {
         global_widths[i] = node_width(s);
     }
-    let xs = assign_x_median(&layers, &edge_pairs, &global_widths, H_GAP, SIDE_MARGIN);
+    let xs = assign_x_balanced(&layers, &edge_pairs, &global_widths, H_GAP, SIDE_MARGIN);
 
     let mut name_to_layout: HashMap<String, StateLayoutNode> = HashMap::new();
     let mut y = TOP_MARGIN + title_off;

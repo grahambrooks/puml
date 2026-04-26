@@ -1,4 +1,5 @@
 pub mod activity;
+pub mod c4;
 pub mod class;
 pub mod gantt;
 pub mod mindmap;

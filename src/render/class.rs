@@ -1,7 +1,7 @@
 use svg::node::element::{Ellipse, Group, Line, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
 use super::theme::Theme;
 use crate::ast::class::{ClassKind, RelationKind};
 use crate::layout::class::{ClassLayout, EdgeLayout, NodeLayout, NoteBox};
@@ -41,6 +41,10 @@ pub fn render(layout: &ClassLayout, theme: &Theme) -> Document {
         doc = doc.add(title_el);
     }
 
+    // Boundaries render first so they sit underneath nodes and edges.
+    for boundary in &layout.boundaries {
+        doc = doc.add(render_boundary(boundary, title_offset));
+    }
     for edge in &layout.edges {
         doc = doc.add(render_edge(edge, title_offset));
     }
@@ -52,6 +56,38 @@ pub fn render(layout: &ClassLayout, theme: &Theme) -> Document {
     }
 
     doc
+}
+
+fn render_boundary(b: &crate::layout::class::BoundaryBox, y_off: f64) -> Group {
+    let y = b.y + y_off;
+    let rect = Rectangle::new()
+        .set("x", b.x)
+        .set("y", y)
+        .set("width", b.width)
+        .set("height", b.height)
+        .set("rx", 8.0)
+        .set("ry", 8.0)
+        .set("fill", "none")
+        .set("stroke", "#888888")
+        .set("stroke-width", 1.5)
+        .set("stroke-dasharray", "8,4");
+
+    let title_label = if b.kind.is_empty() {
+        b.label.clone()
+    } else {
+        format!("{} «{} boundary»", b.label, b.kind)
+    };
+    // Title sits in the top stripe of the boundary rectangle, left-aligned
+    // with a small inset so the dashed stroke is visible behind it.
+    let title = Text::new()
+        .set("x", b.x + 12.0)
+        .set("y", y + 18.0)
+        .set("font-size", 12.0)
+        .set("font-weight", "bold")
+        .set("fill", "#666666")
+        .add(text_node(title_label));
+
+    Group::new().add(rect).add(title)
 }
 
 fn render_note(note: &NoteBox, y_off: f64) -> Group {
@@ -736,11 +772,11 @@ fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
     let (last_x, last_y) = edge.points.last().copied().unwrap_or((0.0, 0.0));
 
     if let Some(ref lbl) = edge.label {
-        let (mx, my) = polyline_midpoint(&edge.points);
+        let (lx, ly, anchor) = label_perpendicular(&edge.points, 8.0);
         let t = Text::new()
-            .set("x", mx)
-            .set("y", my + y_off - 4.0)
-            .set("text-anchor", "middle")
+            .set("x", lx)
+            .set("y", ly + y_off)
+            .set("text-anchor", anchor)
             .set("font-size", "11")
             .add(text_node(lbl.clone()));
         g = g.add(t);
@@ -777,33 +813,4 @@ fn path_from_points(points: &[(f64, f64)], y_off: f64) -> String {
         d.push_str(&format!("{}{},{}", cmd, x, y + y_off));
     }
     d
-}
-
-/// Geometric midpoint along a polyline: walks the segments, finds the one
-/// that contains the path's half-length mark, and interpolates.
-fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
-    if points.len() < 2 {
-        return points.first().copied().unwrap_or((0.0, 0.0));
-    }
-    let seg_lens: Vec<f64> = points
-        .windows(2)
-        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
-        .collect();
-    let total: f64 = seg_lens.iter().sum();
-    let half = total / 2.0;
-    let mut travelled = 0.0;
-    for (i, &len) in seg_lens.iter().enumerate() {
-        if travelled + len >= half {
-            let t = if len > 0.0 {
-                (half - travelled) / len
-            } else {
-                0.0
-            };
-            let (x0, y0) = points[i];
-            let (x1, y1) = points[i + 1];
-            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
-        }
-        travelled += len;
-    }
-    *points.last().unwrap()
 }

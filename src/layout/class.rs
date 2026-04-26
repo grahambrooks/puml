@@ -59,10 +59,22 @@ pub struct EdgeLayout {
     pub to_label: Option<String>,
 }
 
+/// A C4 boundary post-layout: a labeled rectangle covering the bounding
+/// box of the contained nodes plus padding for the title and breathing room.
+pub struct BoundaryBox {
+    pub label: String,
+    pub kind: String,
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
 pub struct ClassLayout {
     pub nodes: Vec<NodeLayout>,
     pub edges: Vec<EdgeLayout>,
     pub notes: Vec<NoteBox>,
+    pub boundaries: Vec<BoundaryBox>,
     pub total_width: f64,
     pub total_height: f64,
     pub title: Option<String>,
@@ -118,28 +130,82 @@ fn member_text(m: &Member) -> String {
     }
 }
 
-use super::sugiyama::{assign_grid_columns, orthogonal_route, reorder_barycentric};
+use super::ports::pick_port;
+use super::sugiyama::{
+    assign_grid_columns, nudge_overlapping_segments, orthogonal_through_ports, reorder_barycentric,
+};
 
-/// Assign each node a rank (layer) using a topological sort on Extension/Implementation edges.
-/// All other nodes default to rank 0.
+const EDGE_NUDGE_GAP: f64 = 6.0;
+
+/// Assign each node a rank (layer) using a topological sort on directed
+/// edges (`Extension`, `Implementation`, `Dependency`, `DashedLink`,
+/// `Realization`).
+///
+/// `Composition` and `Aggregation` are intentionally excluded: in UML the
+/// container is the "owner" of its parts but doesn't sit at a rank above
+/// or below them in the inheritance sense — letting them propagate ranks
+/// would push containers into the inheritance hierarchy and stack
+/// composition graphs into deep towers. `Association` is bidirectional and
+/// has no natural direction to propagate.
+///
+/// Including `Dependency` is what makes component and deployment diagrams
+/// (which use `-->` exclusively) lay out as a multi-row DAG instead of a
+/// single horizontal row.
+///
+/// Endpoints may reference a node by either canonical `name` or `alias`,
+/// so we resolve through `name_to_canonical` before reading/writing ranks.
 fn assign_ranks(diagram: &ClassDiagram) -> HashMap<String, usize> {
     let mut ranks: HashMap<String, usize> = diagram
         .classes
         .iter()
         .map(|c| (c.name.clone(), 0))
         .collect();
-    // Repeatedly propagate: child rank = parent rank + 1
+
+    // alias → canonical name lookup, so relations using the alias still
+    // resolve to the same rank slot.
+    let canonical = |s: &str| -> Option<String> {
+        diagram
+            .classes
+            .iter()
+            .find(|c| c.name == s || c.alias.as_deref() == Some(s))
+            .map(|c| c.name.clone())
+    };
+
+    // Repeatedly propagate: child rank = parent rank + 1.
+    // Iterating up to N times handles transitive chains of length ≤ N.
+    //
+    // In C4 mode, Dependency/DashedLink edges flip direction: the relation
+    // `Rel(a, b)` reads "a calls b" and the convention is caller-above-callee.
+    // So for those edges we treat `to` as the rank-child of `from`. Inheritance
+    // and realization (Extension/Implementation/Realization) stay UML-oriented
+    // — they're rare in C4 anyway.
     for _ in 0..diagram.classes.len() {
         for rel in &diagram.relations {
-            if matches!(
+            let propagates = matches!(
                 rel.kind,
-                RelationKind::Extension | RelationKind::Implementation
-            ) {
-                let parent_rank = ranks.get(&rel.to).copied().unwrap_or(0);
-                let child_rank = ranks.entry(rel.from.clone()).or_insert(0);
-                if *child_rank <= parent_rank {
-                    *child_rank = parent_rank + 1;
-                }
+                RelationKind::Extension
+                    | RelationKind::Implementation
+                    | RelationKind::Dependency
+                    | RelationKind::DashedLink
+                    | RelationKind::Realization
+            );
+            if !propagates {
+                continue;
+            }
+            let (Some(a), Some(b)) = (canonical(rel.from.as_str()), canonical(rel.to.as_str()))
+            else {
+                continue;
+            };
+            let c4_dep = diagram.c4_mode
+                && matches!(
+                    rel.kind,
+                    RelationKind::Dependency | RelationKind::DashedLink
+                );
+            let (parent_name, child_name) = if c4_dep { (a, b) } else { (b, a) };
+            let parent_rank = ranks.get(&parent_name).copied().unwrap_or(0);
+            let child_rank = ranks.entry(child_name).or_insert(0);
+            if *child_rank <= parent_rank {
+                *child_rank = parent_rank + 1;
             }
         }
     }
@@ -159,37 +225,86 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
     // rather than a borrow — the barycentric reorder below works on
     // indices so it can return new per-layer orderings without fighting
     // the borrow checker.
+    let real_n = diagram.classes.len();
     let mut layers: Vec<Vec<usize>> = vec![Vec::new(); max_rank + 1];
     for (i, node) in diagram.classes.iter().enumerate() {
         let r = ranks.get(&node.name).copied().unwrap_or(0);
-        // Invert: layer 0 (top of canvas) = max rank so children draw
-        // above their parents. Matches UML convention with `--|>` arrows
-        // pointing up from child to parent.
-        let layer = max_rank.saturating_sub(r);
-        layers[layer].push(i);
+        // Rank directly drives layer: parent at rank 0 → layer 0 (top of
+        // canvas), child at rank N → layer N (below). This is the standard
+        // UML convention — parents/supertypes/interfaces sit above their
+        // children, with `--|>` arrows pointing up from child to parent.
+        layers[r].push(i);
     }
 
-    // Build an edge list over node indices — ALL relations participate,
-    // not just inheritance, so composition / aggregation / association
-    // also influence within-rank ordering.
-    let name_to_idx: HashMap<&str, usize> = diagram
-        .classes
-        .iter()
-        .enumerate()
-        .map(|(i, c)| (c.name.as_str(), i))
-        .collect();
-    let edge_pairs: Vec<(usize, usize)> = diagram
-        .relations
-        .iter()
-        .filter_map(|r| {
-            let a = name_to_idx.get(r.from.as_str()).copied()?;
-            let b = name_to_idx.get(r.to.as_str()).copied()?;
-            Some((a, b))
-        })
-        .collect();
+    // Map both canonical names and aliases to node index, so relations
+    // like `Foo --> alias_of_bar` resolve to the existing Bar node instead
+    // of being treated as a phantom new class.
+    let mut name_to_idx: HashMap<&str, usize> = HashMap::new();
+    for (i, c) in diagram.classes.iter().enumerate() {
+        name_to_idx.insert(c.name.as_str(), i);
+        if let Some(ref alias) = c.alias {
+            name_to_idx.insert(alias.as_str(), i);
+        }
+    }
 
-    // Reduce edge crossings before x-assignment. 6 sweeps is enough to
-    // converge for the diagrams we care about; any more is diminishing.
+    // Insert virtual (dummy) nodes for any relation whose endpoints sit
+    // more than one layer apart, so barycentric reordering and column
+    // assignment can route the long edge through stable intermediate
+    // anchors. Without this, a grandparent → grandchild edge would draw
+    // as one long Z that ignores intervening nodes; with virtuals it
+    // becomes a stair-step that respects layer rhythm and avoids running
+    // through unrelated boxes.
+    //
+    // For each relation we keep a `chain` of node ids (real + virtual)
+    // describing the path the rendered edge will follow. Direct edges
+    // get a chain of two; multi-rank edges get one virtual per skipped
+    // layer.
+    let mut layer_of: Vec<usize> = vec![0; real_n];
+    for (li, layer) in layers.iter().enumerate() {
+        for &idx in layer {
+            layer_of[idx] = li;
+        }
+    }
+
+    let mut chains: Vec<Vec<usize>> = Vec::with_capacity(diagram.relations.len());
+    let mut next_virtual = real_n;
+    let mut edge_pairs: Vec<(usize, usize)> = Vec::new();
+
+    for rel in &diagram.relations {
+        let (Some(&a), Some(&b)) = (
+            name_to_idx.get(rel.from.as_str()),
+            name_to_idx.get(rel.to.as_str()),
+        ) else {
+            chains.push(Vec::new());
+            continue;
+        };
+        let la = layer_of[a];
+        let lb = layer_of[b];
+        let diff = la.abs_diff(lb);
+        if diff <= 1 {
+            chains.push(vec![a, b]);
+            edge_pairs.push((a, b));
+        } else {
+            let direction: i32 = if lb > la { 1 } else { -1 };
+            let mut chain = vec![a];
+            for step in 1..diff {
+                let v = next_virtual;
+                next_virtual += 1;
+                let v_layer = (la as i32 + direction * step as i32) as usize;
+                layers[v_layer].push(v);
+                chain.push(v);
+            }
+            chain.push(b);
+            for w in chain.windows(2) {
+                edge_pairs.push((w[0], w[1]));
+            }
+            chains.push(chain);
+        }
+    }
+
+    // Reduce edge crossings on the augmented graph (virtual nodes
+    // included). 6 sweeps is enough to converge for the diagrams we
+    // care about; any more is diminishing.
     reorder_barycentric(&mut layers, &edge_pairs, 6);
 
     // Uniform sizing: every class box gets the dimensions of the largest
@@ -209,77 +324,135 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         .map(|c| node_height(c, diagram.hide_empty_members))
         .fold(HEADER_HEIGHT, f64::max);
 
-    // Integer column index per class via median-parent placement.
+    // Integer column index per node (real + virtual) via median-parent
+    // placement on the augmented graph.
     let columns = assign_grid_columns(&layers, &edge_pairs);
     let col_step = uniform_width + NODE_H_GAP;
 
-    let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
-    let mut y = TOP_MARGIN + title_off;
-
+    // Per-layer y for both real and virtual nodes.
+    let mut layer_y: Vec<f64> = Vec::with_capacity(layers.len());
+    let mut y_cursor = TOP_MARGIN + title_off;
     for layer in &layers {
-        if layer.is_empty() {
-            continue;
+        layer_y.push(y_cursor);
+        if !layer.is_empty() {
+            y_cursor += uniform_height + RANK_V_GAP;
         }
-        for &class_idx in layer {
-            let node = &diagram.classes[class_idx];
-            let col = columns.get(&class_idx).copied().unwrap_or(0);
-            let x = SIDE_MARGIN + col as f64 * col_step;
+    }
+    let y = y_cursor;
 
-            let member_sections = build_member_sections(node);
-
-            name_to_layout.insert(
-                node.name.clone(),
-                NodeLayout {
-                    name: node.name.clone(),
-                    display_name: display_name(node),
-                    x,
-                    y,
-                    width: uniform_width,
-                    height: uniform_height,
-                    kind: node.kind.clone(),
-                    stereotype: node.stereotype.clone(),
-                    header_h: HEADER_HEIGHT,
-                    member_sections,
-                },
-            );
+    // Refresh layer_of after reorder, including virtuals. Indexed by node
+    // id (could exceed real_n), so use a HashMap.
+    let mut layer_of_all: HashMap<usize, usize> = HashMap::new();
+    for (li, layer) in layers.iter().enumerate() {
+        for &idx in layer {
+            layer_of_all.insert(idx, li);
         }
-        y += uniform_height + RANK_V_GAP;
+    }
+
+    let mut name_to_layout: HashMap<String, NodeLayout> = HashMap::new();
+    for (class_idx, node) in diagram.classes.iter().enumerate() {
+        let li = layer_of_all.get(&class_idx).copied().unwrap_or(0);
+        let col = columns.get(&class_idx).copied().unwrap_or(0);
+        let x = SIDE_MARGIN + col as f64 * col_step;
+        let member_sections = build_member_sections(node);
+        name_to_layout.insert(
+            node.name.clone(),
+            NodeLayout {
+                name: node.name.clone(),
+                display_name: display_name(node),
+                x,
+                y: layer_y[li],
+                width: uniform_width,
+                height: uniform_height,
+                kind: node.kind.clone(),
+                stereotype: node.stereotype.clone(),
+                header_h: HEADER_HEIGHT,
+                member_sections,
+            },
+        );
     }
 
     // Canvas: span all occupied grid columns + side margins.
     let max_col = columns.values().copied().max().unwrap_or(0);
     let grid_width = uniform_width + max_col as f64 * col_step;
     let mut total_width = grid_width + SIDE_MARGIN * 2.0;
-    let total_height = y + SIDE_MARGIN;
+    let mut total_height = y + SIDE_MARGIN;
 
     // Centre the graph horizontally inside the canvas.
     let (min_x, max_right) = name_to_layout.values().fold(
         (f64::INFINITY, f64::NEG_INFINITY),
         |(min_x, max_right), nl| (min_x.min(nl.x), max_right.max(nl.x + nl.width)),
     );
-    if min_x.is_finite() {
+    let centre_shift = if min_x.is_finite() {
         let content_w = max_right - min_x;
         let target_left = (total_width - content_w) / 2.0;
         let shift = target_left - min_x;
         for nl in name_to_layout.values_mut() {
             nl.x += shift;
         }
+        shift
+    } else {
+        0.0
+    };
+
+    // Per-virtual centre coordinates, in the same coordinate space as the
+    // real nodes (so chain routing can mix them seamlessly).
+    let mut virtual_centre: HashMap<usize, (f64, f64)> = HashMap::new();
+    for v in real_n..next_virtual {
+        let li = layer_of_all.get(&v).copied().unwrap_or(0);
+        let col = columns.get(&v).copied().unwrap_or(0);
+        let cx = SIDE_MARGIN + col as f64 * col_step + uniform_width / 2.0 + centre_shift;
+        let cy = layer_y[li] + uniform_height / 2.0;
+        virtual_centre.insert(v, (cx, cy));
     }
 
-    // Build edges — orthogonal polylines via the sugiyama router. For
-    // parent-child chains where nodes share an x-centre the router
-    // collapses to a straight vertical line; when they don't it emits a
-    // two-bend elbow (out of the source, across, into the target).
-    let edges: Vec<EdgeLayout> = diagram
+    // Build edges. Direct (≤1 layer) edges still go through the orthogonal
+    // router for box-edge attachment. Multi-rank edges follow their
+    // virtual chain so the routing threads through the columns chosen by
+    // barycentric reordering.
+    let mut edges: Vec<EdgeLayout> = diagram
         .relations
         .iter()
-        .filter_map(|rel| {
-            let from_nl = name_to_layout.get(&rel.from)?;
-            let to_nl = name_to_layout.get(&rel.to)?;
+        .zip(chains.iter())
+        .filter_map(|(rel, chain)| {
+            if chain.is_empty() {
+                return None;
+            }
+            // Resolve through the chain's first/last node-id back to the
+            // canonical name — `rel.from`/`rel.to` may be aliases that
+            // wouldn't hit `name_to_layout` directly.
+            let from_idx = *chain.first()?;
+            let to_idx = *chain.last()?;
+            if from_idx >= real_n || to_idx >= real_n {
+                return None;
+            }
+            let from_nl = name_to_layout.get(&diagram.classes[from_idx].name)?;
+            let to_nl = name_to_layout.get(&diagram.classes[to_idx].name)?;
 
-            let from_box = (from_nl.x, from_nl.y, from_nl.width, from_nl.height);
-            let to_box = (to_nl.x, to_nl.y, to_nl.width, to_nl.height);
-            let points = orthogonal_route(from_box, to_box);
+            let points = if chain.len() == 2 {
+                // Port-aware routing: pick the side of each box that faces
+                // the other node. Cross-rank edges (parent → child) force
+                // top/bottom attachment so the visual hierarchy reads
+                // correctly even when the diagonal between centres is
+                // closer to 45° than to vertical; same-rank edges
+                // (sibling associations) fall back to whichever axis
+                // dominates so they exit out the side facing the partner.
+                let a = chain[0];
+                let b = chain[1];
+                let cross_rank = layer_of_all.get(&a) != layer_of_all.get(&b);
+                let from_bbox = (from_nl.x, from_nl.y, from_nl.width, from_nl.height);
+                let to_bbox = (to_nl.x, to_nl.y, to_nl.width, to_nl.height);
+                let from_centre = (
+                    from_nl.x + from_nl.width / 2.0,
+                    from_nl.y + from_nl.height / 2.0,
+                );
+                let to_centre = (to_nl.x + to_nl.width / 2.0, to_nl.y + to_nl.height / 2.0);
+                let (src, src_side) = pick_port(from_bbox, to_centre, cross_rank);
+                let (dst, dst_side) = pick_port(to_bbox, from_centre, cross_rank);
+                orthogonal_through_ports(src, src_side, dst, dst_side)
+            } else {
+                route_through_virtuals(from_nl, to_nl, &chain[1..chain.len() - 1], &virtual_centre)
+            };
 
             Some(EdgeLayout {
                 points,
@@ -291,23 +464,162 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         })
         .collect();
 
+    // Spread overlapping middle rails apart so parallel edges between the
+    // same pair of layers (e.g. two children of one parent, or shared
+    // grandparent links) don't draw on top of each other.
+    let mut routes: Vec<Vec<(f64, f64)>> = edges.iter().map(|e| e.points.clone()).collect();
+    nudge_overlapping_segments(&mut routes, EDGE_NUDGE_GAP);
+    for (e, r) in edges.iter_mut().zip(routes) {
+        e.points = r;
+    }
+
     // Preserve declaration order from the diagram for deterministic SVG output
-    let nodes: Vec<NodeLayout> = diagram
+    let mut nodes: Vec<NodeLayout> = diagram
         .classes
         .iter()
         .filter_map(|c| name_to_layout.remove(&c.name))
         .collect();
 
     let notes = place_notes(&diagram.notes, &nodes, &mut total_width);
+    let mut boundaries = compute_boundaries(&diagram.boundaries, &nodes);
+
+    // Boundaries pad outward by SIDE_PAD + nest depth, so deeply nested
+    // outer boundaries can extend left past x=0 (or above the title). Shift
+    // the whole layout right/down to keep everything inside the canvas.
+    let min_b_x = boundaries.iter().map(|b| b.x).fold(f64::INFINITY, f64::min);
+    if min_b_x.is_finite() && min_b_x < SIDE_MARGIN {
+        let dx = SIDE_MARGIN - min_b_x;
+        for n in &mut nodes {
+            n.x += dx;
+        }
+        for e in &mut edges {
+            for p in &mut e.points {
+                p.0 += dx;
+            }
+        }
+        for b in &mut boundaries {
+            b.x += dx;
+        }
+    }
+
+    // Expand the canvas if any boundary or shifted node extends past the
+    // node grid.
+    for b in &boundaries {
+        total_width = total_width.max(b.x + b.width + SIDE_MARGIN);
+        total_height = total_height.max(b.y + b.height + SIDE_MARGIN);
+    }
+    for n in &nodes {
+        total_width = total_width.max(n.x + n.width + SIDE_MARGIN);
+    }
 
     ClassLayout {
         nodes,
         edges,
         notes,
+        boundaries,
         total_width,
         total_height,
         title: diagram.title.clone(),
     }
+}
+
+/// For each AST boundary, compute the bounding box of its member nodes
+/// plus extra padding scaled by *nesting depth* so an outer boundary lands
+/// strictly outside any inner one it contains.
+///
+/// Nesting is detected by subset: boundary `B` is inside `A` iff every
+/// member of `B` is also a member of `A`. This works for the C4 shape
+/// where nested `Deployment_Node` blocks accumulate ancestor membership in
+/// the translator. Boundaries with no resolved members produce no box.
+fn compute_boundaries(
+    declared: &[crate::ast::class::Boundary],
+    nodes: &[NodeLayout],
+) -> Vec<BoundaryBox> {
+    const TITLE_PAD: f64 = 28.0;
+    const SIDE_PAD: f64 = 14.0;
+    const BOTTOM_PAD: f64 = 14.0;
+    const NEST_STEP: f64 = 22.0;
+
+    // Resolve each boundary to its concrete member set first, dropping any
+    // member name that doesn't match a real node.
+    let resolved: Vec<Vec<&NodeLayout>> = declared
+        .iter()
+        .map(|b| {
+            b.members
+                .iter()
+                .filter_map(|name| nodes.iter().find(|n| &n.name == name))
+                .collect()
+        })
+        .collect();
+
+    let mut out: Vec<BoundaryBox> = Vec::new();
+    for (i, b) in declared.iter().enumerate() {
+        let members = &resolved[i];
+        if members.is_empty() {
+            continue;
+        }
+        // Depth = number of other boundaries contained inside this one.
+        // Strict-subset handles the obvious case (ec2 ⊂ aws). When two
+        // boundaries share the same members (a Deployment_Node that wraps
+        // exactly one inner Deployment_Node), declaration order breaks the
+        // tie — the outer is declared first in the source, so anything
+        // later with the same set is treated as nested under us.
+        let mine: std::collections::HashSet<&str> =
+            members.iter().map(|n| n.name.as_str()).collect();
+        let depth = resolved
+            .iter()
+            .enumerate()
+            .filter(|(j, other)| {
+                if *j == i || other.is_empty() {
+                    return false;
+                }
+                let theirs: std::collections::HashSet<&str> =
+                    other.iter().map(|n| n.name.as_str()).collect();
+                if !theirs.is_subset(&mine) {
+                    return false;
+                }
+                theirs != mine || *j > i
+            })
+            .count();
+
+        let min_x = members.iter().map(|n| n.x).fold(f64::INFINITY, f64::min);
+        let min_y = members.iter().map(|n| n.y).fold(f64::INFINITY, f64::min);
+        let max_x = members
+            .iter()
+            .map(|n| n.x + n.width)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let max_y = members
+            .iter()
+            .map(|n| n.y + n.height)
+            .fold(f64::NEG_INFINITY, f64::max);
+
+        let nest_pad = depth as f64 * NEST_STEP;
+        // Make sure the boundary box is wide enough for its title. Without
+        // this, deeply nested boundaries with long type names overflow the
+        // dashed rectangle on the right side. Title char width is a rough
+        // estimate matching the 12px boundary font.
+        const TITLE_CHAR_W: f64 = 7.0;
+        const TITLE_INSET: f64 = 12.0;
+        let title_text_len = b.label.chars().count()
+            + if b.kind.is_empty() {
+                0
+            } else {
+                b.kind.chars().count() + " «boundary»".chars().count()
+            };
+        let title_min_w = title_text_len as f64 * TITLE_CHAR_W + TITLE_INSET * 2.0;
+
+        let raw_width = (max_x - min_x) + (SIDE_PAD + nest_pad) * 2.0;
+        let width = raw_width.max(title_min_w);
+        out.push(BoundaryBox {
+            label: b.label.clone(),
+            kind: b.kind.clone(),
+            x: min_x - SIDE_PAD - nest_pad,
+            y: min_y - TITLE_PAD - nest_pad,
+            width,
+            height: (max_y - min_y) + TITLE_PAD + BOTTOM_PAD + nest_pad * 2.0,
+        });
+    }
+    out
 }
 
 fn place_notes(notes: &[ClassNote], nodes: &[NodeLayout], total_width: &mut f64) -> Vec<NoteBox> {
@@ -392,3 +704,66 @@ fn build_member_sections(node: &ClassNode) -> Vec<MemberSection> {
 // `connect_nodes` previously chose an attachment pair between two nodes;
 // the orthogonal router in `sugiyama::orthogonal_route` now owns that
 // decision and the bend-point generation, so the old helper is gone.
+
+/// Route a multi-rank edge as a stair-step through its virtual nodes.
+///
+/// Source exits the bottom (or top) of its node; for each virtual centre
+/// in the chain we drop to the midway y between its layer and the
+/// previous, jog horizontally to the virtual's column, and continue.
+/// Final segment enters the target's top (or bottom). This produces a
+/// clean, column-aligned path that respects whatever order barycentric
+/// reordering picked for the virtuals.
+fn route_through_virtuals(
+    from: &NodeLayout,
+    to: &NodeLayout,
+    virtuals: &[usize],
+    virtual_centre: &HashMap<usize, (f64, f64)>,
+) -> Vec<(f64, f64)> {
+    if virtuals.is_empty() {
+        // Caller should have used orthogonal_route directly; fall through.
+        return vec![
+            (from.x + from.width / 2.0, from.y + from.height),
+            (to.x + to.width / 2.0, to.y),
+        ];
+    }
+
+    let descending = to.y > from.y;
+    let from_cx = from.x + from.width / 2.0;
+    let to_cx = to.x + to.width / 2.0;
+    let from_port_y = if descending {
+        from.y + from.height
+    } else {
+        from.y
+    };
+    let to_port_y = if descending { to.y } else { to.y + to.height };
+
+    // Collect every centre on the path: source port, each virtual, target
+    // port. The y-coordinates already alternate in layer order.
+    let mut anchors: Vec<(f64, f64)> = Vec::with_capacity(virtuals.len() + 2);
+    anchors.push((from_cx, from_port_y));
+    for &v in virtuals {
+        if let Some(&(cx, cy)) = virtual_centre.get(&v) {
+            anchors.push((cx, cy));
+        }
+    }
+    anchors.push((to_cx, to_port_y));
+
+    // Stair-step: between consecutive anchors a and b, drop to the midway
+    // y, jog to b's x, continue. If a and b already share x, collapse to
+    // a single straight segment.
+    let mut points: Vec<(f64, f64)> = Vec::with_capacity(anchors.len() * 2);
+    points.push(anchors[0]);
+    for w in anchors.windows(2) {
+        let (ax, ay) = w[0];
+        let (bx, by) = w[1];
+        if (ax - bx).abs() < 0.5 {
+            points.push((bx, by));
+            continue;
+        }
+        let mid_y = (ay + by) / 2.0;
+        points.push((ax, mid_y));
+        points.push((bx, mid_y));
+        points.push((bx, by));
+    }
+    points
+}

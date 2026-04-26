@@ -1,10 +1,13 @@
 use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
 use super::theme::Theme;
 use crate::layout::activity::{ActivityLayout, LayoutEdge, LayoutNode, Shape};
-use crate::layout::sugiyama::{orthogonal_through_ports, Side};
+use crate::layout::ports::pick_port as pick_port_bbox;
+use crate::layout::sugiyama::{nudge_overlapping_segments, orthogonal_through_ports, Side};
+
+const EDGE_NUDGE_GAP: f64 = 6.0;
 
 const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
@@ -43,11 +46,29 @@ pub fn render(layout: &ActivityLayout, theme: &Theme) -> Document {
     let node_map: std::collections::HashMap<usize, &LayoutNode> =
         layout.nodes.iter().map(|n| (n.id, n)).collect();
 
-    // Draw edges first (below nodes)
-    for edge in &layout.edges {
+    // Pre-route every edge so the nudge pass can spread overlapping rails
+    // before any segment is drawn.
+    let mut routes: Vec<(usize, Vec<(f64, f64)>)> = Vec::new();
+    for (i, edge) in layout.edges.iter().enumerate() {
         if let (Some(from), Some(to)) = (node_map.get(&edge.from), node_map.get(&edge.to)) {
-            doc = doc.add(render_edge(edge, from, to));
+            let from_center = (node_cx(from), node_cy(from));
+            let to_center = (node_cx(to), node_cy(to));
+            let (src, src_side) = pick_port(from, to_center);
+            let (dst, dst_side) = pick_port(to, from_center);
+            let points = orthogonal_through_ports(src, src_side, dst, dst_side);
+            routes.push((i, points));
         }
+    }
+    let mut just_points: Vec<Vec<(f64, f64)>> = routes.iter().map(|(_, p)| p.clone()).collect();
+    nudge_overlapping_segments(&mut just_points, EDGE_NUDGE_GAP);
+    for ((_, slot), nudged) in routes.iter_mut().zip(just_points) {
+        *slot = nudged;
+    }
+
+    // Draw edges first (below nodes).
+    for (edge_idx, points) in routes {
+        let edge = &layout.edges[edge_idx];
+        doc = doc.add(render_edge(edge, &points));
     }
 
     // Draw nodes on top
@@ -254,48 +275,25 @@ fn render_note_shape(g: Group, node: &LayoutNode) -> Group {
     g.add(body).add(border).add(fold_line).add(text)
 }
 
-/// Attachment point on a node for a given direction (top/bottom/center).
-/// Pick the edge attachment point on `node` facing a position `toward`.
+/// Pick the edge attachment port on `node` facing a position `toward`.
 ///
-/// A decision diamond's four corner points coincide with the bounding-box
-/// edge midpoints, so the same "which side does the other node sit on?"
-/// logic that works for rectangles also picks the right diamond corner.
-/// For diamonds this yields the top point for incoming edges and the
-/// left/right points for branch exits — exactly the shared-entry /
-/// side-exit convention you'd draw by hand.
+/// Wraps `layout::ports::pick_port` with activity-specific shape policy.
+/// In an activity diagram the conventional reading flow is **top → bottom**
+/// — every action box should have its arrows enter at the top and exit
+/// at the bottom. Decisions are the only shape that fans out sideways
+/// (left/right corners of the diamond carry the branch exits). Bars are
+/// always horizontal too. So:
+///
+/// - `MergeBar`, `Action`, `StartEnd`, `Note`, `Arrow` → vertical only.
+/// - `Decision` → free choice; the diamond's geometry naturally selects
+///   top for the incoming edge and left/right corners for the branches.
 fn pick_port(node: &LayoutNode, toward: (f64, f64)) -> ((f64, f64), Side) {
-    let cx = node_cx(node);
-    let cy = node_cy(node);
-    let (tx, ty) = toward;
-    let dx = tx - cx;
-    let dy = ty - cy;
-    // Fork/join bars are thin rectangles — always attach top/bottom.
-    // For everything else, prefer whichever axis has the greater
-    // separation.
-    let vertical_dominates = match node.shape {
-        Shape::MergeBar => true,
-        _ => dy.abs() >= dx.abs(),
-    };
-    if vertical_dominates {
-        if dy < 0.0 {
-            ((cx, node.y), Side::Top)
-        } else {
-            ((cx, node.y + node.h), Side::Bottom)
-        }
-    } else if dx < 0.0 {
-        ((node.x, cy), Side::Left)
-    } else {
-        ((node.x + node.w, cy), Side::Right)
-    }
+    let bbox = (node.x, node.y, node.w, node.h);
+    let vertical_only = !matches!(node.shape, Shape::Decision);
+    pick_port_bbox(bbox, toward, vertical_only)
 }
 
-fn render_edge(edge: &LayoutEdge, from: &LayoutNode, to: &LayoutNode) -> Group {
-    let from_center = (node_cx(from), node_cy(from));
-    let to_center = (node_cx(to), node_cy(to));
-    let (src, src_side) = pick_port(from, to_center);
-    let (dst, dst_side) = pick_port(to, from_center);
-    let points = orthogonal_through_ports(src, src_side, dst, dst_side);
-
+fn render_edge(edge: &LayoutEdge, points: &[(f64, f64)]) -> Group {
     let class = if edge.dashed { "arrow-dashed" } else { "arrow" };
 
     let mut g = Group::new();
@@ -315,10 +313,11 @@ fn render_edge(edge: &LayoutEdge, from: &LayoutNode, to: &LayoutNode) -> Group {
 
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
-            let (mx, my) = polyline_midpoint(&points);
+            let (lx, ly, anchor) = label_perpendicular(points, 8.0);
             let text = Text::new()
-                .set("x", mx + 6.0)
-                .set("y", my)
+                .set("x", lx)
+                .set("y", ly)
+                .set("text-anchor", anchor)
                 .set("font-size", 11.0)
                 .add(text_node(lbl.clone()));
             g = g.add(text);
@@ -326,31 +325,4 @@ fn render_edge(edge: &LayoutEdge, from: &LayoutNode, to: &LayoutNode) -> Group {
     }
 
     g
-}
-
-fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
-    if points.len() < 2 {
-        return points.first().copied().unwrap_or((0.0, 0.0));
-    }
-    let seg_lens: Vec<f64> = points
-        .windows(2)
-        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
-        .collect();
-    let total: f64 = seg_lens.iter().sum();
-    let half = total / 2.0;
-    let mut travelled = 0.0;
-    for (i, &len) in seg_lens.iter().enumerate() {
-        if travelled + len >= half {
-            let t = if len > 0.0 {
-                (half - travelled) / len
-            } else {
-                0.0
-            };
-            let (x0, y0) = points[i];
-            let (x1, y1) = points[i + 1];
-            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
-        }
-        travelled += len;
-    }
-    *points.last().unwrap()
 }

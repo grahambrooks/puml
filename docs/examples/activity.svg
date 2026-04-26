@@ -15,13 +15,13 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <path class="arrow" d="M340.5,124 L340.5,154" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M312.5,182 L314,182 L314,258 L315.5,258" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M312.5,182 L235.5,182 L235.5,240" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M235.5,276 L235.5,306" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M207.5,334 L209,334 L209,410 L210.5,410" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M207.5,334 L130.5,334 L130.5,392" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M130.5,428 L130.5,458" marker-end="url(#act-arrow)"/>
@@ -30,7 +30,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <path class="arrow" d="M130.5,494 L130.5,524" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M263.5,334 L262,334 L262,410 L260.5,410" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M263.5,334 L340.5,334 L340.5,392" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M340.5,428 L340.5,458" marker-end="url(#act-arrow)"/>
@@ -39,19 +39,19 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <path class="arrow" d="M340.5,494 L340.5,524" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M221,542 L214.25,542 L214.25,618 L207.5,618" marker-end="url(#act-arrow)"/>
-<text font-size="11" x="220.25" y="580">
+<path class="arrow" d="M130.5,560 L130.5,618 L207.5,618" marker-end="url(#act-arrow)"/>
+<text font-size="11" text-anchor="middle" x="140" y="610">
 yes
 </text>
 </g>
 <g>
-<path class="arrow" d="M326.5,538 L295,538 L295,618 L263.5,618" marker-end="url(#act-arrow)"/>
-<text font-size="11" x="301" y="578">
+<path class="arrow" d="M340.5,552 L340.5,618 L263.5,618" marker-end="url(#act-arrow)"/>
+<text font-size="11" text-anchor="middle" x="335" y="637">
 no
 </text>
 </g>
 <g>
-<path class="arrow" d="M368.5,182 L367,182 L367,258 L365.5,258" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M368.5,182 L445.5,182 L445.5,240" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M445.5,276 L445.5,306" marker-end="url(#act-arrow)"/>
@@ -61,13 +61,13 @@ no
 </g>
 <g>
 <path class="arrow" d="M263.5,618 L288,618 L288,704 L312.5,704" marker-end="url(#act-arrow)"/>
-<text font-size="11" x="294" y="661">
+<text font-size="11" text-anchor="start" x="296" y="665">
 yes
 </text>
 </g>
 <g>
 <path class="arrow" d="M445.5,400 L445.5,538 L340.5,538 L340.5,676" marker-end="url(#act-arrow)"/>
-<text font-size="11" x="399" y="538">
+<text font-size="11" text-anchor="middle" x="393" y="557">
 no
 </text>
 </g>

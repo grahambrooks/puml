@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Dynamic>
+
+title Sign-In Sequence — Dynamic View
+
+Person(customer, "Personal Banking Customer")
+Container(spa, "Single-Page App", "JavaScript / React")
+Component(sign_in, "Sign-In Controller", "Spring MVC")
+Component(security, "Security Component", "Spring Bean")
+ContainerDb(db, "Database", "PostgreSQL")
+
+RelIndex(1, customer, spa, "Submits credentials")
+RelIndex(2, spa, sign_in, "POST /login", "JSON / HTTPS")
+RelIndex(3, sign_in, security, "Validates credentials")
+RelIndex(4, security, db, "Looks up user", "JDBC")
+RelIndex(5, security, sign_in, "Returns user record")
+RelIndex(6, sign_in, spa, "200 OK + session cookie")
+@enduml

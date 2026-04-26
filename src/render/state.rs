@@ -1,11 +1,14 @@
 use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
 use super::theme::Theme;
 use crate::ast::state::StateKind;
+use crate::layout::ports::pick_port;
 use crate::layout::state::{StateLayout, StateLayoutEdge, StateLayoutNode};
-use crate::layout::sugiyama::orthogonal_route;
+use crate::layout::sugiyama::{nudge_overlapping_segments, orthogonal_through_ports};
+
+const EDGE_NUDGE_GAP: f64 = 6.0;
 
 const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
@@ -43,13 +46,38 @@ pub fn render(layout: &StateLayout, theme: &Theme) -> Document {
     let node_map: std::collections::HashMap<&str, &StateLayoutNode> =
         layout.nodes.iter().map(|n| (n.name.as_str(), n)).collect();
 
-    for edge in &layout.edges {
+    // Pre-compute every route so the nudge pass sees the full edge set and
+    // can spread overlapping rails apart before any segment is drawn. Port
+    // selection picks the side facing the other node — a fork/join bar is
+    // forced top/bottom because its left/right edges have no useful
+    // surface area.
+    let mut routes: Vec<(usize, Vec<(f64, f64)>)> = Vec::new();
+    for (i, edge) in layout.edges.iter().enumerate() {
         if let (Some(from), Some(to)) = (
             node_map.get(edge.from.as_str()),
             node_map.get(edge.to.as_str()),
         ) {
-            doc = doc.add(render_edge(edge, from, to));
+            let from_bbox = (from.x, from.y, from.w, from.h);
+            let to_bbox = (to.x, to.y, to.w, to.h);
+            let from_centre = (from.x + from.w / 2.0, from.y + from.h / 2.0);
+            let to_centre = (to.x + to.w / 2.0, to.y + to.h / 2.0);
+            let vertical_only_from = matches!(from.kind, StateKind::Fork | StateKind::Join);
+            let vertical_only_to = matches!(to.kind, StateKind::Fork | StateKind::Join);
+            let (src, src_side) = pick_port(from_bbox, to_centre, vertical_only_from);
+            let (dst, dst_side) = pick_port(to_bbox, from_centre, vertical_only_to);
+            let points = orthogonal_through_ports(src, src_side, dst, dst_side);
+            routes.push((i, points));
         }
+    }
+    let mut just_points: Vec<Vec<(f64, f64)>> = routes.iter().map(|(_, p)| p.clone()).collect();
+    nudge_overlapping_segments(&mut just_points, EDGE_NUDGE_GAP);
+    for ((_, slot), nudged) in routes.iter_mut().zip(just_points) {
+        *slot = nudged;
+    }
+
+    for (edge_idx, points) in routes {
+        let edge = &layout.edges[edge_idx];
+        doc = doc.add(render_edge(edge, &points));
     }
 
     for node in &layout.nodes {
@@ -194,12 +222,7 @@ fn render_state_box(node: &StateLayoutNode) -> Group {
     Group::new().add(rect).add(text)
 }
 
-fn render_edge(edge: &StateLayoutEdge, from: &StateLayoutNode, to: &StateLayoutNode) -> Group {
-    // Orthogonal route handles forward, backward (loop-back), and sibling
-    // transitions with the same call — it picks source/target ports and
-    // bend points from the two bounding boxes.
-    let points = orthogonal_route((from.x, from.y, from.w, from.h), (to.x, to.y, to.w, to.h));
-
+fn render_edge(edge: &StateLayoutEdge, points: &[(f64, f64)]) -> Group {
     let mut g = Group::new();
     if points.len() < 2 {
         return g;
@@ -218,12 +241,11 @@ fn render_edge(edge: &StateLayoutEdge, from: &StateLayoutNode, to: &StateLayoutN
 
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
-            // Label at the path midpoint, offset slightly right of the line
-            // so it doesn't sit on the stroke itself.
-            let (mx, my) = polyline_midpoint(&points);
+            let (lx, ly, anchor) = label_perpendicular(points, 8.0);
             let text = Text::new()
-                .set("x", mx + 6.0)
-                .set("y", my)
+                .set("x", lx)
+                .set("y", ly)
+                .set("text-anchor", anchor)
                 .set("font-size", 11.0)
                 .add(text_node(lbl.clone()));
             g = g.add(text);
@@ -231,31 +253,4 @@ fn render_edge(edge: &StateLayoutEdge, from: &StateLayoutNode, to: &StateLayoutN
     }
 
     g
-}
-
-fn polyline_midpoint(points: &[(f64, f64)]) -> (f64, f64) {
-    if points.len() < 2 {
-        return points.first().copied().unwrap_or((0.0, 0.0));
-    }
-    let seg_lens: Vec<f64> = points
-        .windows(2)
-        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
-        .collect();
-    let total: f64 = seg_lens.iter().sum();
-    let half = total / 2.0;
-    let mut travelled = 0.0;
-    for (i, &len) in seg_lens.iter().enumerate() {
-        if travelled + len >= half {
-            let t = if len > 0.0 {
-                (half - travelled) / len
-            } else {
-                0.0
-            };
-            let (x0, y0) = points[i];
-            let (x1, y1) = points[i + 1];
-            return (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
-        }
-        travelled += len;
-    }
-    *points.last().unwrap()
 }

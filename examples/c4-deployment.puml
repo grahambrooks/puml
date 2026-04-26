@@ -1,0 +1,23 @@
+@startuml
+!include <C4/C4_Deployment>
+
+title Internet Banking System — Production Deployment
+
+Deployment_Node(customer_pc, "Customer's computer", "Microsoft Windows or macOS") {
+  Deployment_Node(browser, "Web Browser", "Chrome, Firefox, Safari, or Edge") {
+    ContainerInstance(spa_instance, "Single-Page App")
+  }
+}
+
+Deployment_Node(aws, "Amazon Web Services", "AWS region us-east-1") {
+  Deployment_Node(ec2, "EC2 Auto Scaling Group", "Linux VM cluster") {
+    ContainerInstance(api_instance, "API Application")
+  }
+  Deployment_Node(rds, "Amazon RDS", "PostgreSQL 15") {
+    ContainerInstance(db_instance, "Database")
+  }
+}
+
+Rel(spa_instance, api_instance, "Makes API calls to", "HTTPS")
+Rel(api_instance, db_instance, "Reads from / writes to", "JDBC")
+@enduml

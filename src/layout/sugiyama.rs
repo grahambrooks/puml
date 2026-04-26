@@ -1,13 +1,19 @@
-//! Shared layout primitives lifted from the Sugiyama hierarchical-layout
-//! family. Each diagram layout does its own rank assignment and placement;
-//! this module carries the one piece that's always the same — barycentric
-//! crossing reduction within adjacent layers.
+//! Shared layout primitives from the Sugiyama hierarchical-layout family.
 //!
-//! A fuller Sugiyama pipeline would also do network-simplex ranking, virtual
-//! nodes for long edges, and Brandes–Köpf x-coordinate assignment. We land
-//! only the crossing reduction for now: it's the single step that most
-//! affects perceived layout quality, and it's well-defined on our existing
-//! layer representation.
+//! Each diagram layout does its own rank assignment and placement, then
+//! shares the steps in this module:
+//!
+//! - `reorder_barycentric` — crossing reduction within adjacent layers.
+//! - `assign_x_median` / `assign_grid_columns` — horizontal placement.
+//! - `orthogonal_through_ports` — orthogonal polyline between two
+//!   pre-selected ports (paired with `layout::ports::pick_port`).
+//! - `nudge_overlapping_segments` — channel-routing nudge that spreads
+//!   parallel rails apart so they don't draw on top of each other.
+//!
+//! Network-simplex ranking and full Brandes–Köpf coordinate assignment are
+//! still future work; the median-based placement here is enough for the
+//! tree- and DAG-shaped inputs typical of UML class/state/component
+//! diagrams.
 use std::collections::HashMap;
 
 /// Reduce edge crossings between adjacent layers using barycentric ordering.
@@ -205,6 +211,71 @@ pub fn assign_x_median(
     x
 }
 
+/// Bidirectional median placement — a simplified Brandes & Köpf (2002).
+///
+/// Runs `assign_x_median` top-down (each node aims at the median of its
+/// predecessors), then a second pass bottom-up (each node aims at the
+/// median of its successors), and averages the two before compacting
+/// left-to-right within each layer to enforce `min_gap`.
+///
+/// The averaging gives layouts whose long edges read closer to vertical
+/// even when the graph is asymmetric — a node with one parent above and
+/// three children below pulls toward the children too, instead of
+/// stacking under its single parent and letting the children drift right.
+/// Without the conflict-edge marking and 4-variant balancing of the full
+/// algorithm, this is ~50 lines instead of ~300, and captures the main
+/// visual benefit for the tree- and DAG-shaped diagrams we render.
+pub fn assign_x_balanced(
+    layers: &[Vec<usize>],
+    edges: &[(usize, usize)],
+    widths: &[f64],
+    min_gap: f64,
+    side_margin: f64,
+) -> HashMap<usize, f64> {
+    if layers.is_empty() {
+        return HashMap::new();
+    }
+
+    let down = assign_x_median(layers, edges, widths, min_gap, side_margin);
+
+    // Bottom-up: reverse the layer order, then run the same median
+    // routine. `assign_x_median` only looks at adjacent-layer edges, so
+    // reversing layers turns its "predecessor median" into a "successor
+    // median" without any other change.
+    let reversed_layers: Vec<Vec<usize>> = layers.iter().rev().cloned().collect();
+    let up = assign_x_median(&reversed_layers, edges, widths, min_gap, side_margin);
+
+    // Average both placements per node, then compact each layer
+    // left-to-right so widths and min_gap are honoured. Compaction may
+    // shift nodes right of their average target — that's fine; the
+    // ordering and relative spacing are what matter visually.
+    let mut target: HashMap<usize, f64> = HashMap::new();
+    for layer in layers {
+        for &n in layer {
+            let d = down.get(&n).copied();
+            let u = up.get(&n).copied();
+            let avg = match (d, u) {
+                (Some(a), Some(b)) => (a + b) / 2.0,
+                (Some(a), None) | (None, Some(a)) => a,
+                _ => side_margin,
+            };
+            target.insert(n, avg);
+        }
+    }
+
+    let mut x: HashMap<usize, f64> = HashMap::new();
+    for layer in layers {
+        let mut cursor = side_margin;
+        for &n in layer {
+            let w = widths.get(n).copied().unwrap_or(0.0);
+            let placed = target.get(&n).copied().unwrap_or(cursor).max(cursor);
+            x.insert(n, placed);
+            cursor = placed + w + min_gap;
+        }
+    }
+    x
+}
+
 /// Median of the x-centres of `nodes` according to the current `x`
 /// left-coords and `widths`. `None` if no predecessor has been placed yet.
 fn median_center(nodes: &[usize], x: &HashMap<usize, f64>, widths: &[f64]) -> Option<f64> {
@@ -334,12 +405,12 @@ impl Side {
 
 /// Route an orthogonal polyline between two pre-selected ports.
 ///
-/// Unlike `orthogonal_route` which takes bounding boxes and picks
-/// box-edge midpoints as ports, this variant is used when the caller knows
-/// exactly which side of each node the edge should attach to — typically
-/// because the shape demands it (a decision diamond wants its top point
-/// for entry and side points for branch exits, not its bounding-box
-/// midpoints).
+/// Callers pick the port (top/bottom/left/right) on each node — usually via
+/// `layout::ports::pick_port` — and this function emits the polyline. A
+/// decision diamond wants its top point for entry and side points for
+/// branch exits, not its bounding-box midpoints; class boxes typically
+/// want bottom→top for parent→child; sibling-rank associations want
+/// side→side. Port selection makes that choice; this routes accordingly.
 ///
 /// The router picks the bend point(s) based on whether each port exits its
 /// node vertically or horizontally. Four combinations:
@@ -391,90 +462,134 @@ pub fn orthogonal_through_ports(
     }
 }
 
-/// Compute an orthogonal (90°-angle) route between two rectangular nodes.
+/// Spread overlapping orthogonal segments across parallel lanes so they
+/// don't draw on top of each other.
 ///
-/// Returns a polyline of waypoints, first point on the source boundary, last
-/// on the target boundary, with one or two bends between them. Segments run
-/// strictly horizontal or vertical — no diagonals. That's what makes the
-/// resulting diagram read like a Mermaid / Lucidchart / Excalidraw output
-/// instead of a hand-drawn sketch.
+/// Operates only on the middle segment of 4-point "Z-bend" routes — the
+/// shape produced by `orthogonal_through_ports` for
+/// rank-to-rank edges. The endpoint segments stay anchored to their ports;
+/// only the interior rail moves, and the two segments adjacent to it
+/// stretch or shrink to keep the polyline orthogonal.
 ///
-/// Bounding boxes are passed as `(x, y, width, height)` with `(x, y)` the
-/// top-left corner.
+/// Two routes are considered to share a rail if their middle-segment rail
+/// coordinates differ by less than `RAIL_TOLERANCE`. They overlap if their
+/// spans (extents along the rail's axis) intersect. Each overlap cluster
+/// is distributed across lanes spaced `gap` apart, centred on the original
+/// rail — so nudging is symmetric and doesn't bias one direction.
 ///
-/// Routing cases:
-///
-/// 1. Source clearly above target (gap between bottom of source and top of
-///    target): route out the bottom, across, in the top. If source and
-///    target centres already line up horizontally, collapse to a straight
-///    vertical segment.
-/// 2. Source clearly below target: mirror of case 1, routing out the top.
-/// 3. Source clearly left/right of target (no vertical overlap): route out
-///    the side, across, in the opposite side.
-/// 4. Bounding boxes overlap vertically AND horizontally: fall back to a
-///    two-point segment connecting the nearest boundary points. In practice
-///    this only triggers when the layout placed overlapping nodes — a bug
-///    worth fixing upstream rather than papering over here.
-pub fn orthogonal_route(from: (f64, f64, f64, f64), to: (f64, f64, f64, f64)) -> Vec<(f64, f64)> {
-    let (fx, fy, fw, fh) = from;
-    let (tx, ty, tw, th) = to;
-    let fcx = fx + fw / 2.0;
-    let fcy = fy + fh / 2.0;
-    let tcx = tx + tw / 2.0;
-    let tcy = ty + th / 2.0;
+/// Two-point straight routes and three-point single-bend L-routes are left
+/// alone: their bend points are anchored to box-edge midpoints, and moving
+/// them would break port attachment.
+pub fn nudge_overlapping_segments(routes: &mut [Vec<(f64, f64)>], gap: f64) {
+    const RAIL_TOLERANCE: f64 = 0.5;
+    const SPAN_EPS: f64 = 0.5;
 
-    // Tolerance for "already aligned" — two centres within this distance
-    // collapse to a straight line.
-    const ALIGN_EPS: f64 = 0.75;
+    // (route_idx, rail_coord, span_lo, span_hi) for horizontal and vertical
+    // middle segments respectively.
+    let mut horiz: Vec<(usize, f64, f64, f64)> = Vec::new();
+    let mut vert: Vec<(usize, f64, f64, f64)> = Vec::new();
 
-    // Case 1: source strictly above target.
-    if fy + fh <= ty {
-        let src = (fcx, fy + fh);
-        let dst = (tcx, ty);
-        if (fcx - tcx).abs() < ALIGN_EPS {
-            return vec![src, dst];
+    for (i, route) in routes.iter().enumerate() {
+        if route.len() != 4 {
+            continue;
         }
-        let mid_y = (fy + fh + ty) / 2.0;
-        return vec![src, (fcx, mid_y), (tcx, mid_y), dst];
+        let (x1, y1) = route[1];
+        let (x2, y2) = route[2];
+        if (y1 - y2).abs() < RAIL_TOLERANCE && (x1 - x2).abs() >= RAIL_TOLERANCE {
+            horiz.push((i, (y1 + y2) / 2.0, x1.min(x2), x1.max(x2)));
+        } else if (x1 - x2).abs() < RAIL_TOLERANCE && (y1 - y2).abs() >= RAIL_TOLERANCE {
+            vert.push((i, (x1 + x2) / 2.0, y1.min(y2), y1.max(y2)));
+        }
     }
 
-    // Case 2: source strictly below target.
-    if ty + th <= fy {
-        let src = (fcx, fy);
-        let dst = (tcx, ty + th);
-        if (fcx - tcx).abs() < ALIGN_EPS {
-            return vec![src, dst];
+    let dys = lane_offsets(&horiz, gap, RAIL_TOLERANCE, SPAN_EPS);
+    let dxs = lane_offsets(&vert, gap, RAIL_TOLERANCE, SPAN_EPS);
+
+    for (route_idx, dy) in dys {
+        let route = &mut routes[route_idx];
+        if route.len() == 4 {
+            route[1].1 += dy;
+            route[2].1 += dy;
         }
-        let mid_y = (ty + th + fy) / 2.0;
-        return vec![src, (fcx, mid_y), (tcx, mid_y), dst];
+    }
+    for (route_idx, dx) in dxs {
+        let route = &mut routes[route_idx];
+        if route.len() == 4 {
+            route[1].0 += dx;
+            route[2].0 += dx;
+        }
+    }
+}
+
+/// For a list of `(route_idx, rail, span_lo, span_hi)` entries, return the
+/// per-route offset that pushes overlapping rails into distinct lanes.
+fn lane_offsets(
+    segs: &[(usize, f64, f64, f64)],
+    gap: f64,
+    rail_tol: f64,
+    span_eps: f64,
+) -> Vec<(usize, f64)> {
+    if segs.len() < 2 {
+        return Vec::new();
     }
 
-    // Case 3a: source strictly left of target.
-    if fx + fw <= tx {
-        let src = (fx + fw, fcy);
-        let dst = (tx, tcy);
-        if (fcy - tcy).abs() < ALIGN_EPS {
-            return vec![src, dst];
-        }
-        let mid_x = (fx + fw + tx) / 2.0;
-        return vec![src, (mid_x, fcy), (mid_x, tcy), dst];
-    }
+    // Sort by rail so neighbouring rails cluster together.
+    let mut by_rail: Vec<usize> = (0..segs.len()).collect();
+    by_rail.sort_by(|&a, &b| {
+        segs[a]
+            .1
+            .partial_cmp(&segs[b].1)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
-    // Case 3b: source strictly right of target.
-    if tx + tw <= fx {
-        let src = (fx, fcy);
-        let dst = (tx + tw, tcy);
-        if (fcy - tcy).abs() < ALIGN_EPS {
-            return vec![src, dst];
+    let mut nudges: Vec<(usize, f64)> = Vec::new();
+    let mut cluster_start = 0;
+    while cluster_start < by_rail.len() {
+        let mut cluster_end = cluster_start + 1;
+        while cluster_end < by_rail.len()
+            && (segs[by_rail[cluster_end]].1 - segs[by_rail[cluster_start]].1).abs() < rail_tol
+        {
+            cluster_end += 1;
         }
-        let mid_x = (fx + tx + tw) / 2.0;
-        return vec![src, (mid_x, fcy), (mid_x, tcy), dst];
-    }
+        let cluster = &by_rail[cluster_start..cluster_end];
 
-    // Case 4: overlap — clamp each endpoint to its box perimeter and hope.
-    let src = (fcx.clamp(fx, fx + fw), fcy.clamp(fy, fy + fh));
-    let dst = (tcx.clamp(tx, tx + tw), tcy.clamp(ty, ty + th));
-    vec![src, dst]
+        if cluster.len() > 1 {
+            // Sweep within the cluster on span_lo to find overlap groups.
+            let mut by_span: Vec<usize> = cluster.to_vec();
+            by_span.sort_by(|&a, &b| {
+                segs[a]
+                    .2
+                    .partial_cmp(&segs[b].2)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
+
+            let mut group_start = 0;
+            while group_start < by_span.len() {
+                let mut group_end = group_start + 1;
+                let mut group_max = segs[by_span[group_start]].3;
+                while group_end < by_span.len() && segs[by_span[group_end]].2 < group_max - span_eps
+                {
+                    group_max = group_max.max(segs[by_span[group_end]].3);
+                    group_end += 1;
+                }
+                let group = &by_span[group_start..group_end];
+                if group.len() > 1 {
+                    // Lanes are centred on the original rail so the cluster
+                    // doesn't bias upward or downward.
+                    let count = group.len() as f64;
+                    for (lane, &seg_idx) in group.iter().enumerate() {
+                        let offset = (lane as f64 - (count - 1.0) / 2.0) * gap;
+                        if offset.abs() > 1e-6 {
+                            nudges.push((segs[seg_idx].0, offset));
+                        }
+                    }
+                }
+                group_start = group_end;
+            }
+        }
+        cluster_start = cluster_end;
+    }
+    nudges
 }
 
 #[cfg(test)]
@@ -563,47 +678,6 @@ mod tests {
     }
 
     #[test]
-    fn orthogonal_route_straight_line_when_aligned() {
-        // Two boxes vertically aligned (same center-x); expect a 2-point
-        // straight line, no bends.
-        let from = (40.0, 0.0, 80.0, 30.0); // centre x = 80
-        let to = (40.0, 80.0, 80.0, 30.0); // centre x = 80
-        let pts = orthogonal_route(from, to);
-        assert_eq!(pts.len(), 2);
-        assert_eq!(pts[0], (80.0, 30.0)); // source bottom-centre
-        assert_eq!(pts[1], (80.0, 80.0)); // target top-centre
-    }
-
-    #[test]
-    fn orthogonal_route_bends_for_offset_child() {
-        // Source above-left, target below-right. Expect 4 points: source
-        // bottom, bend, bend, target top.
-        let from = (0.0, 0.0, 60.0, 30.0); // centre x = 30
-        let to = (200.0, 80.0, 60.0, 30.0); // centre x = 230
-        let pts = orthogonal_route(from, to);
-        assert_eq!(pts.len(), 4);
-        assert_eq!(pts[0], (30.0, 30.0));
-        assert_eq!(pts[3], (230.0, 80.0));
-        // Interior points share y = midway, and x steps at the corners.
-        assert!((pts[1].1 - pts[2].1).abs() < 0.001);
-        assert_eq!(pts[1].0, 30.0);
-        assert_eq!(pts[2].0, 230.0);
-    }
-
-    #[test]
-    fn orthogonal_route_side_attach_when_same_row() {
-        // Two boxes in the same row (vertically overlapping), source left.
-        // Expect routing out the right side, across, in the left side.
-        let from = (0.0, 0.0, 60.0, 40.0);
-        let to = (200.0, 5.0, 60.0, 40.0);
-        let pts = orthogonal_route(from, to);
-        // At least 2 points, first on the right boundary of `from`.
-        assert!(!pts.is_empty());
-        assert_eq!(pts[0].0, 60.0); // from right edge
-        assert_eq!(pts.last().unwrap().0, 200.0); // to left edge
-    }
-
-    #[test]
     fn ports_bottom_to_top_collapses_when_aligned() {
         // Diamond top exit + child top entry, aligned x.
         let pts = orthogonal_through_ports((100.0, 50.0), Side::Bottom, (100.0, 150.0), Side::Top);
@@ -672,5 +746,118 @@ mod tests {
         assert_eq!(col[&6], 1);
         assert_eq!(col[&8], 3);
         assert!(col[&99] == 1 || col[&99] == 3);
+    }
+
+    #[test]
+    fn balanced_centres_parent_over_children() {
+        // Single parent above two children. The top-down pass anchors the
+        // parent at the side margin and the children spread under it; the
+        // bottom-up pass pulls the parent toward the children's median.
+        // The averaged result should put the parent roughly above the
+        // midpoint of its two children.
+        let layers = vec![vec![0], vec![1, 2]];
+        let widths = vec![100.0, 80.0, 80.0];
+        let edges = vec![(1, 0), (2, 0)];
+        let x = assign_x_balanced(&layers, &edges, &widths, 20.0, 10.0);
+        let parent_centre = x[&0] + widths[0] / 2.0;
+        let child_left = x[&1] + widths[1] / 2.0;
+        let child_right = x[&2] + widths[2] / 2.0;
+        let kids_midpoint = (child_left + child_right) / 2.0;
+        // Allow a small margin — averaging plus min_gap compaction means
+        // perfect alignment is not guaranteed, but the parent should be
+        // close to the kids' midpoint.
+        assert!(
+            (parent_centre - kids_midpoint).abs() < 60.0,
+            "parent centre {parent_centre} should be near kids' midpoint {kids_midpoint}"
+        );
+    }
+
+    #[test]
+    fn balanced_preserves_min_gap() {
+        // Even with bidirectional pull, no two siblings should overlap.
+        let layers = vec![vec![0], vec![1, 2]];
+        let widths = vec![120.0, 80.0, 80.0];
+        let edges = vec![(1, 0), (2, 0)];
+        let x = assign_x_balanced(&layers, &edges, &widths, 20.0, 10.0);
+        let left_end = x[&1] + widths[1];
+        let right_start = x[&2];
+        assert!(
+            right_start >= left_end + 20.0 - 0.001,
+            "children overlap: left ends at {left_end}, right starts at {right_start}"
+        );
+    }
+
+    #[test]
+    fn nudge_leaves_isolated_route_unchanged() {
+        let mut routes = vec![vec![(0.0, 0.0), (0.0, 50.0), (100.0, 50.0), (100.0, 100.0)]];
+        let original = routes.clone();
+        nudge_overlapping_segments(&mut routes, 6.0);
+        assert_eq!(routes, original);
+    }
+
+    #[test]
+    fn nudge_separates_two_overlapping_horizontal_rails() {
+        // Two 4-point routes with horizontal middle segments at the same y
+        // and overlapping x spans. They should be split symmetrically.
+        let mut routes = vec![
+            vec![(0.0, 0.0), (0.0, 50.0), (100.0, 50.0), (100.0, 100.0)],
+            vec![(20.0, 0.0), (20.0, 50.0), (80.0, 50.0), (80.0, 100.0)],
+        ];
+        nudge_overlapping_segments(&mut routes, 6.0);
+        // Middle rails moved to y = 50 ± 3.
+        let r0_y = routes[0][1].1;
+        let r1_y = routes[1][1].1;
+        assert!((r0_y - 47.0).abs() < 0.001 || (r0_y - 53.0).abs() < 0.001);
+        assert!((r1_y - 47.0).abs() < 0.001 || (r1_y - 53.0).abs() < 0.001);
+        assert!((r0_y - r1_y).abs() > 5.0);
+        // Endpoint segments stay anchored to ports.
+        assert_eq!(routes[0][0], (0.0, 0.0));
+        assert_eq!(routes[0][3], (100.0, 100.0));
+        assert_eq!(routes[1][0], (20.0, 0.0));
+        assert_eq!(routes[1][3], (80.0, 100.0));
+        // Rails still horizontal after nudging.
+        assert!((routes[0][1].1 - routes[0][2].1).abs() < 0.001);
+        assert!((routes[1][1].1 - routes[1][2].1).abs() < 0.001);
+    }
+
+    #[test]
+    fn nudge_ignores_non_overlapping_spans() {
+        // Same rail y, but the spans don't intersect — leave alone.
+        let mut routes = vec![
+            vec![(0.0, 0.0), (0.0, 50.0), (40.0, 50.0), (40.0, 100.0)],
+            vec![(80.0, 0.0), (80.0, 50.0), (120.0, 50.0), (120.0, 100.0)],
+        ];
+        let original = routes.clone();
+        nudge_overlapping_segments(&mut routes, 6.0);
+        assert_eq!(routes, original);
+    }
+
+    #[test]
+    fn nudge_preserves_two_point_straight_routes() {
+        // Two-point routes are anchored to ports at both ends and must not
+        // be touched even if they share a coordinate with other routes.
+        let mut routes = vec![
+            vec![(50.0, 0.0), (50.0, 100.0)],
+            vec![(50.0, 0.0), (50.0, 100.0)],
+        ];
+        let original = routes.clone();
+        nudge_overlapping_segments(&mut routes, 6.0);
+        assert_eq!(routes, original);
+    }
+
+    #[test]
+    fn nudge_separates_three_overlapping_rails_symmetrically() {
+        let mut routes = vec![
+            vec![(0.0, 0.0), (0.0, 50.0), (100.0, 50.0), (100.0, 100.0)],
+            vec![(10.0, 0.0), (10.0, 50.0), (90.0, 50.0), (90.0, 100.0)],
+            vec![(20.0, 0.0), (20.0, 50.0), (80.0, 50.0), (80.0, 100.0)],
+        ];
+        nudge_overlapping_segments(&mut routes, 6.0);
+        // Three lanes: -gap, 0, +gap → y = 44, 50, 56.
+        let mut ys: Vec<f64> = routes.iter().map(|r| r[1].1).collect();
+        ys.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        assert!((ys[0] - 44.0).abs() < 0.001);
+        assert!((ys[1] - 50.0).abs() < 0.001);
+        assert!((ys[2] - 56.0).abs() < 0.001);
     }
 }

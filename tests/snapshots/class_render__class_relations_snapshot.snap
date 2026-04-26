@@ -1,6 +1,5 @@
 ---
 source: tests/class_render.rs
-assertion_line: 40
 expression: svg
 ---
 <svg height="262" viewBox="0 0 740 262" width="740" xmlns="http://www.w3.org/2000/svg">
@@ -30,7 +29,7 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
 <path class="class-line" d="M210,91 L170,91" marker-end="url(#arr-diamond-f)"/>
-<text font-size="11" text-anchor="middle" x="190" y="87">
+<text font-size="11" text-anchor="middle" x="190" y="110">
 contains
 </text>
 <text font-size="11" x="216" y="87">
@@ -42,7 +41,7 @@ many
 </g>
 <g>
 <path class="class-line" d="M390,91 L350,91" marker-end="url(#arr-diamond-h)"/>
-<text font-size="11" text-anchor="middle" x="370" y="87">
+<text font-size="11" text-anchor="middle" x="370" y="110">
 employs
 </text>
 <text font-size="11" x="396" y="87">
@@ -54,7 +53,7 @@ many
 </g>
 <g>
 <path class="class-line" d="M530,91 L570,91" marker-end="none"/>
-<text font-size="11" text-anchor="middle" x="550" y="87">
+<text font-size="11" text-anchor="middle" x="550" y="83">
 has
 </text>
 </g>

@@ -74,6 +74,39 @@ fn inheritance_chain_snapshot() {
 }
 
 #[test]
+fn multirank_renders() {
+    // A 3-deep inheritance chain (A → B → C → D) plus a long association
+    // A--D that spans every layer. Verifies that the long edge threads
+    // through virtual nodes rather than cutting straight across the diagram.
+    let svg = render_fixture("class_multirank.puml");
+    assert!(svg.contains("\nA\n"));
+    assert!(svg.contains("\nD\n"));
+    assert!(svg.contains("\nE\n"));
+    // The long A--D edge crosses three layers; with virtual nodes the
+    // routing produces a polyline with ≥5 segments. Without them it would
+    // be a 3-segment Z.
+    let class_lines: Vec<&str> = svg
+        .lines()
+        .filter(|l| l.contains("class=\"class-line\""))
+        .collect();
+    let max_bends = class_lines
+        .iter()
+        .map(|l| l.matches(" L").count())
+        .max()
+        .unwrap_or(0);
+    assert!(
+        max_bends >= 5,
+        "expected stair-step routing to produce ≥5 L segments on the long edge; max found {max_bends}"
+    );
+}
+
+#[test]
+fn multirank_snapshot() {
+    let svg = render_fixture("class_multirank.puml");
+    insta::assert_snapshot!(svg);
+}
+
+#[test]
 fn associations_renders() {
     let svg = render_fixture("class_associations.puml");
     assert!(svg.contains("Order"));

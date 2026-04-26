@@ -2,6 +2,7 @@ pub mod activity;
 pub mod class;
 pub mod gantt;
 pub mod mindmap;
+pub mod ports;
 pub mod sequence;
 pub mod state;
 pub mod sugiyama;

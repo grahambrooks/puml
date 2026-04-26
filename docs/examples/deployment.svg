@@ -1,4 +1,4 @@
-<svg height="242" viewBox="0 0 3260 242" width="3260" xmlns="http://www.w3.org/2000/svg">
+<svg height="852" viewBox="0 0 920 852" width="920" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -23,226 +23,172 @@
 text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}@media (prefers-color-scheme:dark){text{fill:#e8e8e8}.bg{fill:#1e1e1e}.arrow,.class-line{stroke:#e8e8e8}.arrow-dashed,.class-line-dashed{stroke:#e8e8e8}.divider-line{stroke:#aaaaaa}}
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
-<text class="title" text-anchor="middle" x="1630" y="30">
+<text class="title" text-anchor="middle" x="460" y="30">
 Production Deployment
 </text>
 <g>
-<path class="class-line" d="M1790,111 L1830,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="1810" y="107">
+<path class="class-line" d="M820,578 L820,477 L820,355 L820,233 L820,182.5 L460,182.5 L460,132" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="812.5" y="201.5">
 serve
 </text>
 </g>
 <g>
-<path class="class-line" d="M1790,111 L2010,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="1900" y="107">
+<path class="class-line" d="M820,578 L820,538 L640,538 L640,498" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="730" y="557">
 dynamic
 </text>
 </g>
 <g>
-<path class="class-line" d="M2150,111 L2190,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2170" y="107">
+<path class="class-line" d="M640,456 L640,416 L460,416 L460,376" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="550" y="435">
 route
 </text>
 </g>
 <g>
-<path class="class-line" d="M2150,111 L2370,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2260" y="107">
+<path class="class-line" d="M640,456 L640,376" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="end" x="632" y="420">
 route
 </text>
 </g>
 <g>
-<path class="class-line" d="M2330,111 L2550,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2440" y="107">
+<path class="class-line" d="M460,334 L460,254" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="end" x="452" y="298">
 read/write
 </text>
 </g>
 <g>
-<path class="class-line" d="M2510,111 L2550,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2530" y="107">
+<path class="class-line" d="M640,334 L640,294 L460,294 L460,254" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="550" y="313">
 read/write
 </text>
 </g>
 <g>
-<path class="class-line" d="M2690,111 L2730,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2710" y="107">
+<path class="class-line" d="M460,212 L460,172 L100,172 L100,132" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="280" y="191">
 replicate
 </text>
 </g>
 <g>
-<path class="class-line" d="M2330,111 L2910,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2620" y="107">
+<path class="class-line" d="M460,334 L460,283.5 L280,283.5 L280,233 L280,132" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="319.5" y="302.5">
 publish
 </text>
 </g>
 <g>
-<path class="class-line" d="M2510,111 L2910,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2710" y="107">
+<path class="class-line" d="M640,334 L640,233 L640,182.5 L280,182.5 L280,132" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="510.5" y="201.5">
 publish
 </text>
 </g>
 <g>
-<path class="class-line" d="M3090,111 L1790,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2440" y="107">
+<path class="class-line" d="M820,700 L820,620" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="end" x="812" y="664">
 hosts
 </text>
 </g>
 <g>
-<path class="class-line" d="M3090,111 L2150,111" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="2620" y="107">
+<path class="class-line" d="M820,700 L820,649.5 L640,649.5 L640,599 L640,498" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="679.5" y="668.5">
 hosts
 </text>
 </g>
 <g>
-<path d="M170.00,111.00 A22.12,22.12 0 0 1 149.50,125.85 A37.47,37.47 0 0 1 100.00,132.00 A37.47,37.47 0 0 1 50.50,125.85 A22.12,22.12 0 0 1 30.00,111.00 A22.12,22.12 0 0 1 50.50,96.15 A37.47,37.47 0 0 1 100.00,90.00 A37.47,37.47 0 0 1 149.50,96.15 A22.12,22.12 0 0 1 170.00,111.00 Z" fill="none" stroke="#8da0b0" stroke-width="1.5"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="100" y="102">
+<path d="M890.00,721.00 A22.12,22.12 0 0 1 869.50,735.85 A37.47,37.47 0 0 1 820.00,742.00 A37.47,37.47 0 0 1 770.50,735.85 A22.12,22.12 0 0 1 750.00,721.00 A22.12,22.12 0 0 1 770.50,706.15 A37.47,37.47 0 0 1 820.00,700.00 A37.47,37.47 0 0 1 869.50,706.15 A22.12,22.12 0 0 1 890.00,721.00 Z" fill="none" stroke="#8da0b0" stroke-width="1.5"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="820" y="712">
 «cloud»
 </text>
-<text font-weight="bold" text-anchor="middle" x="100" y="116">
+<text font-weight="bold" text-anchor="middle" x="820" y="726">
 AWS us-east-1
 </text>
 </g>
 <g>
-<polygon fill="none" points="210,96 216,90 350,90 344,96" stroke="#888888" stroke-width="1.5"/>
-<polygon fill="none" points="344,96 350,90 350,126 344,132" stroke="#888888" stroke-width="1.5"/>
-<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="210" y="96"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="280" y="102">
+<polygon fill="none" points="750,584 756,578 890,578 884,584" stroke="#888888" stroke-width="1.5"/>
+<polygon fill="none" points="884,584 890,578 890,614 884,620" stroke="#888888" stroke-width="1.5"/>
+<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="750" y="584"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="820" y="590">
 «node»
 </text>
-<text font-weight="bold" text-anchor="middle" x="280" y="116">
+<text font-weight="bold" text-anchor="middle" x="820" y="604">
 Edge CDN
 </text>
 </g>
 <g>
-<polygon fill="none" points="390,96 396,90 530,90 524,96" stroke="#888888" stroke-width="1.5"/>
-<polygon fill="none" points="524,96 530,90 530,126 524,132" stroke="#888888" stroke-width="1.5"/>
-<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="390" y="96"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="460" y="102">
+<polygon fill="none" points="570,462 576,456 710,456 704,462" stroke="#888888" stroke-width="1.5"/>
+<polygon fill="none" points="704,462 710,456 710,492 704,498" stroke="#888888" stroke-width="1.5"/>
+<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="570" y="462"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="640" y="468">
 «node»
 </text>
-<text font-weight="bold" text-anchor="middle" x="460" y="116">
+<text font-weight="bold" text-anchor="middle" x="640" y="482">
 Load Balancer
 </text>
 </g>
 <g>
-<polygon fill="none" points="570,96 576,90 710,90 704,96" stroke="#888888" stroke-width="1.5"/>
-<polygon fill="none" points="704,96 710,90 710,126 704,132" stroke="#888888" stroke-width="1.5"/>
-<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="570" y="96"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="640" y="102">
+<polygon fill="none" points="390,340 396,334 530,334 524,340" stroke="#888888" stroke-width="1.5"/>
+<polygon fill="none" points="524,340 530,334 530,370 524,376" stroke="#888888" stroke-width="1.5"/>
+<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="390" y="340"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="460" y="346">
 «node»
 </text>
-<text font-weight="bold" text-anchor="middle" x="640" y="116">
+<text font-weight="bold" text-anchor="middle" x="460" y="360">
 API Server 1
 </text>
 </g>
 <g>
-<polygon fill="none" points="750,96 756,90 890,90 884,96" stroke="#888888" stroke-width="1.5"/>
-<polygon fill="none" points="884,96 890,90 890,126 884,132" stroke="#888888" stroke-width="1.5"/>
-<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="750" y="96"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="820" y="102">
+<polygon fill="none" points="570,340 576,334 710,334 704,340" stroke="#888888" stroke-width="1.5"/>
+<polygon fill="none" points="704,340 710,334 710,370 704,376" stroke="#888888" stroke-width="1.5"/>
+<rect fill="none" height="36" stroke="#888888" stroke-width="1.5" width="134" x="570" y="340"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="640" y="346">
 «node»
 </text>
-<text font-weight="bold" text-anchor="middle" x="820" y="116">
+<text font-weight="bold" text-anchor="middle" x="640" y="360">
 API Server 2
 </text>
 </g>
 <g>
-<line stroke="#a06ba0" stroke-width="1.5" x1="930" x2="930" y1="97.56" y2="124.44"/>
-<line stroke="#a06ba0" stroke-width="1.5" x1="1070" x2="1070" y1="97.56" y2="124.44"/>
-<path d="M930,124.44 A70,7.56 0 0 0 1070,124.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
-<ellipse cx="1000" cy="97.56" fill="none" rx="70" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="1000" y="102">
+<line stroke="#a06ba0" stroke-width="1.5" x1="390" x2="390" y1="219.56" y2="246.44"/>
+<line stroke="#a06ba0" stroke-width="1.5" x1="530" x2="530" y1="219.56" y2="246.44"/>
+<path d="M390,246.44 A70,7.56 0 0 0 530,246.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
+<ellipse cx="460" cy="219.56" fill="none" rx="70" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="460" y="224">
 «database»
 </text>
-<text font-weight="bold" text-anchor="middle" x="1000" y="116">
+<text font-weight="bold" text-anchor="middle" x="460" y="238">
 Primary DB
 </text>
 </g>
 <g>
-<line stroke="#a06ba0" stroke-width="1.5" x1="1110" x2="1110" y1="97.56" y2="124.44"/>
-<line stroke="#a06ba0" stroke-width="1.5" x1="1250" x2="1250" y1="97.56" y2="124.44"/>
-<path d="M1110,124.44 A70,7.56 0 0 0 1250,124.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
-<ellipse cx="1180" cy="97.56" fill="none" rx="70" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="1180" y="102">
+<line stroke="#a06ba0" stroke-width="1.5" x1="30" x2="30" y1="97.56" y2="124.44"/>
+<line stroke="#a06ba0" stroke-width="1.5" x1="170" x2="170" y1="97.56" y2="124.44"/>
+<path d="M30,124.44 A70,7.56 0 0 0 170,124.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
+<ellipse cx="100" cy="97.56" fill="none" rx="70" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="100" y="102">
 «database»
 </text>
-<text font-weight="bold" text-anchor="middle" x="1180" y="116">
+<text font-weight="bold" text-anchor="middle" x="100" y="116">
 Replica DB
 </text>
 </g>
 <g>
-<line stroke="#5a92c4" stroke-width="1.5" x1="1300" x2="1420" y1="90" y2="90"/>
-<line stroke="#5a92c4" stroke-width="1.5" x1="1300" x2="1420" y1="132" y2="132"/>
-<ellipse cx="1300" cy="111" fill="none" rx="10" ry="21" stroke="#5a92c4" stroke-width="1.5"/>
-<path d="M1420,90 A10,21 0 0 1 1420,132" fill="none" stroke="#5a92c4" stroke-width="1.5"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="1360" y="102">
+<line stroke="#5a92c4" stroke-width="1.5" x1="220" x2="340" y1="90" y2="90"/>
+<line stroke="#5a92c4" stroke-width="1.5" x1="220" x2="340" y1="132" y2="132"/>
+<ellipse cx="220" cy="111" fill="none" rx="10" ry="21" stroke="#5a92c4" stroke-width="1.5"/>
+<path d="M340,90 A10,21 0 0 1 340,132" fill="none" stroke="#5a92c4" stroke-width="1.5"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="280" y="102">
 «queue»
 </text>
-<text font-weight="bold" text-anchor="middle" x="1360" y="116">
+<text font-weight="bold" text-anchor="middle" x="280" y="116">
 Event Bus
 </text>
 </g>
 <g>
-<path d="M1470,90 L1519,90 L1529,100 L1610,100 L1610,132 L1470,132 Z" fill="none" stroke="#c89b2e" stroke-width="1.5"/>
-<line stroke="#c89b2e" stroke-width="1" x1="1470" x2="1529" y1="100" y2="100"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="1540" y="102">
+<path d="M390,90 L439,90 L449,100 L530,100 L530,132 L390,132 Z" fill="none" stroke="#c89b2e" stroke-width="1.5"/>
+<line stroke="#c89b2e" stroke-width="1" x1="390" x2="449" y1="100" y2="100"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="460" y="102">
 «folder»
 </text>
-<text font-weight="bold" text-anchor="middle" x="1540" y="116">
+<text font-weight="bold" text-anchor="middle" x="460" y="116">
 Static Assets
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1650" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="1720" y="112">
-cdn
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="1830" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="1900" y="112">
-assets
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2010" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2080" y="112">
-lb
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2190" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2260" y="112">
-api1
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2370" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2440" y="112">
-api2
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2550" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2620" y="112">
-primary
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2730" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2800" y="112">
-replica
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="2910" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="2980" y="112">
-bus
-</text>
-</g>
-<g>
-<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="3090" y="90"/>
-<text font-weight="bold" text-anchor="middle" x="3160" y="112">
-aws
 </text>
 </g>
 </svg>

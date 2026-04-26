@@ -10,10 +10,28 @@ pub struct DiagramSource {
     pub type_hint: Option<String>,
 }
 
+#[allow(dead_code)] // bin doesn't call this; lib consumers and tests do
 pub fn preprocess(source: &str, base_dir: Option<&Path>) -> Vec<DiagramSource> {
-    let expanded = expand_includes(source, base_dir, &mut HashMap::new());
+    preprocess_with_includes(source, base_dir).0
+}
+
+/// Same as [`preprocess`] but also returns the set of files reached via
+/// `!include` directives during expansion. Watch mode uses this to track
+/// every file whose contents could affect the rendered output.
+pub fn preprocess_with_includes(
+    source: &str,
+    base_dir: Option<&Path>,
+) -> (Vec<DiagramSource>, Vec<PathBuf>) {
+    let mut seen: HashMap<PathBuf, ()> = HashMap::new();
+    let expanded = expand_includes(source, base_dir, &mut seen);
+    // C4 macro translation runs after include expansion (so any included
+    // C4 helper file gets seen) and before define expansion (so a `!define`
+    // can still target a translated line).
+    let expanded = super::c4::translate(&expanded);
     let expanded = expand_defines(&expanded);
-    split_diagrams(&expanded)
+    let diagrams = split_diagrams(&expanded);
+    let includes: Vec<PathBuf> = seen.into_keys().collect();
+    (diagrams, includes)
 }
 
 fn expand_includes(
@@ -26,6 +44,14 @@ fn expand_includes(
         let trimmed = line.trim();
         if let Some(rest) = trimmed.strip_prefix("!include ") {
             let path_str = rest.trim().trim_matches('"');
+            // Stdlib references (`!include <C4/Container>`, `!include <office/...>`)
+            // are not real files on disk — pass them through so downstream
+            // translation passes (e.g. C4) can detect and handle them.
+            if path_str.starts_with('<') && path_str.ends_with('>') {
+                out.push_str(line);
+                out.push('\n');
+                continue;
+            }
             let resolved = base_dir
                 .map(|d| d.join(path_str))
                 .unwrap_or_else(|| PathBuf::from(path_str));

@@ -18,9 +18,19 @@ class Circle {
   +area(): double
 }
 
-class Rectangle {
-  +width: double
+class Square {
+  +side: double
+  +area(): double
+}
+
+class Triangle {
+  +base: double
   +height: double
+  +area(): double
+}
+
+class Polygon {
+  -points: List<Point>
   +area(): double
 }
 
@@ -32,6 +42,9 @@ class Canvas {
 
 Shape ..|> Drawable : implements
 Circle --|> Shape : extends
-Rectangle --|> Shape : extends
+Square --|> Shape : extends
+Triangle --|> Shape : extends
+Polygon --|> Shape : extends
 Canvas "1" o-- "*" Shape : contains
+Canvas ..> Circle : creates
 @enduml

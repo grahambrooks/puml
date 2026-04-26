@@ -16,6 +16,9 @@ const ACTIVATION_WIDTH: f64 = 10.0;
 const FONT_SIZE: f64 = 13.0;
 const TOP_MARGIN: f64 = 20.0;
 const TITLE_HEIGHT: f64 = 30.0;
+const SELF_LOOP_MIN_W: f64 = 30.0;
+const SELF_LOOP_H: f64 = 20.0;
+const CHAR_WIDTH: f64 = 7.5;
 
 pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     let title_offset = if layout.title.is_some() {
@@ -191,6 +194,16 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
         .add(label)
 }
 
+/// Width of the right-angle loop arc for a self-message — sized so the
+/// label fits comfortably inside the loop's horizontal extent. The same
+/// formula is used in `layout::sequence::widen_for_messages` so the
+/// participant column is always wide enough to hold the loop without
+/// bleeding into the next column.
+pub fn self_loop_width(label: &str) -> f64 {
+    let label_pixels = label.chars().count() as f64 * CHAR_WIDTH;
+    (label_pixels + 16.0).max(SELF_LOOP_MIN_W)
+}
+
 fn render_message(m: &MessageLayout, y_off: f64) -> Group {
     let y = m.y + y_off;
     let label_y = y - 5.0;
@@ -202,9 +215,14 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
     };
 
     if m.self_msg {
-        // Self-message: right-angle path looping right
+        // Self-message: right-angle path looping right. Loop width grows
+        // with the label so a long message still has somewhere to put its
+        // text without crashing into the next participant's lifeline.
+        // Layout's `widen_for_messages` widens the source participant's
+        // column with the same formula, so the loop always fits inside
+        // its column with room to spare.
         let x = m.from_x;
-        let loop_w = 30.0;
+        let loop_w = self_loop_width(&m.label);
         let path = svg::node::element::Path::new()
             .set(
                 "d",
@@ -212,15 +230,19 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
                     "M {x} {y} L {} {y} L {} {} L {x} {}",
                     x + loop_w,
                     x + loop_w,
-                    y + 20.0,
-                    y + 20.0
+                    y + SELF_LOOP_H,
+                    y + SELF_LOOP_H
                 ),
             )
             .set("class", class)
             .set("marker-end", marker);
+        // Label centred above the top arc — same convention as a
+        // cross-participant message label, just relative to the loop's
+        // bounding box instead of the line itself.
         let label = Text::new()
-            .set("x", x + loop_w + 4.0)
-            .set("y", y + 10.0)
+            .set("x", x + loop_w / 2.0)
+            .set("y", label_y)
+            .set("text-anchor", "middle")
             .add(text_node(m.label.clone()));
         return Group::new().add(path).add(label);
     }

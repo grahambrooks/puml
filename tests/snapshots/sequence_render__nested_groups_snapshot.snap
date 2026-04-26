@@ -1,9 +1,8 @@
 ---
 source: tests/sequence_render.rs
-assertion_line: 103
 expression: svg
 ---
-<svg height="402" viewBox="0 0 310 402" width="310" xmlns="http://www.w3.org/2000/svg">
+<svg height="418" viewBox="0 0 317 418" width="317" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -23,29 +22,29 @@ Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
-<text text-anchor="middle" x="230" y="44.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="173.5" y="20"/>
+<text text-anchor="middle" x="233.5" y="44.5">
 Bob
 </text>
 </g>
-<line class="lifeline" x1="80" x2="80" y1="60" y2="332"/>
-<line class="lifeline" x1="230" x2="230" y1="60" y2="332"/>
+<line class="lifeline" x1="80" x2="80" y1="60" y2="348"/>
+<line class="lifeline" x1="233.5" x2="233.5" y1="60" y2="348"/>
 <g>
-<rect fill="none" height="136" stroke="#888" stroke-width="1.2" width="270" x="20" y="178"/>
-<polygon fill="none" points="20,178 60,178 68,186 60,194 20,194" stroke="#888888" stroke-width="1.2"/>
-<text font-size="11" font-weight="bold" x="28" y="190">
+<rect fill="none" height="136" stroke="#888" stroke-width="1.2" width="273.5" x="20" y="194"/>
+<polygon fill="none" points="20,194 60,194 68,202 60,210 20,210" stroke="#888888" stroke-width="1.2"/>
+<text font-size="11" font-weight="bold" x="28" y="206">
 alt
 </text>
-<text font-size="12" x="76" y="190">
+<text font-size="12" x="76" y="206">
 [success]
 </text>
-<line stroke="#888" stroke-dasharray="4,3" stroke-width="1" x1="20" x2="290" y1="246" y2="246"/>
-<text font-size="12" font-weight="bold" x="28" y="259">
+<line stroke="#888" stroke-dasharray="4,3" stroke-width="1" x1="20" x2="293.5" y1="262" y2="262"/>
+<text font-size="12" font-weight="bold" x="28" y="275">
 [timeout]
 </text>
 </g>
 <g>
-<rect fill="none" height="212" stroke="#888" stroke-width="1.2" width="270" x="20" y="110"/>
+<rect fill="none" height="228" stroke="#888" stroke-width="1.2" width="273.5" x="20" y="110"/>
 <polygon fill="none" points="20,110 68,110 76,118 68,126 20,126" stroke="#888888" stroke-width="1.2"/>
 <text font-size="11" font-weight="bold" x="28" y="122">
 loop
@@ -55,38 +54,38 @@ loop
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="70" y2="70"/>
-<text text-anchor="middle" x="155" y="65">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="233.5" y1="70" y2="70"/>
+<text text-anchor="middle" x="156.75" y="65">
 connect
 </text>
 </g>
 <g>
-<path class="arrow" d="M 230 138 L 260 138 L 260 158 L 230 158" marker-end="url(#arrowhead)"/>
-<text x="264" y="148">
+<path class="arrow" d="M 233.5 138 L 287 138 L 287 158 L 233.5 158" marker-end="url(#arrowhead)"/>
+<text text-anchor="middle" x="260.25" y="133">
 retry
 </text>
 </g>
 <g>
-<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="206" y2="206"/>
-<text text-anchor="middle" x="155" y="201">
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="233.5" x2="80" y1="222" y2="222"/>
+<text text-anchor="middle" x="156.75" y="217">
 200 OK
 </text>
 </g>
 <g>
-<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="266" y2="266"/>
-<text text-anchor="middle" x="155" y="261">
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="233.5" x2="80" y1="282" y2="282"/>
+<text text-anchor="middle" x="156.75" y="277">
 504
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="332"/>
-<text text-anchor="middle" x="80" y="356.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="348"/>
+<text text-anchor="middle" x="80" y="372.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="332"/>
-<text text-anchor="middle" x="230" y="356.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="173.5" y="348"/>
+<text text-anchor="middle" x="233.5" y="372.5">
 Bob
 </text>
 </g>

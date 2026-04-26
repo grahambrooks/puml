@@ -1,6 +1,5 @@
 ---
 source: tests/state_render.rs
-assertion_line: 42
 expression: svg
 ---
 <svg height="484" viewBox="0 0 284 484" width="284" xmlns="http://www.w3.org/2000/svg">
@@ -14,43 +13,43 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<path class="arrow" d="M52,54 L52,79 L100,79 L100,104" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M76,54 L76,79 L100,79 L100,104" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M100,140 L100,190" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="165">
+<text font-size="11" text-anchor="start" x="108" y="169">
 poll
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,222 L100,358" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="290">
+<text font-size="11" text-anchor="start" x="108" y="294">
 ready
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,222 L100,272" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="247">
+<text font-size="11" text-anchor="start" x="108" y="251">
 wait
 </text>
 </g>
 <g>
 <path class="arrow" d="M160,376 L190,376 L190,370 L220,370" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="196" y="373">
+<text font-size="11" text-anchor="end" x="182" y="377">
 resume
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,308 L100,358" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="333">
+<text font-size="11" text-anchor="start" x="108" y="337">
 go
 </text>
 </g>
 <g>
-<path class="arrow" d="M100,358 L100,206 L52,206 L52,54" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M100,358 L100,206 L76,206 L76,54" marker-end="url(#state-arrow)"/>
 </g>
 <g>
-<circle cx="52" cy="42" fill="#181818" r="12"/>
+<circle cx="76" cy="42" fill="#181818" r="12"/>
 </g>
 <g>
 <rect fill="none" height="36" rx="10" ry="10" stroke="#6c8ebf" stroke-width="1.5" width="120" x="40" y="104"/>

@@ -1,6 +1,5 @@
 ---
 source: tests/activity_render.rs
-assertion_line: 82
 expression: svg
 ---
 <svg height="460" viewBox="0 0 865 460" width="865" xmlns="http://www.w3.org/2000/svg">
@@ -20,22 +19,22 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 <path class="arrow" d="M380,124 L380,154" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M380,162 L380,210 L225,210" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M380,162 L380,174 L145,174 L145,192" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M380,162 L380,177 L355,177 L355,192" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M380,162 L380,180 L355,180 L355,192" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M380,162 L380,210 L485,210" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M380,162 L380,177 L565,177 L565,192" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M225,210 L380,210 L380,258" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M145,228 L145,240 L380,240 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M355,228 L355,243 L380,243 L380,258" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M355,228 L355,246 L380,246 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
-<path class="arrow" d="M485,210 L380,210 L380,258" marker-end="url(#act-arrow)"/>
+<path class="arrow" d="M565,228 L565,243 L380,243 L380,258" marker-end="url(#act-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M380,266 L380,296" marker-end="url(#act-arrow)"/>

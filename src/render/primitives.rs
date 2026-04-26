@@ -51,6 +51,69 @@ pub fn text_node(s: impl AsRef<str>) -> svg::node::Text {
     svg::node::Text::new(escape_text(s.as_ref()))
 }
 
+/// Place an edge label perpendicular to the polyline at its midpoint.
+///
+/// Returns `(x, y, text_anchor)` for an SVG text element. The label is
+/// offset along the right-hand perpendicular of the direction of travel,
+/// so labels on counter-flowing edges between the same pair of nodes
+/// land on opposite sides naturally — eliminating the standard
+/// bidirectional-edge collision.
+pub fn label_perpendicular(points: &[(f64, f64)], gap: f64) -> (f64, f64, &'static str) {
+    if points.len() < 2 {
+        let (x, y) = points.first().copied().unwrap_or((0.0, 0.0));
+        return (x + gap, y, "start");
+    }
+    let seg_lens: Vec<f64> = points
+        .windows(2)
+        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
+        .collect();
+    let total: f64 = seg_lens.iter().sum();
+    let half = total / 2.0;
+    let mut travelled = 0.0;
+    for (i, &len) in seg_lens.iter().enumerate() {
+        if travelled + len < half {
+            travelled += len;
+            continue;
+        }
+        let t = if len > 0.0 {
+            (half - travelled) / len
+        } else {
+            0.0
+        };
+        let (x0, y0) = points[i];
+        let (x1, y1) = points[i + 1];
+        let dx = x1 - x0;
+        let dy = y1 - y0;
+        let mag = (dx * dx + dy * dy).sqrt().max(0.0001);
+        let (ux, uy) = (dx / mag, dy / mag);
+        let (px, py) = (uy, -ux);
+        let mx = x0 + dx * t;
+        let my = y0 + dy * t;
+        let lx = mx + px * gap;
+        // Bias text downward when the perpendicular goes mostly up so it
+        // doesn't visually sit on top of the edge stroke. The 4px nudge for
+        // near-horizontal labels keeps the baseline below the line.
+        let dy_baseline = if py < -0.3 {
+            0.0
+        } else if py > 0.3 {
+            11.0
+        } else {
+            4.0
+        };
+        let ly = my + py * gap + dy_baseline;
+        let anchor = if px > 0.3 {
+            "start"
+        } else if px < -0.3 {
+            "end"
+        } else {
+            "middle"
+        };
+        return (lx, ly, anchor);
+    }
+    let last = *points.last().unwrap();
+    (last.0 + gap, last.1, "start")
+}
+
 /// Full-canvas background rectangle tuned for the theme.
 ///
 /// In `Light` / `Dark` we set the colour inline so the SVG renders correctly

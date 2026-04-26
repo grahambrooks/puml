@@ -1,6 +1,5 @@
 ---
 source: tests/class_render.rs
-assertion_line: 58
 expression: svg
 ---
 <svg height="424" viewBox="0 0 630.5 424" width="630.5" xmlns="http://www.w3.org/2000/svg">
@@ -29,45 +28,45 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<path class="class-line" d="M132,132 L132,212" marker-end="url(#arr-hollow)"/>
+<path class="class-line" d="M132,212 L132,132" marker-end="url(#arr-hollow)"/>
 </g>
 <g>
-<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="30" y="30"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="132" y="44">
+<rect fill="none" height="102" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="30" y="212"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="132" y="226">
 «data»
 </text>
-<text font-weight="bold" text-anchor="middle" x="132" y="56">
+<text font-weight="bold" text-anchor="middle" x="132" y="238">
 Container&lt;T&gt;
 </text>
-<line stroke="#6c8ebf" stroke-width="1" x1="30" x2="234" y1="66" y2="66"/>
-<text font-style="normal" text-decoration="none" x="38" y="80">
+<line stroke="#6c8ebf" stroke-width="1" x1="30" x2="234" y1="248" y2="248"/>
+<text font-style="normal" text-decoration="none" x="38" y="262">
 +items: List&lt;T&gt;
 </text>
-<text font-style="normal" text-decoration="none" x="38" y="100">
+<text font-style="normal" text-decoration="none" x="38" y="282">
 +add(item: T)
 </text>
-<text font-style="normal" text-decoration="none" x="38" y="120">
+<text font-style="normal" text-decoration="none" x="38" y="302">
 +get(index: int): T
 </text>
 </g>
 <g>
-<rect fill="none" height="102" rx="3" stroke="#6666bb" stroke-width="1.5" width="204" x="30" y="212"/>
-<text fill="#555" font-size="10" text-anchor="middle" x="132" y="224">
+<rect fill="none" height="102" rx="3" stroke="#6666bb" stroke-width="1.5" width="204" x="30" y="30"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="132" y="42">
 «interface»
 </text>
-<text font-weight="bold" text-anchor="middle" x="132" y="238">
+<text font-weight="bold" text-anchor="middle" x="132" y="56">
 Iterable&lt;T&gt;
 </text>
-<line stroke="#6666bb" stroke-width="1" x1="30" x2="234" y1="248" y2="248"/>
-<text font-style="normal" text-decoration="none" x="38" y="262">
+<line stroke="#6666bb" stroke-width="1" x1="30" x2="234" y1="66" y2="66"/>
+<text font-style="normal" text-decoration="none" x="38" y="80">
 +iterator(): Iterator&lt;T&gt;
 </text>
 </g>
 <g>
-<polygon class="note-box" points="254,67 590.5,67 600.5,77 600.5,95 254,95"/>
-<polyline fill="none" points="590.5,67 590.5,77 600.5,77" stroke="#bbbb00" stroke-width="1"/>
-<line stroke="#bbbb00" stroke-dasharray="3,2" stroke-width="1" x1="234" x2="254" y1="81" y2="81"/>
-<text font-size="12" x="262" y="83">
+<polygon class="note-box" points="254,249 590.5,249 600.5,259 600.5,277 254,277"/>
+<polyline fill="none" points="590.5,249 590.5,259 600.5,259" stroke="#bbbb00" stroke-width="1"/>
+<line stroke="#bbbb00" stroke-dasharray="3,2" stroke-width="1" x1="234" x2="254" y1="263" y2="263"/>
+<text font-size="12" x="262" y="265">
 Generic container\nholds elements of type T
 </text>
 </g>

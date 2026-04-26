@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Component>
+
+title API Application — Component View
+
+Container(spa, "Single-Page App", "JavaScript / React")
+ContainerDb(db, "Database", "PostgreSQL")
+System_Ext(mainframe, "Mainframe Banking System", "Stores ledger data")
+
+Container_Boundary(api, "API Application") {
+  Component(sign_in, "Sign-In Controller", "Spring MVC", "Authenticates users")
+  Component(accounts, "Accounts Controller", "Spring MVC", "Provides account information")
+  Component(security, "Security Component", "Spring Bean", "Verifies tokens, hashes passwords")
+  Component(mainframe_facade, "Mainframe Banking Facade", "Spring Bean", "Adapter to the mainframe")
+}
+
+Rel(spa, sign_in, "Submits credentials to", "JSON / HTTPS")
+Rel(spa, accounts, "Fetches accounts via", "JSON / HTTPS")
+Rel(sign_in, security, "Uses")
+Rel(accounts, security, "Uses")
+Rel(accounts, mainframe_facade, "Uses")
+Rel(security, db, "Reads / writes", "JDBC")
+Rel(mainframe_facade, mainframe, "Calls", "XML / SOAP")
+@enduml

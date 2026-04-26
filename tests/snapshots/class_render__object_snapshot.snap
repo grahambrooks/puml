@@ -1,9 +1,8 @@
 ---
 source: tests/class_render.rs
-assertion_line: 105
 expression: svg
 ---
-<svg height="222" viewBox="0 0 380 222" width="380" xmlns="http://www.w3.org/2000/svg">
+<svg height="384" viewBox="0 0 200 384" width="200" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -29,34 +28,34 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<path class="class-line" d="M170,71 L210,71" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="190" y="67">
+<path class="class-line" d="M100,192 L100,112" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="end" x="92" y="156">
 knows
+</text>
+</g>
+<g>
+<rect fill="none" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="192"/>
+<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="100" y="214">
+alice
+</text>
+<line stroke="#b8a85a" stroke-width="1" x1="30" x2="170" y1="228" y2="228"/>
+<text font-style="normal" text-decoration="none" x="38" y="242">
+name: "Alice"
+</text>
+<text font-style="normal" text-decoration="none" x="38" y="262">
+age: 30
 </text>
 </g>
 <g>
 <rect fill="none" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="30" y="30"/>
 <text font-weight="bold" text-anchor="middle" text-decoration="underline" x="100" y="52">
-alice
+bob
 </text>
 <line stroke="#b8a85a" stroke-width="1" x1="30" x2="170" y1="66" y2="66"/>
 <text font-style="normal" text-decoration="none" x="38" y="80">
-name: "Alice"
-</text>
-<text font-style="normal" text-decoration="none" x="38" y="100">
-age: 30
-</text>
-</g>
-<g>
-<rect fill="none" height="82" rx="3" stroke="#b8a85a" stroke-width="1.5" width="140" x="210" y="30"/>
-<text font-weight="bold" text-anchor="middle" text-decoration="underline" x="280" y="52">
-bob
-</text>
-<line stroke="#b8a85a" stroke-width="1" x1="210" x2="350" y1="66" y2="66"/>
-<text font-style="normal" text-decoration="none" x="218" y="80">
 name: "Bob"
 </text>
-<text font-style="normal" text-decoration="none" x="218" y="100">
+<text font-style="normal" text-decoration="none" x="38" y="100">
 age: 25
 </text>
 </g>

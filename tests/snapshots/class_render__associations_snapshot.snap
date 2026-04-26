@@ -1,9 +1,8 @@
 ---
 source: tests/class_render.rs
-assertion_line: 87
 expression: svg
 ---
-<svg height="222" viewBox="0 0 560 222" width="560" xmlns="http://www.w3.org/2000/svg">
+<svg height="384" viewBox="0 0 380 384" width="380" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -29,68 +28,68 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g>
-<path class="class-line" d="M390,71 L170,71" marker-end="none"/>
-<text font-size="11" text-anchor="middle" x="280" y="67">
+<path class="class-line" d="M280,112 L280,192" marker-end="none"/>
+<text font-size="11" text-anchor="start" x="288" y="156">
 places
 </text>
-<text font-size="11" x="396" y="67">
+<text font-size="11" x="286" y="108">
 1
 </text>
-<text font-size="11" x="176" y="67">
+<text font-size="11" x="286" y="188">
 *
 </text>
 </g>
 <g>
-<path class="class-line" d="M210,71 L170,71" marker-end="url(#arr-diamond-f)"/>
-<text font-size="11" text-anchor="middle" x="190" y="67">
+<path class="class-line" d="M100,112 L100,152 L280,152 L280,192" marker-end="url(#arr-diamond-f)"/>
+<text font-size="11" text-anchor="middle" x="190" y="144">
 contains
 </text>
-<text font-size="11" x="216" y="67">
+<text font-size="11" x="106" y="108">
 1
 </text>
-<text font-size="11" x="176" y="67">
+<text font-size="11" x="286" y="188">
 *
 </text>
 </g>
 <g>
-<path class="class-line" d="M170,71 L390,71" marker-end="url(#arrowhead)"/>
-<text font-size="11" text-anchor="middle" x="280" y="67">
+<path class="class-line" d="M280,192 L280,112" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="end" x="272" y="156">
 owner
+</text>
+</g>
+<g>
+<rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="192"/>
+<text font-weight="bold" text-anchor="middle" x="280" y="214">
+Order
+</text>
+<line stroke="#6c8ebf" stroke-width="1" x1="210" x2="350" y1="228" y2="228"/>
+<text font-style="normal" text-decoration="none" x="218" y="242">
++id: int
+</text>
+<text font-style="normal" text-decoration="none" x="218" y="262">
++total(): Money
 </text>
 </g>
 <g>
 <rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="30" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="100" y="52">
-Order
+LineItem
 </text>
 <line stroke="#6c8ebf" stroke-width="1" x1="30" x2="170" y1="66" y2="66"/>
 <text font-style="normal" text-decoration="none" x="38" y="80">
-+id: int
++qty: int
 </text>
 <text font-style="normal" text-decoration="none" x="38" y="100">
-+total(): Money
++price: Money
 </text>
 </g>
 <g>
 <rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="210" y="30"/>
 <text font-weight="bold" text-anchor="middle" x="280" y="52">
-LineItem
+Customer
 </text>
 <line stroke="#6c8ebf" stroke-width="1" x1="210" x2="350" y1="66" y2="66"/>
 <text font-style="normal" text-decoration="none" x="218" y="80">
-+qty: int
-</text>
-<text font-style="normal" text-decoration="none" x="218" y="100">
-+price: Money
-</text>
-</g>
-<g>
-<rect fill="none" height="82" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="140" x="390" y="30"/>
-<text font-weight="bold" text-anchor="middle" x="460" y="52">
-Customer
-</text>
-<line stroke="#6c8ebf" stroke-width="1" x1="390" x2="530" y1="66" y2="66"/>
-<text font-style="normal" text-decoration="none" x="398" y="80">
 +name: String
 </text>
 </g>

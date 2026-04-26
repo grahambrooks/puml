@@ -12,61 +12,61 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 Connection Lifecycle
 </text>
 <g>
-<path class="arrow" d="M52,84 L52,195 L100,195 L100,306" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M52,84 L52,192 L100,192 L100,306" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M100,306 L100,170" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="238">
+<text font-size="11" text-anchor="end" x="92" y="242">
 connect()
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,170 L100,220" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="195">
+<text font-size="11" text-anchor="start" x="108" y="199">
 handshake ok
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,170 L100,306" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="238">
+<text font-size="11" text-anchor="start" x="108" y="242">
 timeout
 </text>
 </g>
 <g>
-<path class="arrow" d="M52,84 L52,152 L280,152 L280,220" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M64,72 L142,72 L142,238 L220,238" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <path class="arrow" d="M280,220 L280,170" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="286" y="195">
+<text font-size="11" text-anchor="end" x="272" y="199">
 send(msg)
 </text>
 </g>
 <g>
 <path class="arrow" d="M280,170 L280,220" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="286" y="195">
+<text font-size="11" text-anchor="start" x="288" y="199">
 ack
 </text>
 </g>
 <g>
-<path class="arrow" d="M280,220 L280,195 L460,195 L460,170" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="376" y="195">
+<path class="arrow" d="M340,238 L367,238 L367,152 L400,152" marker-end="url(#state-arrow)"/>
+<text font-size="11" text-anchor="end" x="359" y="196">
 incoming
 </text>
 </g>
 <g>
-<path class="arrow" d="M460,170 L460,195 L280,195 L280,220" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="376" y="195">
+<path class="arrow" d="M400,152 L373,152 L373,238 L340,238" marker-end="url(#state-arrow)"/>
+<text font-size="11" text-anchor="start" x="381" y="202">
 delivered
 </text>
 </g>
 <g>
 <path class="arrow" d="M100,256 L100,306" marker-end="url(#state-arrow)"/>
-<text font-size="11" x="106" y="281">
+<text font-size="11" text-anchor="start" x="108" y="285">
 close()
 </text>
 </g>
 <g>
-<path class="arrow" d="M100,306 L100,195 L52,195 L52,84" marker-end="url(#state-arrow)"/>
+<path class="arrow" d="M100,306 L100,198 L52,198 L52,84" marker-end="url(#state-arrow)"/>
 </g>
 <g>
 <circle cx="52" cy="72" fill="#181818" r="12"/>

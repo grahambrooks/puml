@@ -18,6 +18,7 @@ note right of User : User stores token
 
 User -> WS : GET /data
 activate WS
+WS -> WS : validate token
 WS -> DB : SELECT data WHERE user_id=?
 activate DB
 DB --> WS : rows

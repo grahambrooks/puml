@@ -41,6 +41,10 @@ pub struct Member {
 #[derive(Debug, Clone)]
 pub struct ClassNode {
     pub name: String,
+    /// Alias from `class "Foo" as F` — relations may reference the node
+    /// by either `name` or `alias`, so layout must check both when
+    /// resolving edge endpoints.
+    pub alias: Option<String>,
     pub generics: Option<String>,
     pub kind: ClassKind,
     pub stereotype: Option<String>,
@@ -89,6 +93,18 @@ pub struct Relation {
     pub reversed: bool,
 }
 
+/// A C4 (or future container) boundary: a labeled rectangle drawn around
+/// a set of classes after they're laid out. The rectangle does not influence
+/// layout — children are placed by the normal class engine and the boundary
+/// is a post-layout overlay sized to fit them.
+#[derive(Debug, Clone)]
+pub struct Boundary {
+    pub alias: String,
+    pub label: String,
+    pub kind: String,
+    pub members: Vec<String>,
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct ClassDiagram {
     pub title: Option<String>,
@@ -97,4 +113,9 @@ pub struct ClassDiagram {
     pub notes: Vec<ClassNote>,
     pub hide_empty_members: bool,
     pub skinparams: Vec<(String, String)>,
+    /// True for diagrams that came from a `!include <C4/...>` source. C4
+    /// reads top-down from caller to callee — the inverse of UML class
+    /// inheritance — so rank propagation flips for Dependency edges.
+    pub c4_mode: bool,
+    pub boundaries: Vec<Boundary>,
 }

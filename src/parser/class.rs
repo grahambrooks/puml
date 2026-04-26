@@ -66,7 +66,56 @@ pub fn parse(source: &str) -> Result<ClassDiagram, PumlError> {
                 }
                 Rule::skinparam_stmt => {
                     if let Some((k, v)) = super::extract_skinparam(stmt.as_str()) {
-                        diagram.skinparams.push((k, v));
+                        // `pumlC4*` keys are sentinels injected by the C4
+                        // macro translator. Intercept them and don't pass
+                        // through to the public skinparam list.
+                        match k.as_str() {
+                            "pumlC4Mode" => {
+                                diagram.c4_mode = v.trim() == "true";
+                            }
+                            "pumlC4Boundary" => {
+                                let mut parts = v.splitn(3, '|');
+                                let alias = parts.next().unwrap_or("").trim().to_string();
+                                let label = parts.next().unwrap_or("").trim().to_string();
+                                let kind = parts.next().unwrap_or("").trim().to_string();
+                                if !alias.is_empty() {
+                                    diagram.boundaries.push(crate::ast::class::Boundary {
+                                        alias,
+                                        label,
+                                        kind,
+                                        members: Vec::new(),
+                                    });
+                                }
+                            }
+                            "pumlC4BoundaryMember" => {
+                                if let Some((b_alias, c_alias)) = v.split_once('|') {
+                                    let c_alias = c_alias.trim();
+                                    // Boundary membership comes through as
+                                    // aliases (the C4 macro arg), but the
+                                    // layout indexes nodes by their canonical
+                                    // `name`. Resolve here so downstream
+                                    // doesn't have to know about aliases.
+                                    let resolved = diagram
+                                        .classes
+                                        .iter()
+                                        .find(|c| {
+                                            c.alias.as_deref() == Some(c_alias) || c.name == c_alias
+                                        })
+                                        .map(|c| c.name.clone())
+                                        .unwrap_or_else(|| c_alias.to_string());
+                                    if let Some(b) = diagram
+                                        .boundaries
+                                        .iter_mut()
+                                        .find(|b| b.alias == b_alias.trim())
+                                    {
+                                        b.members.push(resolved);
+                                    }
+                                }
+                            }
+                            _ => {
+                                diagram.skinparams.push((k, v));
+                            }
+                        }
                     }
                 }
                 Rule::EOI => {}
@@ -88,9 +137,17 @@ fn unquote(s: &str) -> String {
 }
 
 fn ensure_class(classes: &mut Vec<ClassNode>, name: &str) {
-    if !classes.iter().any(|c| c.name == name) {
+    // Match against canonical name *or* alias — `Foo --> Bar` uses whichever
+    // identifier the source typed, but should resolve to the existing node
+    // if either matches. Without this check, a relation written against an
+    // alias spawns a phantom class.
+    if !classes
+        .iter()
+        .any(|c| c.name == name || c.alias.as_deref() == Some(name))
+    {
         classes.push(ClassNode {
             name: name.to_string(),
+            alias: None,
             generics: None,
             kind: ClassKind::Class,
             stereotype: None,
@@ -104,6 +161,7 @@ fn ensure_class(classes: &mut Vec<ClassNode>, name: &str) {
 fn parse_class(pair: Pair<Rule>) -> ClassNode {
     let mut kind = ClassKind::Class;
     let mut name = String::new();
+    let mut alias: Option<String> = None;
     let mut generics: Option<String> = None;
     let mut stereotype = None;
     let mut color = None;
@@ -111,6 +169,9 @@ fn parse_class(pair: Pair<Rule>) -> ClassNode {
 
     for inner in pair.into_inner() {
         match inner.as_rule() {
+            Rule::alias => {
+                alias = Some(inner.as_str().trim().to_string());
+            }
             Rule::class_kw => {
                 let kw = inner.as_str().to_lowercase();
                 kind = if kw.contains("interface") {
@@ -168,6 +229,7 @@ fn parse_class(pair: Pair<Rule>) -> ClassNode {
 
     ClassNode {
         name,
+        alias,
         generics,
         kind,
         stereotype,

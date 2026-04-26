@@ -83,8 +83,18 @@ fn text_width(s: &str) -> f64 {
     s.len() as f64 * CHAR_WIDTH
 }
 
+/// Display name shown inside the participant header box. PlantUML's
+/// convention is `participant "Display Name" as ALIAS` — the quoted name
+/// is the human-readable label, and the alias is just a short referent
+/// for messages. So always show `name`, falling back to alias only if
+/// the parser produced an aliased entry with no canonical name (rare but
+/// possible from forward declarations).
 fn participant_display(p: &Participant) -> String {
-    p.alias.clone().unwrap_or_else(|| p.name.clone())
+    if !p.name.is_empty() {
+        p.name.clone()
+    } else {
+        p.alias.clone().unwrap_or_default()
+    }
 }
 
 pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
@@ -220,7 +230,15 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
                 self_msg,
                 lost: matches!(msg.arrow, ArrowStyle::Lost),
             }));
-            ctx.y += ROW_HEIGHT;
+            // Self-messages occupy ~20px more vertical space than a
+            // straight cross-participant arrow because of the loop's
+            // bottom arc; without the bump the next message's label can
+            // sit on top of the loop's lower edge.
+            ctx.y += if self_msg {
+                ROW_HEIGHT + 16.0
+            } else {
+                ROW_HEIGHT
+            };
         }
         SequenceElement::Note(note) => {
             let anchor_x = note
@@ -377,7 +395,19 @@ fn widen_for_messages(
             .iter()
             .position(|p| p.alias.as_deref().unwrap_or(&p.name) == msg.to || p.name == msg.to);
         if let (Some(fi), Some(ti)) = (fi, ti) {
-            if fi != ti {
+            if fi == ti {
+                // Self-message: the loop arc extends loop_w to the right
+                // of the participant centre, so the column needs to be
+                // wide enough that the loop's right edge stays inside the
+                // column (with a small buffer). Otherwise the loop
+                // crashes into the next participant's lifeline.
+                let loop_w = crate::render::sequence::self_loop_width(&msg.label);
+                let needed_half = loop_w + 10.0;
+                let current_half = col_widths[fi] / 2.0;
+                if needed_half > current_half {
+                    col_widths[fi] = needed_half * 2.0;
+                }
+            } else {
                 let (lo, hi) = (fi.min(ti), fi.max(ti));
                 let span: f64 = col_widths[lo..=hi].iter().sum::<f64>()
                     + PARTICIPANT_H_PADDING * (hi - lo) as f64;

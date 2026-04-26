@@ -42,7 +42,10 @@ Arguments:
   [INPUT]  Input file (default: stdin)
 
 Options:
-  -o, --output <FILE>   Output SVG file (default: stdout)
+  -o, --output <FILE>   Output file. Format inferred from extension —
+                        `.png` rasterises via resvg, anything else writes SVG.
+                        Default: SVG to stdout.
+      --scale <N>       PNG scale factor (default 2 for retina sharpness)
   -t, --type <TYPE>     Force diagram type (sequence|class|activity|state|...)
       --theme <THEME>   Built-in theme name
   -w, --watch           Re-render on file change
@@ -51,7 +54,38 @@ Options:
   -V, --version
 ```
 
+```bash
+puml examples/class.puml -o out.svg            # SVG (default)
+puml examples/class.puml -o out.png            # PNG, 2x scale
+puml examples/class.puml -o out.png --scale 1  # PNG, 1:1 pixels
+puml examples/class.puml -o out.svg --watch    # re-render on save (Ctrl+C to stop)
+```
+
 Multiple diagrams in one file produce multiple output files (`out-1.svg`, `out-2.svg`, …).
+
+`--watch` also tracks every file reached via `!include` and re-renders when any of them change. Parse errors land on stderr but don't kill the watcher — fix and save again.
+
+### `init-genai` — set up AI authoring guidance
+
+```bash
+puml init-genai          # drop templates into the current directory
+puml init-genai path/to/project
+puml init-genai --force  # overwrite existing files
+```
+
+Drops a consistent set of "how to author `.puml` files in this project"
+templates into the locations that downstream AI tools read:
+
+| File                                     | Tool                          |
+|------------------------------------------|-------------------------------|
+| `CLAUDE.md`                              | Claude Code                   |
+| `AGENTS.md`                              | Codex / Aider / OpenCode      |
+| `.cursor/rules/puml.mdc`                 | Cursor                        |
+| `.github/copilot-instructions.md`        | GitHub Copilot                |
+| `.windsurfrules`                         | Windsurf                      |
+
+Existing files are left untouched unless `--force` is passed; the summary
+reports which files were created, skipped, or overwritten.
 
 ### Themes & dark mode
 
@@ -128,13 +162,18 @@ or `for f in examples/*.puml; do puml "$f" -o "docs/examples/$(basename "$f" .pu
 
 ![Deployment diagram](docs/examples/deployment.svg)
 
+### C4 — [examples/c4-container.puml](examples/c4-container.puml)
+
+![C4 container diagram](docs/examples/c4-container.svg)
+
 ## Diagram support
 
-| Status   | Diagram                                                                         | Notes                                                                                                                                                               |
-|----------|---------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Shipping | Sequence, Class, Activity, State, Use Case, Timing, Mind Map, Gantt, Deployment | Full parser + layout + renderer with fixture coverage. Deployment uses real UML shapes (3D node, cloud outline, cylinders, folder tab, frame tab, folded document). |
-| Partial  | Component, Object                                                               | Render via the class pipeline. Missing: `[Foo]` bracket components, `attr = value` object members.                                                                  |
-| Planned  | —                                                                               | All PlantUML diagram types currently parse and render.                                                                                                              |
+| Status   | Diagram                                                                         | Notes                                                                                                                                                                          |
+|----------|---------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Shipping | Sequence, Class, Activity, State, Use Case, Timing, Mind Map, Gantt, Deployment | Full parser + layout + renderer with fixture coverage. Deployment uses real UML shapes (3D node, cloud outline, cylinders, folder tab, frame tab, folded document).            |
+| Shipping | C4 (Container, Component, Context)                                              | `!include <C4/Container>` and friends translate `Person/System/Container/Component/Rel/Boundary` macros into puml constructs at preprocess time. Boundaries render flat (MVP). |
+| Partial  | Component, Object                                                               | Render via the class pipeline. Missing: `[Foo]` bracket components, `attr = value` object members.                                                                             |
+| Planned  | —                                                                               | All PlantUML diagram types currently parse and render.                                                                                                                         |
 
 "Shipping" means: parses the common PlantUML idioms for that diagram, produces a readable SVG, has fixture + snapshot
 coverage. It does **not** yet mean byte-level parity with `plantuml.jar`.

@@ -1,0 +1,153 @@
+<svg height="608" viewBox="0 0 780 608" width="780" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arr-hollow" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 0, 10 5, 0 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arr-diamond-f" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#181818" points="0 5, 5 0, 10 5, 5 10"/>
+</marker>
+<marker id="arr-diamond-h" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
+<polygon fill="#ffffff" points="0 5, 5 0, 10 5, 5 10" stroke="#181818" stroke-width="1"/>
+</marker>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}@media (prefers-color-scheme:dark){text{fill:#e8e8e8}.bg{fill:#1e1e1e}.arrow,.class-line{stroke:#e8e8e8}.arrow-dashed,.class-line-dashed{stroke:#e8e8e8}.divider-line{stroke:#aaaaaa}}
+</style>
+<rect class="bg" fill="#ffffff" height="100%" width="100%"/>
+<text class="title" text-anchor="middle" x="390" y="30">
+API Application — Component View
+</text>
+<g>
+<rect fill="none" height="206" rx="8" ry="8" stroke="#888888" stroke-dasharray="8,4" stroke-width="1.5" width="720" x="30" y="184"/>
+<text fill="#666666" font-size="12" font-weight="bold" x="42" y="202">
+API Application «container boundary»
+</text>
+</g>
+<g>
+<path class="class-line" d="M146,132 L146,212" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="start" x="154" y="176">
+Submits credentials to [JSON / HTTPS]
+</text>
+</g>
+<g>
+<path class="class-line" d="M146,132 L146,172 L390,172 L390,212" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="268" y="164">
+Fetches accounts via [JSON / HTTPS]
+</text>
+</g>
+<g>
+<path class="class-line" d="M146,254 L146,294 L390,294 L390,334" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="268" y="286">
+Uses
+</text>
+</g>
+<g>
+<path class="class-line" d="M390,254 L390,334" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="start" x="398" y="298">
+Uses
+</text>
+</g>
+<g>
+<path class="class-line" d="M390,254 L390,294 L634,294 L634,334" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="middle" x="512" y="286">
+Uses
+</text>
+</g>
+<g>
+<path class="class-line" d="M390,376 L390,456" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="start" x="398" y="420">
+Reads / writes [JDBC]
+</text>
+</g>
+<g>
+<path class="class-line" d="M634,376 L634,456" marker-end="url(#arrowhead)"/>
+<text font-size="11" text-anchor="start" x="642" y="420">
+Calls [XML / SOAP]
+</text>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="44" y="90"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="146" y="104">
+«container: JavaScript / React»
+</text>
+<text font-weight="bold" text-anchor="middle" x="146" y="116">
+Single-Page App
+</text>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="38" y="98"/>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="38" y="110"/>
+</g>
+<g>
+<line stroke="#a06ba0" stroke-width="1.5" x1="288" x2="288" y1="463.56" y2="490.44"/>
+<line stroke="#a06ba0" stroke-width="1.5" x1="492" x2="492" y1="463.56" y2="490.44"/>
+<path d="M288,490.44 A102,7.56 0 0 0 492,490.44" fill="none" stroke="#a06ba0" stroke-width="1.5"/>
+<ellipse cx="390" cy="463.56" fill="none" rx="102" ry="7.56" stroke="#a06ba0" stroke-width="1.5"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="390" y="470">
+«container: PostgreSQL»
+</text>
+<text font-weight="bold" text-anchor="middle" x="390" y="482">
+Database
+</text>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#888888" stroke-width="1.5" width="204" x="532" y="456"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="634" y="470">
+«system external»
+</text>
+<text font-weight="bold" text-anchor="middle" x="634" y="482">
+Mainframe Banking System
+</text>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="44" y="212"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="146" y="226">
+«component: Spring MVC»
+</text>
+<text font-weight="bold" text-anchor="middle" x="146" y="238">
+Sign-In Controller
+</text>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="38" y="220"/>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="38" y="232"/>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="288" y="212"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="390" y="226">
+«component: Spring MVC»
+</text>
+<text font-weight="bold" text-anchor="middle" x="390" y="238">
+Accounts Controller
+</text>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="282" y="220"/>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="282" y="232"/>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="288" y="334"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="390" y="348">
+«component: Spring Bean»
+</text>
+<text font-weight="bold" text-anchor="middle" x="390" y="360">
+Security Component
+</text>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="282" y="342"/>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="282" y="354"/>
+</g>
+<g>
+<rect fill="none" height="42" rx="3" stroke="#6c8ebf" stroke-width="1.5" width="204" x="532" y="334"/>
+<text fill="#555" font-size="10" text-anchor="middle" x="634" y="348">
+«component: Spring Bean»
+</text>
+<text font-weight="bold" text-anchor="middle" x="634" y="360">
+Mainframe Banking Facade
+</text>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="526" y="342"/>
+<rect fill="none" height="8" stroke="#6c8ebf" stroke-width="1.5" width="12" x="526" y="354"/>
+</g>
+</svg>

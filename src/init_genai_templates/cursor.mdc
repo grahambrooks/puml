@@ -1,0 +1,69 @@
+---
+description: Authoring PlantUML diagrams with the puml renderer
+globs: ["**/*.puml", "**/*.plantuml"]
+alwaysApply: false
+---
+
+# puml — Cursor authoring rules
+
+This project renders diagrams with [`puml`](https://github.com/grahambrooks/puml),
+a native PlantUML-compatible CLI. Apply these rules when editing `.puml` /
+`.plantuml` files.
+
+## Files
+
+- One diagram per file, wrapped in `@startuml` / `@enduml`.
+- Filenames: lowercase, hyphenated, intent-first (`signup-sequence.puml`).
+
+## Render
+
+```bash
+puml diagram.puml -o diagram.svg          # SVG (preferred)
+puml diagram.puml -o diagram.svg --watch  # live reload
+```
+
+## Diagram selection
+
+| Intent                          | Diagram   |
+|---------------------------------|-----------|
+| Interactions over time          | Sequence  |
+| Static structure / inheritance  | Class     |
+| Branching activity              | Activity  |
+| State machine                   | State     |
+| User goals                      | Use Case  |
+| Software architecture           | C4        |
+| Infrastructure                  | Deployment|
+
+## C4 model
+
+```plantuml
+@startuml
+!include <C4/C4_Container>
+title <System> — Containers
+
+Person(user, "User")
+System_Boundary(svc, "<System>") {
+  Container(api, "API", "<runtime>")
+  ContainerDb(db, "Database", "<engine>")
+}
+Rel(user, api, "Uses", "HTTPS")
+Rel(api, db, "Reads / writes", "SQL")
+@enduml
+```
+
+Canonical includes only: `<C4/C4_Context>`, `<C4/C4_Container>`,
+`<C4/C4_Component>`, `<C4/C4_Deployment>`, `<C4/C4_Dynamic>`.
+
+## Style
+
+- Stable aliases for every node.
+- `title` directly after `@startuml`.
+- Declarations first, `Rel(...)` calls last.
+- Parents above children in class hierarchies.
+
+## Don't
+
+- Don't mix multiple diagram types in one file.
+- Don't use sprites, OpenIconic, salt mockups, or `LAYOUT_*` hints — `puml`
+  ignores them.
+- Don't hand-edit generated `.svg` / `.png` files.

@@ -1,9 +1,8 @@
 ---
 source: tests/sequence_render.rs
-assertion_line: 87
 expression: svg
 ---
-<svg height="340" viewBox="0 0 310 340" width="310" xmlns="http://www.w3.org/2000/svg">
+<svg height="372" viewBox="0 0 414 372" width="414" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -16,56 +15,56 @@ expression: svg
 text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}@media (prefers-color-scheme:dark){text{fill:#e8e8e8}.bg{fill:#1e1e1e}.arrow,.class-line{stroke:#e8e8e8}.arrow-dashed,.class-line-dashed{stroke:#e8e8e8}.divider-line{stroke:#aaaaaa}}
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
-<text class="title" text-anchor="middle" x="155" y="25">
+<text class="title" text-anchor="middle" x="207" y="25">
 Internal Refresh
 </text>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="50"/>
-<text text-anchor="middle" x="80" y="74.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="38.5" y="50"/>
+<text text-anchor="middle" x="98.5" y="74.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="50"/>
-<text text-anchor="middle" x="230" y="74.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="240.5" y="50"/>
+<text text-anchor="middle" x="300.5" y="74.5">
 Bob
 </text>
 </g>
-<line class="lifeline" x1="80" x2="80" y1="90" y2="270"/>
-<line class="lifeline" x1="230" x2="230" y1="90" y2="270"/>
+<line class="lifeline" x1="98.5" x2="98.5" y1="90" y2="302"/>
+<line class="lifeline" x1="300.5" x2="300.5" y1="90" y2="302"/>
 <g>
-<path class="arrow" d="M 80 100 L 110 100 L 110 120 L 80 120" marker-end="url(#arrowhead)"/>
-<text x="114" y="110">
+<path class="arrow" d="M 98.5 100 L 167 100 L 167 120 L 98.5 120" marker-end="url(#arrowhead)"/>
+<text text-anchor="middle" x="132.75" y="95">
 reflect
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="140" y2="140"/>
-<text text-anchor="middle" x="155" y="135">
+<line class="arrow" marker-end="url(#arrowhead)" x1="98.5" x2="300.5" y1="156" y2="156"/>
+<text text-anchor="middle" x="199.5" y="151">
 hello
 </text>
 </g>
 <g>
-<path class="arrow" d="M 230 180 L 260 180 L 260 200 L 230 200" marker-end="url(#arrowhead)"/>
-<text x="264" y="190">
+<path class="arrow" d="M 300.5 196 L 384 196 L 384 216 L 300.5 216" marker-end="url(#arrowhead)"/>
+<text text-anchor="middle" x="342.25" y="191">
 recompute
 </text>
 </g>
 <g>
-<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="220" y2="220"/>
-<text text-anchor="middle" x="155" y="215">
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="300.5" x2="98.5" y1="252" y2="252"/>
+<text text-anchor="middle" x="199.5" y="247">
 done
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="270"/>
-<text text-anchor="middle" x="80" y="294.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="38.5" y="302"/>
+<text text-anchor="middle" x="98.5" y="326.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="270"/>
-<text text-anchor="middle" x="230" y="294.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="240.5" y="302"/>
+<text text-anchor="middle" x="300.5" y="326.5">
 Bob
 </text>
 </g>
