@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
 use crate::ast::class::*;
 
@@ -13,6 +13,7 @@ const NODE_H_GAP: f64 = 40.0;
 const SIDE_MARGIN: f64 = 30.0;
 const TOP_MARGIN: f64 = 30.0;
 const TITLE_HEIGHT: f64 = 30.0;
+const SAME_RANK_RAIL_GAP: f64 = 22.0;
 
 pub struct NodeLayout {
     pub name: String,
@@ -155,11 +156,7 @@ const EDGE_NUDGE_GAP: f64 = 6.0;
 /// Endpoints may reference a node by either canonical `name` or `alias`,
 /// so we resolve through `name_to_canonical` before reading/writing ranks.
 fn assign_ranks(diagram: &ClassDiagram) -> HashMap<String, usize> {
-    let mut ranks: HashMap<String, usize> = diagram
-        .classes
-        .iter()
-        .map(|c| (c.name.clone(), 0))
-        .collect();
+    let source_to_target_dependencies = uses_source_to_target_dependency_ranks(diagram);
 
     // alias → canonical name lookup, so relations using the alias still
     // resolve to the same rank slot.
@@ -171,41 +168,134 @@ fn assign_ranks(diagram: &ClassDiagram) -> HashMap<String, usize> {
             .map(|c| c.name.clone())
     };
 
-    // Repeatedly propagate: child rank = parent rank + 1.
-    // Iterating up to N times handles transitive chains of length ≤ N.
+    let name_to_idx: HashMap<&str, usize> = diagram
+        .classes
+        .iter()
+        .enumerate()
+        .map(|(i, c)| (c.name.as_str(), i))
+        .collect();
+    let mut edges: Vec<(usize, usize)> = Vec::new();
+
+    // Propagate as parent → child.
     //
     // In C4 mode, Dependency/DashedLink edges flip direction: the relation
     // `Rel(a, b)` reads "a calls b" and the convention is caller-above-callee.
     // So for those edges we treat `to` as the rank-child of `from`. Inheritance
     // and realization (Extension/Implementation/Realization) stay UML-oriented
     // — they're rare in C4 anyway.
-    for _ in 0..diagram.classes.len() {
-        for rel in &diagram.relations {
-            let propagates = matches!(
-                rel.kind,
-                RelationKind::Extension
-                    | RelationKind::Implementation
-                    | RelationKind::Dependency
-                    | RelationKind::DashedLink
-                    | RelationKind::Realization
-            );
-            if !propagates {
-                continue;
+    for rel in &diagram.relations {
+        let propagates = matches!(
+            rel.kind,
+            RelationKind::Extension
+                | RelationKind::Implementation
+                | RelationKind::Dependency
+                | RelationKind::DashedLink
+                | RelationKind::Realization
+        );
+        if !propagates {
+            continue;
+        }
+        let (Some(a), Some(b)) = (canonical(rel.from.as_str()), canonical(rel.to.as_str())) else {
+            continue;
+        };
+        let dependency = matches!(
+            rel.kind,
+            RelationKind::Dependency | RelationKind::DashedLink
+        );
+        let (parent_name, child_name) = if source_to_target_dependencies && dependency {
+            (a, b)
+        } else {
+            (b, a)
+        };
+        let (Some(&parent), Some(&child)) = (
+            name_to_idx.get(parent_name.as_str()),
+            name_to_idx.get(child_name.as_str()),
+        ) else {
+            continue;
+        };
+        if parent != child {
+            edges.push((parent, child));
+        }
+    }
+
+    let dag_edges = break_ranking_cycles(diagram.classes.len(), &edges);
+    let ranks = longest_path_ranks(diagram.classes.len(), &dag_edges);
+    diagram
+        .classes
+        .iter()
+        .enumerate()
+        .map(|(i, c)| (c.name.clone(), ranks[i]))
+        .collect()
+}
+
+fn uses_source_to_target_dependency_ranks(diagram: &ClassDiagram) -> bool {
+    diagram.c4_mode
+        || diagram.classes.iter().any(|c| {
+            matches!(
+                c.kind,
+                ClassKind::Node
+                    | ClassKind::Cloud
+                    | ClassKind::Database
+                    | ClassKind::Folder
+                    | ClassKind::Frame
+                    | ClassKind::Artifact
+                    | ClassKind::Queue
+            )
+        })
+}
+
+fn break_ranking_cycles(n: usize, edges: &[(usize, usize)]) -> Vec<(usize, usize)> {
+    fn reaches(v: usize, target: usize, graph: &[Vec<usize>], seen: &mut [bool]) -> bool {
+        if v == target {
+            return true;
+        }
+        if seen[v] {
+            return false;
+        }
+        seen[v] = true;
+        for &to in &graph[v] {
+            if reaches(to, target, graph, seen) {
+                return true;
             }
-            let (Some(a), Some(b)) = (canonical(rel.from.as_str()), canonical(rel.to.as_str()))
-            else {
-                continue;
-            };
-            let c4_dep = diagram.c4_mode
-                && matches!(
-                    rel.kind,
-                    RelationKind::Dependency | RelationKind::DashedLink
-                );
-            let (parent_name, child_name) = if c4_dep { (a, b) } else { (b, a) };
-            let parent_rank = ranks.get(&parent_name).copied().unwrap_or(0);
-            let child_rank = ranks.entry(child_name).or_insert(0);
-            if *child_rank <= parent_rank {
-                *child_rank = parent_rank + 1;
+        }
+        false
+    }
+
+    let mut graph = vec![Vec::new(); n];
+    let mut kept = Vec::new();
+    for &(parent, child) in edges {
+        let mut seen = vec![false; n];
+        if reaches(child, parent, &graph, &mut seen) {
+            continue;
+        }
+        graph[parent].push(child);
+        kept.push((parent, child));
+    }
+    kept.sort_unstable();
+    kept.dedup();
+    kept
+}
+
+fn longest_path_ranks(n: usize, edges: &[(usize, usize)]) -> Vec<usize> {
+    let mut outgoing = vec![Vec::new(); n];
+    let mut indegree = vec![0_usize; n];
+    for &(a, b) in edges {
+        outgoing[a].push(b);
+        indegree[b] += 1;
+    }
+
+    let mut ranks = vec![0_usize; n];
+    let mut queue: VecDeque<usize> = indegree
+        .iter()
+        .enumerate()
+        .filter_map(|(i, &d)| (d == 0).then_some(i))
+        .collect();
+    while let Some(v) = queue.pop_front() {
+        for &to in &outgoing[v] {
+            ranks[to] = ranks[to].max(ranks[v] + 1);
+            indegree[to] -= 1;
+            if indegree[to] == 0 {
+                queue.push_back(to);
             }
         }
     }
@@ -219,6 +309,7 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         0.0
     };
     let ranks = assign_ranks(diagram);
+    let source_to_target_dependencies = uses_source_to_target_dependency_ranks(diagram);
     let max_rank = ranks.values().copied().max().unwrap_or(0);
 
     // Group nodes by rank, carrying their *index* into `diagram.classes`
@@ -440,16 +531,22 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
                 let a = chain[0];
                 let b = chain[1];
                 let cross_rank = layer_of_all.get(&a) != layer_of_all.get(&b);
-                let from_bbox = (from_nl.x, from_nl.y, from_nl.width, from_nl.height);
-                let to_bbox = (to_nl.x, to_nl.y, to_nl.width, to_nl.height);
-                let from_centre = (
-                    from_nl.x + from_nl.width / 2.0,
-                    from_nl.y + from_nl.height / 2.0,
-                );
-                let to_centre = (to_nl.x + to_nl.width / 2.0, to_nl.y + to_nl.height / 2.0);
-                let (src, src_side) = pick_port(from_bbox, to_centre, cross_rank);
-                let (dst, dst_side) = pick_port(to_bbox, from_centre, cross_rank);
-                orthogonal_through_ports(src, src_side, dst, dst_side)
+                if source_to_target_dependencies && cross_rank && to_nl.y < from_nl.y {
+                    route_upward_around(from_nl, to_nl)
+                } else if !cross_rank && same_rank_obstacle(from_nl, to_nl, &name_to_layout) {
+                    route_same_rank_around(from_nl, to_nl)
+                } else {
+                    let from_bbox = (from_nl.x, from_nl.y, from_nl.width, from_nl.height);
+                    let to_bbox = (to_nl.x, to_nl.y, to_nl.width, to_nl.height);
+                    let from_centre = (
+                        from_nl.x + from_nl.width / 2.0,
+                        from_nl.y + from_nl.height / 2.0,
+                    );
+                    let to_centre = (to_nl.x + to_nl.width / 2.0, to_nl.y + to_nl.height / 2.0);
+                    let (src, src_side) = pick_port(from_bbox, to_centre, cross_rank);
+                    let (dst, dst_side) = pick_port(to_bbox, from_centre, cross_rank);
+                    orthogonal_through_ports(src, src_side, dst, dst_side)
+                }
             } else {
                 route_through_virtuals(from_nl, to_nl, &chain[1..chain.len() - 1], &virtual_centre)
             };
@@ -480,7 +577,7 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         .filter_map(|c| name_to_layout.remove(&c.name))
         .collect();
 
-    let notes = place_notes(&diagram.notes, &nodes, &mut total_width);
+    let mut notes = place_notes(&diagram.notes, &nodes, &mut total_width);
     let mut boundaries = compute_boundaries(&diagram.boundaries, &nodes);
 
     // Boundaries pad outward by SIDE_PAD + nest depth, so deeply nested
@@ -502,6 +599,12 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
         }
     }
 
+    let (edge_min_x, _) = edge_horizontal_bounds(&edges);
+    if edge_min_x.is_finite() && edge_min_x < SIDE_MARGIN {
+        let dx = SIDE_MARGIN - edge_min_x;
+        shift_layout_x(&mut nodes, &mut edges, &mut boundaries, &mut notes, dx);
+    }
+
     // Expand the canvas if any boundary or shifted node extends past the
     // node grid.
     for b in &boundaries {
@@ -510,6 +613,13 @@ pub fn layout(diagram: &ClassDiagram) -> ClassLayout {
     }
     for n in &nodes {
         total_width = total_width.max(n.x + n.width + SIDE_MARGIN);
+    }
+    for note in &notes {
+        total_width = total_width.max(note.x + note.width + SIDE_MARGIN);
+    }
+    let (_, edge_max_x) = edge_horizontal_bounds(&edges);
+    if edge_max_x.is_finite() {
+        total_width = total_width.max(edge_max_x + SIDE_MARGIN);
     }
 
     ClassLayout {
@@ -766,4 +876,225 @@ fn route_through_virtuals(
         points.push((bx, by));
     }
     points
+}
+
+fn same_rank_obstacle(
+    from: &NodeLayout,
+    to: &NodeLayout,
+    nodes: &HashMap<String, NodeLayout>,
+) -> bool {
+    if (from.y - to.y).abs() > 0.5 {
+        return false;
+    }
+
+    let from_right = from.x + from.width;
+    let to_right = to.x + to.width;
+    let (span_left, span_right) = if from.x < to.x {
+        (from_right, to.x)
+    } else {
+        (to_right, from.x)
+    };
+    if span_right <= span_left {
+        return false;
+    }
+
+    nodes.values().any(|node| {
+        node.name != from.name
+            && node.name != to.name
+            && (node.y - from.y).abs() <= 0.5
+            && node.x < span_right
+            && node.x + node.width > span_left
+    })
+}
+
+fn route_same_rank_around(from: &NodeLayout, to: &NodeLayout) -> Vec<(f64, f64)> {
+    let left_to_right = from.x < to.x;
+    let y = from.y + from.height / 2.0;
+    let (src_x, dst_x) = if left_to_right {
+        (from.x + from.width, to.x)
+    } else {
+        (from.x, to.x + to.width)
+    };
+    let rail_y = if left_to_right {
+        from.y - SAME_RANK_RAIL_GAP
+    } else {
+        from.y + from.height + SAME_RANK_RAIL_GAP
+    };
+
+    vec![(src_x, y), (src_x, rail_y), (dst_x, rail_y), (dst_x, y)]
+}
+
+fn route_upward_around(from: &NodeLayout, to: &NodeLayout) -> Vec<(f64, f64)> {
+    let rail_x = (from.x + from.width).max(to.x + to.width) + NODE_H_GAP;
+    let src = (from.x + from.width / 2.0, from.y);
+    let dst = (to.x + to.width / 2.0, to.y + to.height);
+    vec![src, (rail_x, src.1), (rail_x, dst.1), dst]
+}
+
+fn shift_layout_x(
+    nodes: &mut [NodeLayout],
+    edges: &mut [EdgeLayout],
+    boundaries: &mut [BoundaryBox],
+    notes: &mut [NoteBox],
+    dx: f64,
+) {
+    for n in nodes {
+        n.x += dx;
+    }
+    for e in edges {
+        for p in &mut e.points {
+            p.0 += dx;
+        }
+    }
+    for b in boundaries {
+        b.x += dx;
+    }
+    for note in notes {
+        note.x += dx;
+        note.target_x += dx;
+    }
+}
+
+fn edge_horizontal_bounds(edges: &[EdgeLayout]) -> (f64, f64) {
+    let mut min_x = f64::INFINITY;
+    let mut max_x = f64::NEG_INFINITY;
+    for edge in edges {
+        for &(x, _) in &edge.points {
+            min_x = min_x.min(x);
+            max_x = max_x.max(x);
+        }
+        if let Some(ref label) = edge.label {
+            let (x, _, anchor) = edge_label_position(&edge.points, 8.0);
+            let width = text_w(label);
+            let (left, right) = match anchor {
+                "end" => (x - width, x),
+                "middle" => (x - width / 2.0, x + width / 2.0),
+                _ => (x, x + width),
+            };
+            min_x = min_x.min(left);
+            max_x = max_x.max(right);
+        }
+        if let (Some(label), Some(&(x, _))) = (&edge.from_label, edge.points.first()) {
+            min_x = min_x.min(x + 6.0);
+            max_x = max_x.max(x + 6.0 + text_w(label));
+        }
+        if let (Some(label), Some(&(x, _))) = (&edge.to_label, edge.points.last()) {
+            min_x = min_x.min(x + 6.0);
+            max_x = max_x.max(x + 6.0 + text_w(label));
+        }
+    }
+    (min_x, max_x)
+}
+
+fn edge_label_position(points: &[(f64, f64)], gap: f64) -> (f64, f64, &'static str) {
+    if points.len() < 2 {
+        let (x, y) = points.first().copied().unwrap_or((0.0, 0.0));
+        return (x + gap, y, "start");
+    }
+    let seg_lens: Vec<f64> = points
+        .windows(2)
+        .map(|w| ((w[1].0 - w[0].0).powi(2) + (w[1].1 - w[0].1).powi(2)).sqrt())
+        .collect();
+    let total: f64 = seg_lens.iter().sum();
+    let half = total / 2.0;
+    let mut travelled = 0.0;
+    for (i, &len) in seg_lens.iter().enumerate() {
+        if travelled + len < half {
+            travelled += len;
+            continue;
+        }
+        let t = if len > 0.0 {
+            (half - travelled) / len
+        } else {
+            0.0
+        };
+        let (x0, y0) = points[i];
+        let (x1, y1) = points[i + 1];
+        let dx = x1 - x0;
+        let dy = y1 - y0;
+        let mag = (dx * dx + dy * dy).sqrt().max(0.0001);
+        let (ux, uy) = (dx / mag, dy / mag);
+        let (px, py) = (uy, -ux);
+        let mx = x0 + dx * t;
+        let my = y0 + dy * t;
+        let lx = mx + px * gap;
+        let dy_baseline = if py < -0.3 {
+            0.0
+        } else if py > 0.3 {
+            11.0
+        } else {
+            4.0
+        };
+        let ly = my + py * gap + dy_baseline;
+        let anchor = if px > 0.3 {
+            "start"
+        } else if px < -0.3 {
+            "end"
+        } else {
+            "middle"
+        };
+        return (lx, ly, anchor);
+    }
+    let last = *points.last().unwrap();
+    (last.0 + gap, last.1, "start")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn class(name: &str) -> ClassNode {
+        ClassNode {
+            name: name.to_string(),
+            alias: None,
+            generics: None,
+            kind: ClassKind::Class,
+            stereotype: None,
+            color: None,
+            members: Vec::new(),
+            namespace: None,
+        }
+    }
+
+    fn dependency(from: &str, to: &str) -> Relation {
+        Relation {
+            from: from.to_string(),
+            to: to.to_string(),
+            kind: RelationKind::Dependency,
+            from_label: None,
+            to_label: None,
+            label: None,
+            reversed: false,
+        }
+    }
+
+    #[test]
+    fn c4_dependency_cycles_keep_forward_ranks() {
+        let diagram = ClassDiagram {
+            classes: vec![
+                class("customer"),
+                class("spa"),
+                class("sign_in"),
+                class("security"),
+                class("db"),
+            ],
+            relations: vec![
+                dependency("customer", "spa"),
+                dependency("spa", "sign_in"),
+                dependency("sign_in", "security"),
+                dependency("security", "db"),
+                dependency("security", "sign_in"),
+                dependency("sign_in", "spa"),
+            ],
+            c4_mode: true,
+            ..ClassDiagram::default()
+        };
+
+        let ranks = assign_ranks(&diagram);
+        assert_eq!(ranks["customer"], 0);
+        assert_eq!(ranks["spa"], 1);
+        assert_eq!(ranks["sign_in"], 2);
+        assert_eq!(ranks["security"], 3);
+        assert_eq!(ranks["db"], 4);
+    }
 }

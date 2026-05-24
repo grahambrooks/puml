@@ -2,7 +2,7 @@
 source: tests/class_render.rs
 expression: svg
 ---
-<svg height="548" viewBox="0 0 380 548" width="380" xmlns="http://www.w3.org/2000/svg">
+<svg height="548" viewBox="0 0 408 548" width="408" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arr-filled" markerHeight="12" markerWidth="12" orient="auto" refX="10" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>

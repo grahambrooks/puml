@@ -5,7 +5,9 @@ title Internet Banking System — System Context
 
 Person(customer, "Personal Banking Customer", "A customer of the bank with personal accounts")
 
-System(banking, "Internet Banking System", "Lets customers view balances and make payments")
+System_Boundary(bank, "Bank") {
+  System(banking, "Internet Banking System", "Lets customers view balances and make payments")
+}
 
 System_Ext(mainframe, "Mainframe Banking System", "Stores all core banking ledger data")
 System_Ext(email, "Email System", "Sends customer-facing notifications")
