@@ -1,0 +1,24 @@
+name: ci
+
+# Minimal merge gate, provisioned by grahambrooks/auto-managed (ensure_ci.sh).
+# Dependency PRs cannot auto-merge without a green check, so every managed repo
+# needs at least this. Edit freely — the control plane never overwrites it.
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --locked --all-targets
+      - run: cargo test --locked
