@@ -15,7 +15,7 @@ path = "src/main.rs"
 clap = { version = "4", features = ["derive"] }
 pest = "2"
 pest_derive = "2"
-logos = "0.14"
+logos = "0.16"
 svg = "0.18"
 anyhow = "1"
 thiserror = "1"
