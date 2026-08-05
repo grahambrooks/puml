@@ -18,7 +18,7 @@ pest_derive = "2"
 logos = "0.16"
 svg = "0.18"
 anyhow = "1"
-thiserror = "1"
+thiserror = "2"
 resvg = { version = "0.48", default-features = false, features = [
     "text",
     "system-fonts",
