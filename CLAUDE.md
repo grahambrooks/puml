@@ -141,7 +141,7 @@ cargo insta review
 
 ## Verifying a task is complete
 
-**Before reporting any code change as complete, run `make check` and confirm it passes.** This runs `fmt-check`, `clippy -D warnings`, and the full test suite — the same gates the release workflow enforces. If `make check` fails, the task is not done.
+**Before reporting any code change as complete, run `make check` and confirm it passes.** This runs `fmt-check`, `clippy -D warnings`, and the full test suite — the same gates the `ci` workflow enforces. If `make check` fails, the task is not done.
 
 - If `clippy` flags something, fix it rather than silencing it with `#[allow(...)]` unless the lint is genuinely wrong for this code.
 - If tests fail because snapshots legitimately changed, run `make snapshots` and inspect the diff before committing. Do not update snapshots blindly.

@@ -26,8 +26,8 @@ cargo install --path .
 
 ### Prebuilt binaries
 
-Grab a tarball from the [latest release](https://github.com/grahambrooks/puml/releases/latest) — x86_64 Linux, x86_64
-macOS, and aarch64 macOS are published on every push to `main`.
+Grab a tarball from the [latest release](https://github.com/grahambrooks/puml/releases/latest) — macOS and Linux,
+each for x86_64 and aarch64 — or run it with `bx grahambrooks/puml`.
 
 ## Usage
 
@@ -222,12 +222,14 @@ cargo insta review
 
 ## Releases
 
-Every push to `main` that touches source code runs the `Release` workflow, which:
+Releases are cut by pushing a CalVer tag (`vYYYY.M.N`). The `release` workflow
+(release-kit v2, configured by `.release.env`):
 
-1. Runs `fmt-check`, `clippy`, and `cargo test`.
-2. Computes a date-based version (`YYYY.M.D`, with `-N` suffix for repeat releases on the same day).
-3. Builds release tarballs for Linux x86_64, macOS x86_64, and macOS aarch64.
-4. Publishes a GitHub release and updates `HomebrewFormula/puml.rb` in-place.
+1. Stamps the tag's version into `Cargo.toml` and builds `puml-<tag>-<target>.tar.gz` for macOS and Linux
+   (x86_64 and aarch64), attached to the GitHub release with `SHA256SUMS`.
+2. Opens and merges a PR that updates `Formula/puml.rb` and the `Cargo.toml` version.
+
+The `ci` workflow runs `fmt-check`, `clippy`, and `cargo test` on `main` and on pull requests.
 
 ## Non-goals
 

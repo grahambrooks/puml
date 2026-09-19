@@ -1,0 +1,35 @@
+name: ci
+
+# The fmt/clippy/test gate that used to be the "Checks" job of the old
+# push-to-main release workflow. Releases are now cut from tags by release.yml
+# (release-kit v2); this keeps the same checks running on main and on PRs.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'Formula/**'
+      - '**.md'
+      - '.idea/**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
