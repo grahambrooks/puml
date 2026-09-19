@@ -16,7 +16,7 @@ clap = { version = "4", features = ["derive"] }
 pest = "2"
 pest_derive = "2"
 logos = "0.16"
-svg = "0.18"
+svg = "0.13"
 anyhow = "1"
 thiserror = "1"
 resvg = { version = "0.48", default-features = false, features = [
