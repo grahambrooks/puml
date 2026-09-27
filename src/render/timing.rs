@@ -1,7 +1,7 @@
 use svg::node::element::{Group, Line, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, style_block};
 use super::theme::Theme;
 use crate::ast::timing::LaneKind;
 use crate::layout::timing::{LaneRow, TimingLayout};
@@ -29,12 +29,11 @@ pub fn render(layout: &TimingLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -52,12 +51,11 @@ pub fn render(layout: &TimingLayout, theme: &Theme) -> Document {
             .set("y2", axis_y + 4.0)
             .set("stroke", "#666")
             .set("stroke-width", "1");
-        let label = Text::new()
+        let label = Text::new(tick.label.clone())
             .set("x", tick.x)
             .set("y", axis_y + 18.0)
             .set("text-anchor", "middle")
-            .set("font-size", "10")
-            .add(text_node(tick.label.clone()));
+            .set("font-size", "10");
         doc = doc.add(line).add(label);
     }
     // Baseline under the axis ticks.
@@ -79,13 +77,12 @@ fn render_lane(lane: &LaneRow, layout: &TimingLayout) -> Group {
     let label_x = layout.timeline_x0 - 8.0;
 
     // Lane label to the left of the timeline.
-    let label = Text::new()
+    let label = Text::new(lane.display.clone())
         .set("x", label_x)
         .set("y", y + lane_h / 2.0 + FONT_SIZE / 3.0)
         .set("text-anchor", "end")
         .set("font-size", FONT_SIZE)
-        .set("font-weight", "bold")
-        .add(text_node(lane.display.clone()));
+        .set("font-weight", "bold");
 
     // Horizontal guide line for the lane.
     let guide = Line::new()
@@ -117,12 +114,11 @@ fn render_lane(lane: &LaneRow, layout: &TimingLayout) -> Group {
             .set("fill", fill)
             .set("stroke", stroke)
             .set("stroke-width", "1.2");
-        let label = Text::new()
+        let label = Text::new(seg.state.clone())
             .set("x", seg.x_start + seg_w / 2.0)
             .set("y", y + lane_h / 2.0 + FONT_SIZE / 3.0)
             .set("text-anchor", "middle")
-            .set("font-size", FONT_SIZE - 2.0)
-            .add(text_node(seg.state.clone()));
+            .set("font-size", FONT_SIZE - 2.0);
         g = g.add(rect).add(label);
     }
 

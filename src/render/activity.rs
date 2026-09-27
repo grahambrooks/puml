@@ -1,7 +1,7 @@
 use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
 use crate::layout::activity::{ActivityLayout, LayoutEdge, LayoutNode, Shape};
 use crate::layout::ports::pick_port as pick_port_bbox;
@@ -33,12 +33,11 @@ pub fn render(layout: &ActivityLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -157,11 +156,10 @@ fn render_action(g: Group, node: &LayoutNode) -> Group {
         .set("stroke", "#6c8ebf")
         .set("stroke-width", 1.5);
 
-    let text = Text::new()
+    let text = Text::new(node.label.clone())
         .set("x", node_cx(node))
         .set("y", node.y + node.h / 2.0 + FONT_SIZE / 3.0)
-        .set("text-anchor", "middle")
-        .add(text_node(node.label.clone()));
+        .set("text-anchor", "middle");
 
     g.add(rect).add(text)
 }
@@ -192,12 +190,11 @@ fn render_decision(g: Group, node: &LayoutNode) -> Group {
     let mut g = g.add(diamond);
 
     if !node.label.is_empty() {
-        let text = Text::new()
+        let text = Text::new(node.label.clone())
             .set("x", cx)
             .set("y", cy + FONT_SIZE / 3.0)
             .set("text-anchor", "middle")
-            .set("font-size", FONT_SIZE)
-            .add(text_node(node.label.clone()));
+            .set("font-size", FONT_SIZE);
         g = g.add(text);
     }
     g
@@ -266,11 +263,10 @@ fn render_note_shape(g: Group, node: &LayoutNode) -> Group {
         .set("stroke", "#bbbb00")
         .set("stroke-width", 1.0);
 
-    let text = Text::new()
+    let text = Text::new(node.label.clone())
         .set("x", x + 6.0)
         .set("y", y + FONT_SIZE + 4.0)
-        .set("font-size", FONT_SIZE)
-        .add(text_node(node.label.clone()));
+        .set("font-size", FONT_SIZE);
 
     g.add(body).add(border).add(fold_line).add(text)
 }
@@ -314,12 +310,11 @@ fn render_edge(edge: &LayoutEdge, points: &[(f64, f64)]) -> Group {
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
             let (lx, ly, anchor) = label_perpendicular(points, 8.0);
-            let text = Text::new()
+            let text = Text::new(lbl.clone())
                 .set("x", lx)
                 .set("y", ly)
                 .set("text-anchor", anchor)
-                .set("font-size", 11.0)
-                .add(text_node(lbl.clone()));
+                .set("font-size", 11.0);
             g = g.add(text);
         }
     }

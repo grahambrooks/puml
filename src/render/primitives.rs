@@ -32,25 +32,6 @@ pub fn arrowhead_defs() -> Definitions {
     Definitions::new().add(marker).add(open_marker)
 }
 
-/// Escape characters that must not appear literally in SVG text nodes.
-pub fn escape_text(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    for c in s.chars() {
-        match c {
-            '&' => out.push_str("&amp;"),
-            '<' => out.push_str("&lt;"),
-            '>' => out.push_str("&gt;"),
-            _ => out.push(c),
-        }
-    }
-    out
-}
-
-/// Build a text-content node with SVG-safe escaping applied.
-pub fn text_node(s: impl AsRef<str>) -> svg::node::Text {
-    svg::node::Text::new(escape_text(s.as_ref()))
-}
-
 /// Place an edge label perpendicular to the polyline at its midpoint.
 ///
 /// Returns `(x, y, text_anchor)` for an SVG text element. The label is

@@ -1,7 +1,7 @@
 use svg::node::element::{Group, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, style_block};
 use super::theme::Theme;
 use crate::layout::mindmap::{MindLayoutEdge, MindLayoutNode, MindMapLayout};
 
@@ -28,12 +28,11 @@ pub fn render(layout: &MindMapLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -82,7 +81,7 @@ fn render_node(node: &MindLayoutNode) -> Group {
         .set("fill", fill)
         .set("stroke", "#3d6aa0")
         .set("stroke-width", stroke_width);
-    let label = Text::new()
+    let label = Text::new(node.label.clone())
         .set("x", node.x + node.w / 2.0)
         .set("y", node.y + node.h / 2.0 + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
@@ -90,7 +89,6 @@ fn render_node(node: &MindLayoutNode) -> Group {
         .set(
             "font-weight",
             if node.depth == 1 { "bold" } else { "normal" },
-        )
-        .add(text_node(node.label.clone()));
+        );
     Group::new().add(rect).add(label)
 }

@@ -1,7 +1,7 @@
 use svg::node::element::{Circle, Definitions, Ellipse, Group, Line, Marker, Polygon, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, style_block};
 use super::theme::Theme;
 use crate::ast::usecase::NodeKind;
 use crate::layout::usecase::{UseCaseLayout, UseCaseLayoutEdge, UseCaseLayoutNode};
@@ -30,12 +30,11 @@ pub fn render(layout: &UseCaseLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -120,12 +119,11 @@ fn render_actor(node: &UseCaseLayoutNode) -> Group {
         .set("x2", cx + 10.0)
         .set("y2", body_bot + 14.0)
         .set("class", "arrow");
-    let label = Text::new()
+    let label = Text::new(node.display.clone())
         .set("x", cx)
         .set("y", top + node.h - 2.0)
         .set("text-anchor", "middle")
-        .set("font-size", FONT_SIZE)
-        .add(text_node(node.display.clone()));
+        .set("font-size", FONT_SIZE);
 
     Group::new()
         .add(head)
@@ -150,22 +148,20 @@ fn render_usecase(node: &UseCaseLayoutNode) -> Group {
         .set("fill", "none")
         .set("stroke", "#d6b656")
         .set("stroke-width", "1.5");
-    let label = Text::new()
+    let label = Text::new(node.display.clone())
         .set("x", cx)
         .set("y", cy + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
-        .set("font-size", FONT_SIZE)
-        .add(text_node(node.display.clone()));
+        .set("font-size", FONT_SIZE);
 
     let mut g = Group::new().add(ellipse).add(label);
     if let Some(ref s) = node.stereotype {
-        let st = Text::new()
+        let st = Text::new(format!("«{}»", s))
             .set("x", cx)
             .set("y", node.y + node.h + FONT_SIZE)
             .set("text-anchor", "middle")
             .set("font-size", "10")
-            .set("fill", "#555")
-            .add(text_node(format!("«{}»", s)));
+            .set("fill", "#555");
         g = g.add(st);
     }
     g
@@ -191,12 +187,11 @@ fn render_edge(
 
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
-            let t = Text::new()
+            let t = Text::new(lbl.clone())
                 .set("x", (x1 + x2) / 2.0)
                 .set("y", (y1 + y2) / 2.0 - 4.0)
                 .set("text-anchor", "middle")
-                .set("font-size", 11.0)
-                .add(text_node(lbl.clone()));
+                .set("font-size", 11.0);
             g = g.add(t);
         }
     }

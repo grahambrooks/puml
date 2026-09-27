@@ -1,7 +1,7 @@
 use svg::node::element::{Ellipse, Group, Line, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
 use crate::ast::class::{ClassKind, RelationKind};
 use crate::layout::class::{ClassLayout, EdgeLayout, NodeLayout, NoteBox};
@@ -32,12 +32,11 @@ pub fn render(layout: &ClassLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -79,13 +78,12 @@ fn render_boundary(b: &crate::layout::class::BoundaryBox, y_off: f64) -> Group {
     };
     // Title sits in the top stripe of the boundary rectangle, left-aligned
     // with a small inset so the dashed stroke is visible behind it.
-    let title = Text::new()
+    let title = Text::new(title_label)
         .set("x", b.x + 12.0)
         .set("y", y + 18.0)
         .set("font-size", 12.0)
         .set("font-weight", "bold")
-        .set("fill", "#666666")
-        .add(text_node(title_label));
+        .set("fill", "#666666");
 
     Group::new().add(rect).add(title)
 }
@@ -144,11 +142,10 @@ fn render_note(note: &NoteBox, y_off: f64) -> Group {
     let mut g = Group::new().add(body).add(fold_line).add(tether);
     for (i, line) in note.lines.iter().enumerate() {
         let ty = y + 16.0 + i as f64 * 16.0;
-        let t = Text::new()
+        let t = Text::new(line.clone())
             .set("x", note.x + 8.0)
             .set("y", ty)
-            .set("font-size", FONT_SIZE - 1.0)
-            .add(text_node(line.clone()));
+            .set("font-size", FONT_SIZE - 1.0);
         g = g.add(t);
     }
     g
@@ -599,13 +596,12 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
 
     // Stereotype label
     if let Some(ref stereo) = node.stereotype {
-        let st = Text::new()
+        let st = Text::new(format!("«{}»", stereo))
             .set("x", x + w / 2.0)
             .set("y", y + 14.0)
             .set("text-anchor", "middle")
             .set("font-size", "10")
-            .set("fill", "#555")
-            .add(text_node(format!("«{}»", stereo)));
+            .set("fill", "#555");
         g = g.add(st);
     }
 
@@ -635,18 +631,17 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
 
     if let Some(kl) = kind_label {
         if node.stereotype.is_none() {
-            let kl_el = Text::new()
+            let kl_el = Text::new(kl)
                 .set("x", x + w / 2.0)
                 .set("y", y + 12.0)
                 .set("text-anchor", "middle")
                 .set("font-size", "10")
-                .set("fill", "#555")
-                .add(text_node(kl));
+                .set("fill", "#555");
             g = g.add(kl_el);
         }
     }
 
-    let mut name_el = Text::new()
+    let mut name_el = Text::new(node.display_name.clone())
         .set("x", x + w / 2.0)
         .set("y", y + HEADER_TEXT_Y_OFF + name_y_adjust)
         .set("text-anchor", "middle")
@@ -657,8 +652,7 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
             } else {
                 "bold"
             },
-        )
-        .add(text_node(node.display_name.clone()));
+        );
     if matches!(node.kind, ClassKind::Object) {
         // UML convention: object instance names are underlined.
         name_el = name_el.set("text-decoration", "underline");
@@ -711,7 +705,7 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
             g = g.add(sep);
         }
         for member in &section.members {
-            let txt = Text::new()
+            let txt = Text::new(member.text.clone())
                 .set("x", x + 8.0)
                 .set("y", my)
                 .set(
@@ -729,8 +723,7 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
                     } else {
                         "none"
                     },
-                )
-                .add(text_node(member.text.clone()));
+                );
             g = g.add(txt);
             my += FONT_SIZE + 7.0;
         }
@@ -773,30 +766,27 @@ fn render_edge(edge: &EdgeLayout, y_off: f64) -> Group {
 
     if let Some(ref lbl) = edge.label {
         let (lx, ly, anchor) = label_perpendicular(&edge.points, 8.0);
-        let t = Text::new()
+        let t = Text::new(lbl.clone())
             .set("x", lx)
             .set("y", ly + y_off)
             .set("text-anchor", anchor)
-            .set("font-size", "11")
-            .add(text_node(lbl.clone()));
+            .set("font-size", "11");
         g = g.add(t);
     }
 
     if let Some(ref lbl) = edge.from_label {
-        let t = Text::new()
+        let t = Text::new(lbl.clone())
             .set("x", first_x + 6.0)
             .set("y", first_y + y_off - 4.0)
-            .set("font-size", "11")
-            .add(text_node(lbl.clone()));
+            .set("font-size", "11");
         g = g.add(t);
     }
 
     if let Some(ref lbl) = edge.to_label {
-        let t = Text::new()
+        let t = Text::new(lbl.clone())
             .set("x", last_x + 6.0)
             .set("y", last_y + y_off - 4.0)
-            .set("font-size", "11")
-            .add(text_node(lbl.clone()));
+            .set("font-size", "11");
         g = g.add(t);
     }
 

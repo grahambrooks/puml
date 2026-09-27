@@ -1,7 +1,7 @@
 use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, label_perpendicular, style_block, text_node};
+use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
 use crate::ast::state::StateKind;
 use crate::layout::ports::pick_port;
@@ -34,12 +34,11 @@ pub fn render(layout: &StateLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -153,13 +152,12 @@ fn render_history(node: &StateLayoutNode) -> Group {
         .set("r", r)
         .set("fill", "none")
         .set("class", "arrow");
-    let text = Text::new()
+    let text = Text::new(label)
         .set("x", cx)
         .set("y", cy + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
         .set("font-size", FONT_SIZE - 2.0)
-        .set("font-weight", "bold")
-        .add(text_node(label));
+        .set("font-weight", "bold");
 
     Group::new().add(circle).add(text)
 }
@@ -212,12 +210,11 @@ fn render_state_box(node: &StateLayoutNode) -> Group {
         .set("stroke-width", 1.5);
 
     let display = node.label.as_deref().unwrap_or(&node.name);
-    let text = Text::new()
+    let text = Text::new(display)
         .set("x", node_cx(node))
         .set("y", node.y + node.h / 2.0 + FONT_SIZE / 3.0)
         .set("text-anchor", "middle")
-        .set("font-size", FONT_SIZE)
-        .add(text_node(display));
+        .set("font-size", FONT_SIZE);
 
     Group::new().add(rect).add(text)
 }
@@ -242,12 +239,11 @@ fn render_edge(edge: &StateLayoutEdge, points: &[(f64, f64)]) -> Group {
     if let Some(ref lbl) = edge.label {
         if !lbl.is_empty() {
             let (lx, ly, anchor) = label_perpendicular(points, 8.0);
-            let text = Text::new()
+            let text = Text::new(lbl.clone())
                 .set("x", lx)
                 .set("y", ly)
                 .set("text-anchor", anchor)
-                .set("font-size", 11.0)
-                .add(text_node(lbl.clone()));
+                .set("font-size", 11.0);
             g = g.add(text);
         }
     }

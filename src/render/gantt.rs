@@ -1,7 +1,7 @@
 use svg::node::element::{Line, Polygon, Rectangle, Text};
 use svg::Document;
 
-use super::primitives::{background_rect, style_block, text_node};
+use super::primitives::{background_rect, style_block};
 use super::theme::Theme;
 use crate::layout::gantt::GanttLayout;
 
@@ -28,12 +28,11 @@ pub fn render(layout: &GanttLayout, theme: &Theme) -> Document {
     doc = doc.add(background_rect(theme));
 
     if let Some(ref t) = layout.title {
-        let title_el = Text::new()
+        let title_el = Text::new(t.clone())
             .set("x", layout.total_width / 2.0)
             .set("y", TOP_MARGIN)
             .set("text-anchor", "middle")
-            .set("class", "title")
-            .add(text_node(t.clone()));
+            .set("class", "title");
         doc = doc.add(title_el);
     }
 
@@ -46,12 +45,11 @@ pub fn render(layout: &GanttLayout, theme: &Theme) -> Document {
             .set("y2", layout.axis_y + 4.0)
             .set("stroke", "#666")
             .set("stroke-width", "1");
-        let label = Text::new()
+        let label = Text::new(tick.label.clone())
             .set("x", tick.x)
             .set("y", layout.axis_y - 8.0)
             .set("text-anchor", "middle")
-            .set("font-size", "10")
-            .add(text_node(tick.label.clone()));
+            .set("font-size", "10");
         doc = doc.add(line).add(label);
     }
     if let (Some(first), Some(last)) = (layout.axis_ticks.first(), layout.axis_ticks.last()) {
@@ -67,11 +65,10 @@ pub fn render(layout: &GanttLayout, theme: &Theme) -> Document {
 
     // Task rows.
     for bar in &layout.bars {
-        let label = Text::new()
+        let label = Text::new(bar.name.clone())
             .set("x", layout.label_col_x)
             .set("y", bar.y + bar.h / 2.0 + FONT_SIZE / 3.0)
-            .set("font-size", FONT_SIZE)
-            .add(text_node(bar.name.clone()));
+            .set("font-size", FONT_SIZE);
         doc = doc.add(label);
 
         if bar.milestone {
