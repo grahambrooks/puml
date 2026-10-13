@@ -42,14 +42,27 @@ pub fn render(layout: &StateLayout, theme: &Theme) -> Document {
         doc = doc.add(title_el);
     }
 
+    let routes = edge_routes(layout);
+
+    for (edge_idx, points) in routes {
+        let edge = &layout.edges[edge_idx];
+        doc = doc.add(render_edge(edge, &points));
+    }
+
+    for node in &layout.nodes {
+        doc = doc.add(render_node(node));
+    }
+
+    doc
+}
+
+/// Every edge's route (its index, its points): ports on the sides facing
+/// each other, an orthogonal path between them, and overlapping rails
+/// nudged apart. A fork or join bar is forced to its top or bottom, as its
+/// ends have no useful surface. Shared with [`crate::scene`].
+pub(crate) fn edge_routes(layout: &StateLayout) -> Vec<(usize, Vec<(f64, f64)>)> {
     let node_map: std::collections::HashMap<&str, &StateLayoutNode> =
         layout.nodes.iter().map(|n| (n.name.as_str(), n)).collect();
-
-    // Pre-compute every route so the nudge pass sees the full edge set and
-    // can spread overlapping rails apart before any segment is drawn. Port
-    // selection picks the side facing the other node — a fork/join bar is
-    // forced top/bottom because its left/right edges have no useful
-    // surface area.
     let mut routes: Vec<(usize, Vec<(f64, f64)>)> = Vec::new();
     for (i, edge) in layout.edges.iter().enumerate() {
         if let (Some(from), Some(to)) = (
@@ -73,17 +86,7 @@ pub fn render(layout: &StateLayout, theme: &Theme) -> Document {
     for ((_, slot), nudged) in routes.iter_mut().zip(just_points) {
         *slot = nudged;
     }
-
-    for (edge_idx, points) in routes {
-        let edge = &layout.edges[edge_idx];
-        doc = doc.add(render_edge(edge, &points));
-    }
-
-    for node in &layout.nodes {
-        doc = doc.add(render_node(node));
-    }
-
-    doc
+    routes
 }
 
 fn state_defs() -> Definitions {

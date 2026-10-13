@@ -178,6 +178,14 @@ or `for f in examples/*.puml; do puml "$f" -o "docs/examples/$(basename "$f" .pu
 "Shipping" means: parses the common PlantUML idioms for that diagram, produces a readable SVG, has fixture + snapshot
 coverage. It does **not** yet mean byte-level parity with `plantuml.jar`.
 
+### As a scene
+
+`puml::scene::scene(&ast)` returns the diagram laid out as a
+[`diagram-scene`](https://github.com/grahambrooks/diagram-scene) `Scene`
+(sequence, class, activity and state diagrams; `None` for the rest). Positions
+and edge routes are the ones the SVG renderer uses, and colours are theme
+roles, so a host such as the emx editor draws it natively in its own theme.
+
 ## Tech stack
 
 - **Parser:** [`pest`](https://pest.rs/) (one PEG grammar per diagram type) with a [

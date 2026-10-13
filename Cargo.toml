@@ -12,6 +12,8 @@ name = "puml"
 path = "src/main.rs"
 
 [dependencies]
+# Diagrams laid out as data, for hosts that draw them natively.
+diagram-scene = { git = "https://github.com/grahambrooks/diagram-scene", tag = "v2026.10.0", default-features = false }
 clap = { version = "4", features = ["derive"] }
 pest = "2"
 pest_derive = "2"

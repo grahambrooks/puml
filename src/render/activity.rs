@@ -41,12 +41,28 @@ pub fn render(layout: &ActivityLayout, theme: &Theme) -> Document {
         doc = doc.add(title_el);
     }
 
-    // Build id→node map for edge routing
+    let routes = edge_routes(layout);
+
+    // Draw edges first (below nodes).
+    for (edge_idx, points) in routes {
+        let edge = &layout.edges[edge_idx];
+        doc = doc.add(render_edge(edge, &points));
+    }
+
+    // Draw nodes on top
+    for node in &layout.nodes {
+        doc = doc.add(render_node(node));
+    }
+
+    doc
+}
+
+/// Every edge's route (its index, its points): ports on the sides facing
+/// each other, an orthogonal path between them, and overlapping rails
+/// spread apart. Shared with [`crate::scene`].
+pub(crate) fn edge_routes(layout: &ActivityLayout) -> Vec<(usize, Vec<(f64, f64)>)> {
     let node_map: std::collections::HashMap<usize, &LayoutNode> =
         layout.nodes.iter().map(|n| (n.id, n)).collect();
-
-    // Pre-route every edge so the nudge pass can spread overlapping rails
-    // before any segment is drawn.
     let mut routes: Vec<(usize, Vec<(f64, f64)>)> = Vec::new();
     for (i, edge) in layout.edges.iter().enumerate() {
         if let (Some(from), Some(to)) = (node_map.get(&edge.from), node_map.get(&edge.to)) {
@@ -63,19 +79,7 @@ pub fn render(layout: &ActivityLayout, theme: &Theme) -> Document {
     for ((_, slot), nudged) in routes.iter_mut().zip(just_points) {
         *slot = nudged;
     }
-
-    // Draw edges first (below nodes).
-    for (edge_idx, points) in routes {
-        let edge = &layout.edges[edge_idx];
-        doc = doc.add(render_edge(edge, &points));
-    }
-
-    // Draw nodes on top
-    for node in &layout.nodes {
-        doc = doc.add(render_node(node));
-    }
-
-    doc
+    routes
 }
 
 fn activity_defs() -> Definitions {

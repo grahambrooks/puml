@@ -40,11 +40,14 @@ message_stmt = { participant_ref ~ " "* ~ arrow ~ " "* ~ participant_ref ~ " "* 
 participant_ref = { quoted_string | bare_name }
 
 arrow = { arrow_token }
+// Longest first: a PEG takes the first alternative that matches, so `->`
+// before `->x` would leave the `x` to be read as a participant.
 arrow_token = _{
     "<-->>" | "<->>" | "<-->" | "<->" |
-    "-->>" | "->>" | "-->" | "->" |
-    "<<--" | "<<-" | "<--" | "<-" |
+    "-->>" | "->>" | "-->" |
     "->x" | "->o" | "x->" | "o->" |
+    "->" |
+    "<<--" | "<<-" | "<--" | "<-" |
     "-\\" | "\\" | "//" | "-/"
 }
 

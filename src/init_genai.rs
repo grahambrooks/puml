@@ -120,9 +120,13 @@ mod tests {
     use super::*;
 
     fn tempdir() -> PathBuf {
+        // A counter too: tests run in parallel, and the clock's resolution
+        // (microseconds on macOS) can hand two of them the same directory.
+        static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let n = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         let mut p = std::env::temp_dir();
         p.push(format!(
-            "puml-init-genai-{}-{}",
+            "puml-init-genai-{}-{n}-{}",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)

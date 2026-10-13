@@ -134,16 +134,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cc"
-version = "1.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
-dependencies = [
- "find-msvc-tools",
- "shlex",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -220,6 +210,11 @@ name = "data-url"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be1e0bca6c3637f992fc1cc7cbc52a78c1ef6db076dbf1059c4323d6a2048376"
+
+[[package]]
+name = "diagram-scene"
+version = "2026.10.0"
+source = "git+https://github.com/grahambrooks/diagram-scene?tag=v2026.10.0#c49b0802763390cb2200d9041bae4c19ddfa4def"
 
 [[package]]
 name = "encode_unicode"
@@ -688,6 +683,7 @@ version = "2026.10.1"
 dependencies = [
  "anyhow",
  "clap",
+ "diagram-scene",
  "insta",
  "logos",
  "notify",
@@ -872,19 +868,6 @@ dependencies = [
  "libc",
  "psm",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "stacker"
-version = "0.1.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "707f49d46706bacf8a2b00d51dace3f9de527c13eec3778f570c411f89e69967"
-dependencies = [
- "cc",
- "cfg-if",
- "libc",
- "psm",
- "windows-sys 0.60.2",
 ]
 
 [[package]]
