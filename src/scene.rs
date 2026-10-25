@@ -45,6 +45,7 @@ fn new_scene(width: f64, height: f64, title: &Option<String>) -> (Scene, f32) {
             Anchor::Middle,
             TextLine::new(t.clone(), Font::Title),
         ));
+        scene.accessibility.title = Some(t.clone());
     }
     (scene, dy)
 }
@@ -577,6 +578,7 @@ mod tests {
         assert!(s.containers.iter().any(|c| matches!(&c.kind, ContainerKind::Fragment { operator, guards } if operator == "alt" && guards.len() == 2)));
         assert!(s.edges.iter().any(|e| e.pen.dash == Dash::Dashed));
         assert!(s.edges.iter().any(|e| e.end == Marker::Cross));
+        assert_eq!(s.accessibility.title.as_deref(), Some("Checkout"));
         inside(&s);
     }
 
