@@ -1,6 +1,6 @@
 [package]
 name = "puml"
-version = "2026.10.2"
+version = "2026.10.25"
 edition = "2021"
 
 [lib]
