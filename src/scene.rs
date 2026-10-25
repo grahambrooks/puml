@@ -40,13 +40,11 @@ fn new_scene(width: f64, height: f64, title: &Option<String>) -> (Scene, f32) {
     let mut scene = Scene::new(width as f32, height as f32 + dy);
     scene.font_size = FONT_SIZE;
     if let Some(t) = title {
-        scene.title = Some(Text {
-            pos: Point::new(scene.width / 2.0, 22.0),
-            anchor: Anchor::Middle,
-            line: TextLine::new(t.clone(), Font::Title),
-            paint: Paint::Role(Role::Text),
-            backed: false,
-        });
+        scene.title = Some(Text::new(
+            Point::new(scene.width / 2.0, 22.0),
+            Anchor::Middle,
+            TextLine::new(t.clone(), Font::Title),
+        ));
     }
     (scene, dy)
 }
@@ -151,11 +149,12 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                 // Under the figure, on the page's colour: the first message
                 // can run just below the box.
                 scene.texts.push(Text {
-                    pos: Point::new(x, rect.bottom() - 3.0),
-                    anchor: Anchor::Middle,
-                    line: TextLine::new(p.display.clone(), Font::Body),
-                    paint: Paint::Role(Role::Text),
                     backed: true,
+                    ..Text::new(
+                        Point::new(x, rect.bottom() - 3.0),
+                        Anchor::Middle,
+                        TextLine::new(p.display.clone(), Font::Body),
+                    )
                 });
             } else {
                 node.label = lines(&p.display, Font::Body);
@@ -276,11 +275,12 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                     });
                 }
                 scene.texts.push(Text {
-                    pos: Point::new(d.total_width as f32 / 2.0, y + 4.0),
-                    anchor: Anchor::Middle,
-                    line: TextLine::new(d.label.clone(), Font::Bold),
-                    paint: Paint::Role(Role::Text),
                     backed: true,
+                    ..Text::new(
+                        Point::new(d.total_width as f32 / 2.0, y + 4.0),
+                        Anchor::Middle,
+                        TextLine::new(d.label.clone(), Font::Bold),
+                    )
                 });
             }
         }
@@ -423,11 +423,13 @@ fn class(l: &layout::class::ClassLayout) -> Scene {
         for (at, text) in ends {
             if let (Some(&(x, y)), Some(text)) = (at, text) {
                 scene.texts.push(Text {
-                    pos: Point::new(x as f32 + 6.0, y as f32 + dy - 4.0),
-                    anchor: Anchor::Start,
-                    line: TextLine::new(text.clone(), Font::Small),
                     paint: Paint::Role(Role::Muted),
                     backed: true,
+                    ..Text::new(
+                        Point::new(x as f32 + 6.0, y as f32 + dy - 4.0),
+                        Anchor::Start,
+                        TextLine::new(text.clone(), Font::Small),
+                    )
                 });
             }
         }

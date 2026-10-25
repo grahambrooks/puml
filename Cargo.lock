@@ -213,8 +213,8 @@ checksum = "be1e0bca6c3637f992fc1cc7cbc52a78c1ef6db076dbf1059c4323d6a2048376"
 
 [[package]]
 name = "diagram-scene"
-version = "2026.10.0"
-source = "git+https://github.com/grahambrooks/diagram-scene?tag=v2026.10.0#c49b0802763390cb2200d9041bae4c19ddfa4def"
+version = "2026.10.25"
+source = "git+https://github.com/grahambrooks/diagram-scene?tag=v2026.10.25#632d4fe17befd981c705c891687562f480e6c18d"
 
 [[package]]
 name = "encode_unicode"
