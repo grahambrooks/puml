@@ -230,3 +230,22 @@ fn skinparam_block_form_parses() {
         );
     }
 }
+
+#[test]
+fn autonumber_with_step_and_format_parses() {
+    let parse = |line: &str| {
+        let src = format!("@startuml\n{line}\nAlice -> Bob: hello\n@enduml\n");
+        let diagrams = puml::parser::preprocessor::preprocess(&src, None);
+        puml::parser::parse(&diagrams[0])
+    };
+    for ok in [
+        "autonumber",
+        "autonumber 5",
+        "autonumber 1 1",
+        "autonumber 1 1 \"<b>[0]\"",
+    ] {
+        parse(ok).unwrap_or_else(|e| panic!("{ok:?}: {e}"));
+    }
+    // A step other than 1 would number messages wrongly if ignored.
+    assert!(parse("autonumber 10 5").is_err());
+}

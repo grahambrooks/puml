@@ -100,7 +100,11 @@ delay_stmt = { "..." ~ (" " ~ rest_of_line)? }
 space_stmt = { "|||" ~ (ASCII_DIGIT+)? }
 
 // ── Autonumber ───────────────────────────────────────────────────────────────
-autonumber_stmt = { ^"autonumber" ~ (" "+ ~ ASCII_DIGIT+)? ~ (" "* ~ NEWLINE) }
+// `autonumber [start [step]] ["format"]`. The format string is styling and is
+// accepted but not applied; a step other than 1 is rejected by the parser.
+autonumber_stmt = { ^"autonumber" ~ (" "+ ~ autonumber_start ~ (" "+ ~ autonumber_step)?)? ~ (" "+ ~ quoted_string)? ~ (" "* ~ NEWLINE) }
+autonumber_start = { ASCII_DIGIT+ }
+autonumber_step  = { ASCII_DIGIT+ }
 
 // ── Misc ─────────────────────────────────────────────────────────────────────
 hide_footbox_stmt = { ^"hide" ~ " "+ ~ ^"footbox" }

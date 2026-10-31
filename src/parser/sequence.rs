@@ -96,8 +96,23 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                     diagram.elements.push(SequenceElement::Space(px));
                 }
                 Rule::autonumber_stmt => {
-                    let inner = stmt.into_inner().as_str().trim();
-                    let start = inner.parse().ok();
+                    let line = stmt.as_span().start_pos().line_col().0;
+                    let mut start = None;
+                    for part in stmt.into_inner() {
+                        match part.as_rule() {
+                            Rule::autonumber_start => start = part.as_str().parse().ok(),
+                            Rule::autonumber_step if part.as_str() != "1" => {
+                                return Err(PumlError::Parse {
+                                    line,
+                                    message: format!(
+                                        "autonumber step {} is not supported (only 1)",
+                                        part.as_str()
+                                    ),
+                                });
+                            }
+                            _ => {}
+                        }
+                    }
                     diagram.elements.push(SequenceElement::Autonumber(start));
                 }
                 Rule::hide_footbox_stmt => {
