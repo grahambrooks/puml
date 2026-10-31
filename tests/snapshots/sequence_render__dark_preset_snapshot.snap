@@ -3,7 +3,7 @@ source: tests/sequence_render.rs
 assertion_line: 179
 expression: svg
 ---
-<svg height="225" viewBox="0 0 310 225" width="310" xmlns="http://www.w3.org/2000/svg">
+<svg height="225" viewBox="0 0 315 225" width="315" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -23,22 +23,22 @@ Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
-<text text-anchor="middle" x="230" y="44.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="175" y="20"/>
+<text text-anchor="middle" x="235" y="44.5">
 Bob
 </text>
 </g>
 <line class="lifeline" x1="80" x2="80" y1="60" y2="155"/>
-<line class="lifeline" x1="230" x2="230" y1="60" y2="155"/>
+<line class="lifeline" x1="235" x2="235" y1="60" y2="155"/>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="91" y2="91"/>
-<text text-anchor="middle" x="155" y="82">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="235" y1="91" y2="91"/>
+<text text-anchor="middle" x="157.5" y="82">
 hello in dark mode
 </text>
 </g>
 <g>
-<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="230" x2="80" y1="131" y2="131"/>
-<text text-anchor="middle" x="155" y="122">
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="235" x2="80" y1="131" y2="131"/>
+<text text-anchor="middle" x="157.5" y="122">
 ack
 </text>
 </g>
@@ -49,8 +49,8 @@ Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="155"/>
-<text text-anchor="middle" x="230" y="179.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="175" y="155"/>
+<text text-anchor="middle" x="235" y="179.5">
 Bob
 </text>
 </g>

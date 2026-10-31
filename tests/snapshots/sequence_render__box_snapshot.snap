@@ -2,7 +2,7 @@
 source: tests/sequence_render.rs
 expression: svg
 ---
-<svg height="683" viewBox="0 0 1385 683" width="1385" xmlns="http://www.w3.org/2000/svg">
+<svg height="683" viewBox="0 0 1625 683" width="1625" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -16,164 +16,164 @@ text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fil
 </style>
 <rect class="bg" fill="#ffffff" height="100%" width="100%"/>
 <g class="participant-group">
-<rect fill="#888888" fill-opacity="0.15" height="665" rx="3" stroke="#888888" stroke-width="1" width="442.25" x="330.75" y="6"/>
-<text font-weight="bold" text-anchor="middle" x="551.875" y="21">
+<rect fill="#888888" fill-opacity="0.15" height="665" rx="3" stroke="#888888" stroke-width="1" width="568.5" x="444.5" y="6"/>
+<text font-weight="bold" text-anchor="middle" x="728.75" y="21">
 Region AB
 </text>
 </g>
 <g class="participant-group">
-<rect fill="#888888" fill-opacity="0.15" height="665" rx="3" stroke="#888888" stroke-width="1" width="586" x="787" y="6"/>
-<text font-weight="bold" text-anchor="middle" x="1080" y="21">
+<rect fill="#888888" fill-opacity="0.15" height="665" rx="3" stroke="#888888" stroke-width="1" width="586" x="1027" y="6"/>
+<text font-weight="bold" text-anchor="middle" x="1320" y="21">
 Region CDE
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="26.25" y="40"/>
-<text text-anchor="middle" x="86.25" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="40"/>
+<text text-anchor="middle" x="80" y="64.5">
 Sales
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="182.5" y="40"/>
-<text text-anchor="middle" x="242.5" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="302.5" y="40"/>
+<text text-anchor="middle" x="362.5" y="64.5">
 Kafka
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="338.75" y="40"/>
-<text text-anchor="middle" x="398.75" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="452.5" y="40"/>
+<text text-anchor="middle" x="512.5" y="64.5">
 AB Cache
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="495" y="40"/>
-<text text-anchor="middle" x="555" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="735" y="40"/>
+<text text-anchor="middle" x="795" y="64.5">
 Subscriber A
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="645" y="40"/>
-<text text-anchor="middle" x="705" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="885" y="40"/>
+<text text-anchor="middle" x="945" y="64.5">
 Subscriber B
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="795" y="40"/>
-<text text-anchor="middle" x="855" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1035" y="40"/>
+<text text-anchor="middle" x="1095" y="64.5">
 CDE Cache
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="945" y="40"/>
-<text text-anchor="middle" x="1005" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1185" y="40"/>
+<text text-anchor="middle" x="1245" y="64.5">
 Subscriber C
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1095" y="40"/>
-<text text-anchor="middle" x="1155" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1335" y="40"/>
+<text text-anchor="middle" x="1395" y="64.5">
 Subscriber D
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1245" y="40"/>
-<text text-anchor="middle" x="1305" y="64.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="1485" y="40"/>
+<text text-anchor="middle" x="1545" y="64.5">
 Subscriber E
 </text>
 </g>
-<line class="lifeline" x1="86.25" x2="86.25" y1="80" y2="663"/>
-<line class="lifeline" x1="242.5" x2="242.5" y1="80" y2="663"/>
-<line class="lifeline" x1="398.75" x2="398.75" y1="80" y2="663"/>
-<line class="lifeline" x1="555" x2="555" y1="80" y2="663"/>
-<line class="lifeline" x1="705" x2="705" y1="80" y2="663"/>
-<line class="lifeline" x1="855" x2="855" y1="80" y2="663"/>
-<line class="lifeline" x1="1005" x2="1005" y1="80" y2="663"/>
-<line class="lifeline" x1="1155" x2="1155" y1="80" y2="663"/>
-<line class="lifeline" x1="1305" x2="1305" y1="80" y2="663"/>
+<line class="lifeline" x1="80" x2="80" y1="80" y2="663"/>
+<line class="lifeline" x1="362.5" x2="362.5" y1="80" y2="663"/>
+<line class="lifeline" x1="512.5" x2="512.5" y1="80" y2="663"/>
+<line class="lifeline" x1="795" x2="795" y1="80" y2="663"/>
+<line class="lifeline" x1="945" x2="945" y1="80" y2="663"/>
+<line class="lifeline" x1="1095" x2="1095" y1="80" y2="663"/>
+<line class="lifeline" x1="1245" x2="1245" y1="80" y2="663"/>
+<line class="lifeline" x1="1395" x2="1395" y1="80" y2="663"/>
+<line class="lifeline" x1="1545" x2="1545" y1="80" y2="663"/>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="86.25" x2="242.5" y1="127" y2="127"/>
-<text text-anchor="middle" x="164.375" y="102">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="362.5" y1="127" y2="127"/>
+<text text-anchor="middle" x="221.25" y="102">
 1: Order Change
 </text>
-<text text-anchor="middle" x="164.375" y="118">
+<text text-anchor="middle" x="221.25" y="118">
  http://sales/orders/1234/version/2
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="242.5" x2="555" y1="183" y2="183"/>
-<text text-anchor="middle" x="398.75" y="158">
+<line class="arrow" marker-end="url(#arrowhead)" x1="362.5" x2="795" y1="183" y2="183"/>
+<text text-anchor="middle" x="578.75" y="158">
 2: Order Change
 </text>
-<text text-anchor="middle" x="398.75" y="174">
+<text text-anchor="middle" x="578.75" y="174">
  http://sales/orders/1234/version/2
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="555" x2="398.75" y1="239" y2="239"/>
-<text text-anchor="middle" x="476.875" y="214">
+<line class="arrow" marker-end="url(#arrowhead)" x1="795" x2="512.5" y1="239" y2="239"/>
+<text text-anchor="middle" x="653.75" y="214">
 3: Get Order
 </text>
-<text text-anchor="middle" x="476.875" y="230">
+<text text-anchor="middle" x="653.75" y="230">
  http://sales/orders/1234/version/2
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="398.75" x2="86.25" y1="279" y2="279"/>
-<text text-anchor="middle" x="242.5" y="270">
+<line class="arrow" marker-end="url(#arrowhead)" x1="512.5" x2="80" y1="279" y2="279"/>
+<text text-anchor="middle" x="296.25" y="270">
 4: Get Order ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="242.5" x2="705" y1="319" y2="319"/>
-<text text-anchor="middle" x="473.75" y="310">
+<line class="arrow" marker-end="url(#arrowhead)" x1="362.5" x2="945" y1="319" y2="319"/>
+<text text-anchor="middle" x="653.75" y="310">
 5: Order Change ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="705" x2="398.75" y1="359" y2="359"/>
-<text text-anchor="middle" x="551.875" y="350">
+<line class="arrow" marker-end="url(#arrowhead)" x1="945" x2="512.5" y1="359" y2="359"/>
+<text text-anchor="middle" x="728.75" y="350">
 6: Get Order ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="242.5" x2="1005" y1="399" y2="399"/>
-<text text-anchor="middle" x="623.75" y="390">
+<line class="arrow" marker-end="url(#arrowhead)" x1="362.5" x2="1245" y1="399" y2="399"/>
+<text text-anchor="middle" x="803.75" y="390">
 7: Order Change ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="1005" x2="855" y1="439" y2="439"/>
-<text text-anchor="middle" x="930" y="430">
+<line class="arrow" marker-end="url(#arrowhead)" x1="1245" x2="1095" y1="439" y2="439"/>
+<text text-anchor="middle" x="1170" y="430">
 8: Get Order ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="855" x2="86.25" y1="479" y2="479"/>
-<text text-anchor="middle" x="470.625" y="470">
+<line class="arrow" marker-end="url(#arrowhead)" x1="1095" x2="80" y1="479" y2="479"/>
+<text text-anchor="middle" x="587.5" y="470">
 9: Get Order ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="242.5" x2="1155" y1="519" y2="519"/>
-<text text-anchor="middle" x="698.75" y="510">
+<line class="arrow" marker-end="url(#arrowhead)" x1="362.5" x2="1395" y1="519" y2="519"/>
+<text text-anchor="middle" x="878.75" y="510">
 10: Order Change ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="1155" x2="855" y1="559" y2="559"/>
-<text text-anchor="middle" x="1005" y="550">
+<line class="arrow" marker-end="url(#arrowhead)" x1="1395" x2="1095" y1="559" y2="559"/>
+<text text-anchor="middle" x="1245" y="550">
 11: Get Order ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="242.5" x2="1305" y1="599" y2="599"/>
-<text text-anchor="middle" x="773.75" y="590">
+<line class="arrow" marker-end="url(#arrowhead)" x1="362.5" x2="1545" y1="599" y2="599"/>
+<text text-anchor="middle" x="953.75" y="590">
 12: Order Change ...
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="1305" x2="855" y1="639" y2="639"/>
-<text text-anchor="middle" x="1080" y="630">
+<line class="arrow" marker-end="url(#arrowhead)" x1="1545" x2="1095" y1="639" y2="639"/>
+<text text-anchor="middle" x="1320" y="630">
 13: Get Order ...
 </text>
 </g>

@@ -156,7 +156,10 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         })
         .collect();
 
-    widen_for_messages(&participants, &diagram.elements, &mut col_widths);
+    // The space between neighbouring columns; a long message label
+    // widens the gaps its arrow crosses.
+    let mut gaps = vec![PARTICIPANT_H_PADDING; n.saturating_sub(1)];
+    widen_for_messages(&participants, &diagram.elements, &mut col_widths, &mut gaps);
 
     // Member columns of each box, as (first, last) indices.
     let box_spans: Vec<Option<(usize, usize)>> = diagram
@@ -171,7 +174,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
             Some((*idx.iter().min()?, *idx.iter().max()?))
         })
         .collect();
-    widen_for_box_titles(&diagram.boxes, &box_spans, &mut col_widths);
+    widen_for_box_titles(&diagram.boxes, &box_spans, &mut col_widths, &gaps);
     let header_offset = if diagram
         .boxes
         .iter()
@@ -193,8 +196,8 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     for (i, w) in col_widths.iter().enumerate() {
         centers.push(x + w / 2.0);
         x += w;
-        if i + 1 < n {
-            x += PARTICIPANT_H_PADDING;
+        if let Some(gap) = gaps.get(i) {
+            x += gap;
         }
     }
     let total_width = x + SIDE_MARGIN;
@@ -290,6 +293,7 @@ fn widen_for_box_titles(
     boxes: &[ParticipantBox],
     spans: &[Option<(usize, usize)>],
     col_widths: &mut [f64],
+    gaps: &[f64],
 ) {
     for (b, span) in boxes.iter().zip(spans) {
         let (Some(title), Some((lo, hi))) = (&b.title, span) else {
@@ -297,7 +301,7 @@ fn widen_for_box_titles(
         };
         let (lo, hi) = (*lo, *hi);
         // The box spans the outer participant boxes plus its padding.
-        let inner = centers_span(col_widths, lo, hi) + PARTICIPANT_WIDTH + 2.0 * BOX_PAD;
+        let inner = centers_span(col_widths, gaps, lo, hi) + PARTICIPANT_WIDTH + 2.0 * BOX_PAD;
         let needed = text_width(title) + 20.0;
         if needed > inner {
             let extra = (needed - inner) / (hi - lo + 1) as f64;
@@ -309,14 +313,28 @@ fn widen_for_box_titles(
 }
 
 /// Distance between the centres of columns `lo` and `hi`.
-fn centers_span(col_widths: &[f64], lo: usize, hi: usize) -> f64 {
+fn centers_span(col_widths: &[f64], gaps: &[f64], lo: usize, hi: usize) -> f64 {
     if lo == hi {
         return 0.0;
     }
     col_widths[lo] / 2.0
         + col_widths[lo + 1..hi].iter().sum::<f64>()
         + col_widths[hi] / 2.0
-        + PARTICIPANT_H_PADDING * (hi - lo) as f64
+        + gaps[lo..hi].iter().sum::<f64>()
+}
+
+/// A message's label lines as drawn: split at `\n`, with the autonumber
+/// prefix (advancing the counter) when numbering is on.
+fn message_lines(label: &str, autonumber: &mut Option<u32>) -> Vec<String> {
+    let mut lines = super::text_lines(label);
+    if let Some(n) = autonumber {
+        match lines.first_mut() {
+            Some(first) => *first = format!("{n}: {first}"),
+            None => lines.push(n.to_string()),
+        }
+        *n += 1;
+    }
+    lines
 }
 
 struct LayoutCtx<'a> {
@@ -350,14 +368,7 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
             let dashed = matches!(msg.arrow, ArrowStyle::Dashed);
             let self_msg = fi == ti;
 
-            let mut lines = super::text_lines(&msg.label);
-            if let Some(ref mut n) = ctx.autonumber {
-                match lines.first_mut() {
-                    Some(first) => *first = format!("{n}: {first}"),
-                    None => lines.push(n.to_string()),
-                }
-                *n += 1;
-            }
+            let lines = message_lines(&msg.label, &mut ctx.autonumber);
             // The label sits in its own row above the arrow, so it can't
             // run into the row before; each extra line pushes the arrow
             // down by a line.
@@ -516,13 +527,20 @@ fn layout_group(ctx: &mut LayoutCtx, group: &GroupBlock) {
     }));
 }
 
-fn collect_messages<'a>(elements: &'a [SequenceElement], out: &mut Vec<&'a Message>) {
+/// Every message in drawing order, with its label lines as drawn
+/// (numbered the way `layout_one` numbers them).
+fn collect_messages<'a>(
+    elements: &'a [SequenceElement],
+    autonumber: &mut Option<u32>,
+    out: &mut Vec<(&'a Message, Vec<String>)>,
+) {
     for e in elements {
         match e {
-            SequenceElement::Message(m) => out.push(m),
+            SequenceElement::Message(m) => out.push((m, message_lines(&m.label, autonumber))),
+            SequenceElement::Autonumber(start) => *autonumber = Some(start.unwrap_or(1)),
             SequenceElement::Group(g) => {
                 for (_, body) in &g.sections {
-                    collect_messages(body, out);
+                    collect_messages(body, autonumber, out);
                 }
             }
             _ => {}
@@ -534,10 +552,11 @@ fn widen_for_messages(
     participants: &[&Participant],
     elements: &[SequenceElement],
     col_widths: &mut [f64],
+    gaps: &mut [f64],
 ) {
-    let mut msgs: Vec<&Message> = Vec::new();
-    collect_messages(elements, &mut msgs);
-    for msg in msgs {
+    let mut msgs = Vec::new();
+    collect_messages(elements, &mut None, &mut msgs);
+    for (msg, lines) in msgs {
         let fi = participants
             .iter()
             .position(|p| p.alias.as_deref().unwrap_or(&p.name) == msg.from || p.name == msg.from);
@@ -551,22 +570,22 @@ fn widen_for_messages(
                 // wide enough that the loop's right edge stays inside the
                 // column (with a small buffer). Otherwise the loop
                 // crashes into the next participant's lifeline.
-                let loop_w =
-                    crate::render::sequence::self_loop_width(&super::text_lines(&msg.label));
+                let loop_w = crate::render::sequence::self_loop_width(&lines);
                 let needed_half = loop_w + 10.0;
                 let current_half = col_widths[fi] / 2.0;
                 if needed_half > current_half {
                     col_widths[fi] = needed_half * 2.0;
                 }
             } else {
+                // The label is centred on the arrow, which runs centre to
+                // centre; the arrow must outrun the widest line.
                 let (lo, hi) = (fi.min(ti), fi.max(ti));
-                let span: f64 = col_widths[lo..=hi].iter().sum::<f64>()
-                    + PARTICIPANT_H_PADDING * (hi - lo) as f64;
-                let needed = lines_width(&super::text_lines(&msg.label)) + 20.0;
-                if needed > span && hi > lo {
+                let span = centers_span(col_widths, gaps, lo, hi);
+                let needed = lines_width(&lines) + 20.0;
+                if needed > span {
                     let extra = (needed - span) / (hi - lo) as f64;
-                    for w in &mut col_widths[lo..hi] {
-                        *w += extra;
+                    for gap in &mut gaps[lo..hi] {
+                        *gap += extra;
                     }
                 }
             }
@@ -653,6 +672,20 @@ mod tests {
         let single = layout_of(&format!("@startuml\nA -> B: {line}\n@enduml\n"));
         assert_eq!(split.total_width, single.total_width);
         assert!(joined.total_width > split.total_width);
+    }
+
+    #[test]
+    fn arrows_outrun_their_numbered_labels() {
+        let label = "new-customer-event <graham, graham@grahambrooks.com>";
+        let l = layout_of(&format!(
+            "@startuml\nautonumber\nA -> B: x\nB -> C: {label}\n@enduml\n"
+        ));
+        let m = messages(&l);
+        let run = (m[1].to_x - m[1].from_x).abs();
+        assert!(
+            run >= lines_width(&m[1].lines) + 20.0,
+            "arrow {run} too short"
+        );
     }
 
     #[test]

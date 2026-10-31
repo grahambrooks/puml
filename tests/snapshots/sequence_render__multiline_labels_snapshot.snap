@@ -2,7 +2,7 @@
 source: tests/sequence_render.rs
 expression: svg
 ---
-<svg height="287" viewBox="0 0 310 287" width="310" xmlns="http://www.w3.org/2000/svg">
+<svg height="287" viewBox="0 0 367.5 287" width="367.5" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -22,40 +22,40 @@ Sales
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
-<text text-anchor="middle" x="230" y="44.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="227.5" y="20"/>
+<text text-anchor="middle" x="287.5" y="44.5">
 Shipping
 </text>
 </g>
 <line class="lifeline" x1="80" x2="80" y1="60" y2="267"/>
-<line class="lifeline" x1="230" x2="230" y1="60" y2="267"/>
+<line class="lifeline" x1="287.5" x2="287.5" y1="60" y2="267"/>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="91" y2="91"/>
-<text text-anchor="middle" x="155" y="82">
+<line class="arrow" marker-end="url(#arrowhead)" x1="287.5" x2="80" y1="91" y2="91"/>
+<text text-anchor="middle" x="183.75" y="82">
 1: Subscribe (Orders)
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="147" y2="147"/>
-<text text-anchor="middle" x="155" y="122">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="287.5" y1="147" y2="147"/>
+<text text-anchor="middle" x="183.75" y="122">
 2: New Order
 </text>
-<text text-anchor="middle" x="155" y="138">
+<text text-anchor="middle" x="183.75" y="138">
  http://sales/orders/1234
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="203" y2="203"/>
-<text text-anchor="middle" x="155" y="178">
+<line class="arrow" marker-end="url(#arrowhead)" x1="287.5" x2="80" y1="203" y2="203"/>
+<text text-anchor="middle" x="183.75" y="178">
 3: Get Order
 </text>
-<text text-anchor="middle" x="155" y="194">
+<text text-anchor="middle" x="183.75" y="194">
  http://sales/orders/1234
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="243" y2="243"/>
-<text text-anchor="middle" x="155" y="234">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="287.5" y1="243" y2="243"/>
+<text text-anchor="middle" x="183.75" y="234">
 4: Order details
 </text>
 </g>
