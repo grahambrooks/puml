@@ -83,21 +83,9 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                     }
                 }
                 Rule::message_stmt => {
-                    let (msg, from, to) = parse_message(stmt);
-                    for name in [&from, &to] {
-                        if !seen_names.contains(name) {
-                            seen_names.push(name.clone());
-                            if let Some((b, _)) = open_box {
-                                diagram.boxes[b].participants.push(name.clone());
-                            }
-                            diagram.participants.push(Participant {
-                                name: name.clone(),
-                                alias: None,
-                                kind: ParticipantKind::Participant,
-                                color: None,
-                            });
-                        }
-                    }
+                    let (msg, _, _) = parse_message(stmt);
+                    let open = open_box.map(|(b, _)| b);
+                    add_implicit(&mut diagram, &mut seen_names, open, &msg);
                     diagram.elements.push(SequenceElement::Message(msg));
                 }
                 Rule::note_stmt => {
@@ -107,6 +95,14 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                 }
                 Rule::group_stmt => {
                     let group = parse_group(stmt);
+                    // Participants first named inside a fragment get a
+                    // column too, in the order they appear.
+                    let mut msgs = Vec::new();
+                    group_messages(&group, &mut msgs);
+                    let open = open_box.map(|(b, _)| b);
+                    for msg in msgs {
+                        add_implicit(&mut diagram, &mut seen_names, open, msg);
+                    }
                     diagram.elements.push(SequenceElement::Group(group));
                 }
                 Rule::divider_stmt => {
@@ -174,6 +170,42 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
     }
 
     Ok(diagram)
+}
+
+/// Registers the message's endpoints as participants if this is their first
+/// mention, adding them to the open box if there is one.
+fn add_implicit(
+    diagram: &mut SequenceDiagram,
+    seen_names: &mut Vec<String>,
+    open_box: Option<usize>,
+    msg: &Message,
+) {
+    for name in [&msg.from, &msg.to] {
+        if !seen_names.contains(name) {
+            seen_names.push(name.clone());
+            if let Some(b) = open_box {
+                diagram.boxes[b].participants.push(name.clone());
+            }
+            diagram.participants.push(Participant {
+                name: name.clone(),
+                alias: None,
+                kind: ParticipantKind::Participant,
+                color: None,
+            });
+        }
+    }
+}
+
+fn group_messages<'a>(group: &'a GroupBlock, out: &mut Vec<&'a Message>) {
+    for (_, body) in &group.sections {
+        for e in body {
+            match e {
+                SequenceElement::Message(m) => out.push(m),
+                SequenceElement::Group(g) => group_messages(g, out),
+                _ => {}
+            }
+        }
+    }
 }
 
 fn unquote(s: &str) -> String {
@@ -451,6 +483,14 @@ mod tests {
             Ok(_) => {}
             Err(e) => panic!("parse failed: {}", e),
         }
+    }
+
+    #[test]
+    fn participants_first_named_in_a_fragment_get_columns() {
+        let src = "A -> B : x\nalt ok\n  A -> C : y\n  loop\n    C -> D : z\n  end\nend\n";
+        let d = parse(src).unwrap();
+        let names: Vec<&str> = d.participants.iter().map(|p| p.name.as_str()).collect();
+        assert_eq!(names, ["A", "B", "C", "D"]);
     }
 
     #[test]
