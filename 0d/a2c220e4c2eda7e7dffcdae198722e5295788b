@@ -1,0 +1,19 @@
+src/parser/sequence.rs
+  s_38439ae326f7ae::t_d8ac1bfd3db0a6 86-88,98-105,175-210,488-495
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0da2c220e4c2eda7e7dffcdae198722e5295788b",
+  "prompts": {},
+  "sessions": {
+    "s_38439ae326f7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e88d1d-b3bb-451e-9770-aa1214b3f499",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
