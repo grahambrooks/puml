@@ -3,8 +3,8 @@ use svg::Document;
 
 use crate::ast::sequence::ParticipantKind;
 use crate::layout::sequence::{
-    ActivationLayout, DividerLayout, GroupLayout, LayoutElement, MessageLayout, NoteLayout,
-    ParticipantLayout, SequenceLayout,
+    ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LayoutElement, MessageLayout,
+    NoteLayout, ParticipantLayout, SequenceLayout,
 };
 
 use super::primitives::{arrowhead_defs, background_rect, style_block};
@@ -51,13 +51,19 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
 
     let y_off = title_offset;
 
+    // Participant boxes (`box` … `end box`) sit behind everything else.
+    for b in &layout.boxes {
+        doc = doc.add(render_box(b, y_off));
+    }
+
     // Header participant boxes
+    let header_top = y_off + TOP_MARGIN + layout.header_offset;
     for p in &layout.participants {
-        doc = doc.add(participant_box(p, y_off + TOP_MARGIN, false));
+        doc = doc.add(participant_box(p, header_top, false));
     }
 
     // Lifelines
-    let lifeline_start = y_off + TOP_MARGIN + PARTICIPANT_HEIGHT;
+    let lifeline_start = header_top + PARTICIPANT_HEIGHT;
     for p in &layout.participants {
         let line = Line::new()
             .set("x1", p.x)
@@ -102,6 +108,47 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     }
 
     doc
+}
+
+/// An SVG paint for a PlantUML colour: `#rgb`/`#rrggbb` stay as they are,
+/// `#Name` becomes the CSS colour keyword `Name`.
+fn svg_color(c: &str) -> String {
+    let body = c.trim_start_matches('#');
+    let hex = matches!(body.len(), 3 | 6) && body.chars().all(|ch| ch.is_ascii_hexdigit());
+    if hex {
+        format!("#{body}")
+    } else {
+        body.to_string()
+    }
+}
+
+fn render_box(b: &BoxLayout, y_off: f64) -> Group {
+    let y = b.y + y_off;
+    let mut rect = Rectangle::new()
+        .set("x", b.x)
+        .set("y", y)
+        .set("width", b.width)
+        .set("height", b.height)
+        .set("rx", "3")
+        .set("stroke", "#888888")
+        .set("stroke-width", "1");
+    // An explicit colour is drawn as given; the default is a translucent
+    // grey that reads on light and dark backgrounds alike.
+    rect = match &b.color {
+        Some(c) => rect.set("fill", svg_color(c)),
+        None => rect.set("fill", "#888888").set("fill-opacity", "0.15"),
+    };
+    let mut g = Group::new().set("class", "participant-group").add(rect);
+    if let Some(t) = &b.title {
+        g = g.add(
+            Text::new(t.clone())
+                .set("x", b.x + b.width / 2.0)
+                .set("y", y + 15.0)
+                .set("text-anchor", "middle")
+                .set("font-weight", "bold"),
+        );
+    }
+    g
 }
 
 fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {

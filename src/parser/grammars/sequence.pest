@@ -1,6 +1,11 @@
 // Sequence diagram grammar
 
-diagram = { SOI ~ statement* ~ EOI }
+diagram = { SOI ~ top_statement* ~ EOI }
+
+// `box` / `end box` only appear at the top level: a box groups participant
+// columns, so it cannot open inside a fragment. The parser pairs them up and
+// rejects nesting.
+top_statement = _{ " "* ~ (box_start | box_end) | statement }
 
 statement = _{
     " "* ~ (
@@ -20,6 +25,12 @@ statement = _{
         | newline
     )
 }
+
+// ── Participant boxes ───────────────────────────────────────────────────────
+// `box ["Title"] [#color]` … `end box`. Gradient colours (`#a-b`) and an
+// unquoted title are not accepted.
+box_start = { ^"box" ~ !(ASCII_ALPHANUMERIC | "_") ~ (" "+ ~ quoted_string)? ~ (" "+ ~ color)? ~ " "* ~ (NEWLINE | &EOI) }
+box_end   = { ^"end" ~ " "+ ~ ^"box" ~ " "* ~ (NEWLINE | &EOI) }
 
 // ── Title ────────────────────────────────────────────────────────────────────
 title_stmt = { ^"title" ~ " "+ ~ rest_of_line }
@@ -81,7 +92,7 @@ note_line = { !^"end note" ~ rest_of_line }
 group_stmt = {
     group_kw ~ (" "+ ~ rest_of_line)? ~ (" "* ~ NEWLINE)? ~
     group_body ~
-    " "* ~ ^"end" ~ " "* ~ NEWLINE?
+    " "* ~ ^"end" ~ !(" "+ ~ ^"box") ~ " "* ~ NEWLINE?
 }
 
 group_kw = { ^"loop" | ^"alt" | ^"opt" | ^"par" | ^"critical" | ^"break" | ^"group" | ^"ref" }

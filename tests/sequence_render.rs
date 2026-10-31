@@ -249,3 +249,84 @@ fn autonumber_with_step_and_format_parses() {
     // A step other than 1 would number messages wrongly if ignored.
     assert!(parse("autonumber 10 5").is_err());
 }
+
+fn parse_seq(src: &str) -> Result<puml::ast::sequence::SequenceDiagram, puml::error::PumlError> {
+    let diagrams = puml::parser::preprocessor::preprocess(src, None);
+    puml::parser::parse(&diagrams[0]).map(|ast| match ast {
+        puml::ast::DiagramAst::Sequence(d) => d,
+        other => panic!("not a sequence diagram: {other:?}"),
+    })
+}
+
+#[test]
+fn box_groups_participants_created_inside_it() {
+    let d = parse_seq(
+        "@startuml\nparticipant Client\nbox \"Backend\" #LightBlue\n  participant \"Request Handler\" as handler\n  participant Store\n  handler -> Cache: lookup\nend box\nClient -> handler: go\nClient -> Late: after\n@enduml\n",
+    )
+    .unwrap();
+    assert_eq!(d.boxes.len(), 1);
+    let b = &d.boxes[0];
+    assert_eq!(b.title.as_deref(), Some("Backend"));
+    assert_eq!(b.color.as_deref(), Some("#LightBlue"));
+    // Declared and implicitly created participants join; earlier and later ones don't.
+    assert_eq!(b.participants, ["handler", "Store", "Cache"]);
+
+    let d = parse_seq("@startuml\nbox\nparticipant A\nend box\nA -> B\n@enduml\n").unwrap();
+    assert_eq!(d.boxes[0].title, None);
+    assert_eq!(d.boxes[0].color, None);
+    assert_eq!(d.boxes[0].participants, ["A"]);
+}
+
+#[test]
+fn box_errors_are_parse_errors() {
+    for src in [
+        // never closed
+        "@startuml\nbox \"A\"\nparticipant A\n@enduml\n",
+        // stray end box
+        "@startuml\nparticipant A\nend box\n@enduml\n",
+        // nested
+        "@startuml\nbox \"A\"\nbox \"B\"\nparticipant A\nend box\nend box\n@enduml\n",
+        // inside a fragment
+        "@startuml\nA -> B\nalt x\nbox \"A\"\nparticipant C\nend box\nend\n@enduml\n",
+        // `end box` must not close a fragment
+        "@startuml\nA -> B\nalt x\nA -> B\nend box\n@enduml\n",
+        // unquoted title and gradients are not supported
+        "@startuml\nbox Backend\nparticipant A\nend box\n@enduml\n",
+        "@startuml\nbox \"A\" #red-blue\nparticipant A\nend box\n@enduml\n",
+    ] {
+        assert!(parse_seq(src).is_err(), "should fail: {src}");
+    }
+    // A participant whose name starts with `box` is still a participant.
+    parse_seq("@startuml\nboxer -> A: hi\n@enduml\n").unwrap();
+}
+
+#[test]
+fn box_renders_behind_its_members_with_title() {
+    let svg = render_fixture("sequence_box_event_sourcing.puml");
+    // From hugo-blog-migration _pages/event-driven-architecture/patterns/event-sourcing.adoc,
+    // with plantuml.skin inlined.
+    let box_at = svg.find("class=\"participant-group\"").expect("box drawn");
+    assert!(svg.contains("Event Sourced Application"));
+    let first_participant = svg
+        .find(">\nRequest Handler\n<")
+        .expect("participant drawn");
+    assert!(box_at < first_participant, "box must be drawn first");
+    assert!(svg.contains("customer-email-event"));
+}
+
+#[test]
+fn boxes_with_implicit_members_render() {
+    // From notification-event-pattern.adoc: members are created by messages
+    // inside each box rather than declared.
+    let svg = render_fixture("sequence_box_regions.puml");
+    assert_eq!(svg.matches("class=\"participant-group\"").count(), 2);
+    for t in ["Region AB", "Region CDE", "Subscriber E", "CDE Cache"] {
+        assert!(svg.contains(t), "{t}");
+    }
+}
+
+#[test]
+fn box_snapshot() {
+    let svg = render_fixture("sequence_box_regions.puml");
+    insta::assert_snapshot!(svg);
+}

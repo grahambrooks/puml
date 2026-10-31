@@ -85,6 +85,16 @@ pub enum SequenceElement {
     Autonumber(Option<u32>),
 }
 
+/// `box "Title" #color` … `end box`: a background panel behind the columns
+/// of the participants first created between the two lines.
+#[derive(Debug, Clone, Default)]
+pub struct ParticipantBox {
+    pub title: Option<String>,
+    pub color: Option<String>,
+    /// Members by the name messages use for them (alias, else name).
+    pub participants: Vec<String>,
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct SequenceDiagram {
     pub title: Option<String>,
@@ -92,6 +102,7 @@ pub struct SequenceDiagram {
     pub elements: Vec<SequenceElement>,
     pub hide_footbox: bool,
     pub skinparams: Vec<(String, String)>,
+    pub boxes: Vec<ParticipantBox>,
 }
 
 impl SequenceDiagram {

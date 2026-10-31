@@ -1,0 +1,55 @@
+@startuml
+hide footbox
+
+skinparam handwritten true
+
+skinparam sequence {
+   ArrowColor blue
+   ParticipantBorderColor #BAE4B3
+   ParticipantBackgroundColor #BAE4B3
+   
+  DefaultFontName "Helvetica Neue"
+  DefaultFontSize 13
+  DefaultFontStyle UltaLight
+  DefaultFontColor grey
+  ParticipantFontName "Helvetica Neue"
+  ParticipantFontStyle UltraLight
+  ParticipantFontSize 13
+
+  ArrowFontName  "Helvetica Neue"
+  ArrowFontStyle UltraLight
+  ArrowFontSize 13
+
+  SequenceArrowFontSize 13
+  SequenceMessageFontSize 13
+
+   LifeLineBorderColor black
+  SequenceMessageAlign left
+}
+
+autonumber 1 1 "<b>[0]"
+
+participant Client as client
+
+box "Event Sourced Application"
+    participant "Request Handler" as handler
+    participant "Event Store" as store
+end box
+
+
+client -> handler: Change name <Graham>
+handler -> store: get events <id>
+store -> handler: new-customer-event <graham, graham@grahambrooks.com>
+handler -> handler: process event
+handler -> store: customer-name-event <Graham>
+handler -> client: <Graham, graham@grahambrooks.com>
+
+...
+
+client -> handler: Change email <graham.brooks@grahambrooks.com>
+handler -> store: get events <id>
+store -> handler: new-customer-event <graham, graham@grahambrooks.coml>\ncustomer-name-event <Graham>
+handler -> handler: process events
+handler -> store: customer-email-event <graham.brooks@grahambrooks.com>
+handler -> client: <Graham, graham.brooks@grahambrooks.com>
+@enduml

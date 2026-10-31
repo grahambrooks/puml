@@ -98,10 +98,29 @@ const SEQ_TOP: f32 = 20.0;
 fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
     use layout::sequence::LayoutElement;
     let (mut scene, dy) = new_scene(l.total_width, l.total_height, &l.title);
-    let top = dy + SEQ_TOP;
+    let top = dy + SEQ_TOP + l.header_offset as f32;
     let bottom = dy + l.lifeline_height as f32;
     // Room for the actors' names under the bottom row.
     scene.height = scene.height.max(bottom + PARTICIPANT_H + 22.0);
+
+    // Participant boxes first, so they sit behind the lifelines.
+    for b in &l.boxes {
+        let kind = ContainerKind::Group;
+        let mut style = Style::for_container(&kind);
+        if let Some(fill) = b.color.as_deref().and_then(color) {
+            style.fill = fill;
+        }
+        scene.containers.push(Container {
+            rect: Rect::new(b.x as f32, b.y as f32 + dy, b.width as f32, b.height as f32),
+            kind,
+            label: b
+                .title
+                .as_ref()
+                .map(|t| vec![TextLine::new(t.clone(), Font::Bold)])
+                .unwrap_or_default(),
+            style,
+        });
+    }
 
     for (i, p) in l.participants.iter().enumerate() {
         let x = p.x as f32;
@@ -579,6 +598,42 @@ mod tests {
         assert!(s.edges.iter().any(|e| e.pen.dash == Dash::Dashed));
         assert!(s.edges.iter().any(|e| e.end == Marker::Cross));
         assert_eq!(s.accessibility.title.as_deref(), Some("Checkout"));
+        inside(&s);
+    }
+
+    #[test]
+    fn sequence_boxes_become_containers_behind_their_participants() {
+        let s = scene_of(
+            "@startuml\nparticipant Client\nbox \"Backend\" #ccddee\n  participant Handler\n  participant Store\nend box\nClient -> Handler: go\nHandler -> Store: save\n@enduml\n",
+        );
+        let (i, b) = s
+            .containers
+            .iter()
+            .enumerate()
+            .find(|(_, c)| c.kind == ContainerKind::Group)
+            .expect("a box");
+        assert_eq!(b.label[0].plain(), "Backend");
+        assert_eq!(b.style.fill, Paint::Rgb(0xcc, 0xdd, 0xee));
+        // Drawn before (under) every lifeline.
+        let first_lifeline = s
+            .containers
+            .iter()
+            .position(|c| c.kind == ContainerKind::Lifeline)
+            .unwrap();
+        assert!(i < first_lifeline);
+        // Encloses its members' header boxes but not Client's.
+        let header = |name: &str| {
+            s.nodes
+                .iter()
+                .find(|n| n.id.ends_with(":0") && n.label.iter().any(|l| l.plain() == name))
+                .unwrap()
+                .rect
+        };
+        assert!(b.rect.encloses(&header("Handler"), 0.0));
+        assert!(b.rect.encloses(&header("Store"), 0.0));
+        assert!(!b.rect.encloses(&header("Client"), 0.0));
+        // The title sits above the header row.
+        assert!(header("Handler").y > b.rect.y + 18.0);
         inside(&s);
     }
 

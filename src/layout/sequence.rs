@@ -61,6 +61,18 @@ pub struct GroupLayout {
     pub section_breaks: Vec<(f64, Option<String>)>,
 }
 
+/// A participant box (`box` … `end box`): a panel behind its members'
+/// columns, from above the header row to below the footer row. `y` and
+/// `height` are in the same coordinates as the other elements.
+pub struct BoxLayout {
+    pub title: Option<String>,
+    pub color: Option<String>,
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
 pub enum LayoutElement {
     Message(MessageLayout),
     Note(NoteLayout),
@@ -77,7 +89,17 @@ pub struct SequenceLayout {
     pub total_height: f64,
     pub title: Option<String>,
     pub hide_footbox: bool,
+    pub boxes: Vec<BoxLayout>,
+    /// Extra space above the participant header row, for box titles. The
+    /// header row's top is `TOP_MARGIN + header_offset`.
+    pub header_offset: f64,
 }
+
+/// How far a box extends beyond its outermost participant boxes.
+const BOX_PAD: f64 = 8.0;
+/// The row a box title takes above the participant headers.
+const BOX_TITLE_H: f64 = 20.0;
+const BOX_TOP: f64 = 6.0;
 
 fn text_width(s: &str) -> f64 {
     s.len() as f64 * CHAR_WIDTH
@@ -111,6 +133,31 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
 
     widen_for_messages(&participants, &diagram.elements, &mut col_widths);
 
+    // Member columns of each box, as (first, last) indices.
+    let box_spans: Vec<Option<(usize, usize)>> = diagram
+        .boxes
+        .iter()
+        .map(|b| {
+            let idx: Vec<usize> = b
+                .participants
+                .iter()
+                .filter_map(|name| find_participant(&participants, name))
+                .collect();
+            Some((*idx.iter().min()?, *idx.iter().max()?))
+        })
+        .collect();
+    widen_for_box_titles(&diagram.boxes, &box_spans, &mut col_widths);
+    let header_offset = if diagram
+        .boxes
+        .iter()
+        .zip(&box_spans)
+        .any(|(b, s)| b.title.is_some() && s.is_some())
+    {
+        BOX_TITLE_H
+    } else {
+        0.0
+    };
+
     let mut centers: Vec<f64> = Vec::with_capacity(n);
     let mut x = SIDE_MARGIN;
     for (i, w) in col_widths.iter().enumerate() {
@@ -141,7 +188,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         elements: Vec::new(),
         active_depth: vec![0; n],
         open_activations: Vec::new(),
-        y: TOP_MARGIN + PARTICIPANT_HEIGHT + 10.0,
+        y: header_offset + TOP_MARGIN + PARTICIPANT_HEIGHT + 10.0,
         autonumber: None,
     };
 
@@ -168,6 +215,32 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     };
     let total_height = lifeline_height + footer_h + TOP_MARGIN;
 
+    let box_bottom = lifeline_height
+        + if diagram.hide_footbox {
+            0.0
+        } else {
+            PARTICIPANT_HEIGHT
+        }
+        + BOX_PAD;
+    let boxes = diagram
+        .boxes
+        .iter()
+        .zip(&box_spans)
+        .filter_map(|(b, span)| {
+            let (lo, hi) = (*span)?;
+            let x = centers[lo] - PARTICIPANT_WIDTH / 2.0 - BOX_PAD;
+            let right = centers[hi] + PARTICIPANT_WIDTH / 2.0 + BOX_PAD;
+            Some(BoxLayout {
+                title: b.title.clone(),
+                color: b.color.clone(),
+                x,
+                y: BOX_TOP,
+                width: right - x,
+                height: box_bottom - BOX_TOP,
+            })
+        })
+        .collect();
+
     SequenceLayout {
         participants: participant_layouts,
         elements: ctx.elements,
@@ -176,7 +249,43 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         total_height,
         title: diagram.title.clone(),
         hide_footbox: diagram.hide_footbox,
+        boxes,
+        header_offset,
     }
+}
+
+/// Widens a box's member columns so its title fits inside it.
+fn widen_for_box_titles(
+    boxes: &[ParticipantBox],
+    spans: &[Option<(usize, usize)>],
+    col_widths: &mut [f64],
+) {
+    for (b, span) in boxes.iter().zip(spans) {
+        let (Some(title), Some((lo, hi))) = (&b.title, span) else {
+            continue;
+        };
+        let (lo, hi) = (*lo, *hi);
+        // The box spans the outer participant boxes plus its padding.
+        let inner = centers_span(col_widths, lo, hi) + PARTICIPANT_WIDTH + 2.0 * BOX_PAD;
+        let needed = text_width(title) + 20.0;
+        if needed > inner {
+            let extra = (needed - inner) / (hi - lo + 1) as f64;
+            for w in &mut col_widths[lo..=hi] {
+                *w += extra;
+            }
+        }
+    }
+}
+
+/// Distance between the centres of columns `lo` and `hi`.
+fn centers_span(col_widths: &[f64], lo: usize, hi: usize) -> f64 {
+    if lo == hi {
+        return 0.0;
+    }
+    col_widths[lo] / 2.0
+        + col_widths[lo + 1..hi].iter().sum::<f64>()
+        + col_widths[hi] / 2.0
+        + PARTICIPANT_H_PADDING * (hi - lo) as f64
 }
 
 struct LayoutCtx<'a> {

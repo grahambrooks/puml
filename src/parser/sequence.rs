@@ -24,10 +24,41 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
     let mut diagram = SequenceDiagram::new();
     // Track implicit participants (those first seen in messages)
     let mut seen_names: Vec<String> = Vec::new();
+    // Index into `diagram.boxes` of the box still open, and the line it opened on.
+    let mut open_box: Option<(usize, usize)> = None;
 
     for pair in pairs {
         for stmt in pair.into_inner() {
             match stmt.as_rule() {
+                Rule::box_start => {
+                    let line = stmt.as_span().start_pos().line_col().0;
+                    if let Some((_, opened)) = open_box {
+                        return Err(PumlError::Parse {
+                            line,
+                            message: format!(
+                                "nested box: the box opened on line {opened} has no `end box`"
+                            ),
+                        });
+                    }
+                    let mut b = ParticipantBox::default();
+                    for part in stmt.into_inner() {
+                        match part.as_rule() {
+                            Rule::quoted_string => b.title = Some(unquote(part.as_str())),
+                            Rule::color => b.color = Some(part.as_str().to_string()),
+                            _ => {}
+                        }
+                    }
+                    diagram.boxes.push(b);
+                    open_box = Some((diagram.boxes.len() - 1, line));
+                }
+                Rule::box_end => {
+                    if open_box.take().is_none() {
+                        return Err(PumlError::Parse {
+                            line: stmt.as_span().start_pos().line_col().0,
+                            message: "`end box` without a matching `box`".to_string(),
+                        });
+                    }
+                }
                 Rule::title_stmt => {
                     diagram.title = Some(stmt.into_inner().as_str().trim().to_string());
                 }
@@ -36,6 +67,9 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                     let name = p.alias.clone().unwrap_or_else(|| p.name.clone());
                     if !seen_names.contains(&name) {
                         seen_names.push(name.clone());
+                        if let Some((b, _)) = open_box {
+                            diagram.boxes[b].participants.push(name.clone());
+                        }
                     }
                     // Replace if already seen implicitly
                     if let Some(pos) = diagram
@@ -53,6 +87,9 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                     for name in [&from, &to] {
                         if !seen_names.contains(name) {
                             seen_names.push(name.clone());
+                            if let Some((b, _)) = open_box {
+                                diagram.boxes[b].participants.push(name.clone());
+                            }
                             diagram.participants.push(Participant {
                                 name: name.clone(),
                                 alias: None,
@@ -127,6 +164,13 @@ pub fn parse(source: &str) -> Result<SequenceDiagram, PumlError> {
                 _ => {}
             }
         }
+    }
+
+    if let Some((_, line)) = open_box {
+        return Err(PumlError::Parse {
+            line,
+            message: "box is never closed with `end box`".to_string(),
+        });
     }
 
     Ok(diagram)

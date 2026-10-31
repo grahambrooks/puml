@@ -1,0 +1,53 @@
+@startuml
+hide footbox
+
+skinparam handwritten true
+
+skinparam sequence {
+   ArrowColor blue
+   ParticipantBorderColor #BAE4B3
+   ParticipantBackgroundColor #BAE4B3
+   
+  DefaultFontName "Helvetica Neue"
+  DefaultFontSize 13
+  DefaultFontStyle UltaLight
+  DefaultFontColor grey
+  ParticipantFontName "Helvetica Neue"
+  ParticipantFontStyle UltraLight
+  ParticipantFontSize 13
+
+  ArrowFontName  "Helvetica Neue"
+  ArrowFontStyle UltraLight
+  ArrowFontSize 13
+
+  SequenceArrowFontSize 13
+  SequenceMessageFontSize 13
+
+   LifeLineBorderColor black
+  SequenceMessageAlign left
+}
+
+autonumber 1 1 "<b>[0]"
+
+Sales -> Kafka: Order Change\n http://sales/orders/1234/version/2
+
+box "Region AB"
+participant "AB Cache"
+Kafka -> "Subscriber A": Order Change\n http://sales/orders/1234/version/2
+"Subscriber A" -> "AB Cache": Get Order\n http://sales/orders/1234/version/2
+"AB Cache" -> Sales: Get Order ...
+Kafka -> "Subscriber B": Order Change ...
+"Subscriber B" -> "AB Cache": Get Order ...
+end box
+
+box "Region CDE"
+participant "CDE Cache"
+Kafka -> "Subscriber C": Order Change ...
+"Subscriber C" -> "CDE Cache": Get Order ...
+"CDE Cache" -> Sales: Get Order ...
+Kafka -> "Subscriber D": Order Change ...
+"Subscriber D" -> "CDE Cache": Get Order ...
+Kafka -> "Subscriber E": Order Change ...
+"Subscriber E" -> "CDE Cache": Get Order ...
+end box
+@enduml
