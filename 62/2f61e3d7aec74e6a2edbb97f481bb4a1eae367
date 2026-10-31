@@ -1,0 +1,51 @@
+src/layout/sequence.rs
+  s_38439ae326f7ae::t_869f182eee71bd 14-24,221,361-364,369,375-377,439,441,451-456,458,462,614-639
+src/render/sequence.rs
+  s_38439ae326f7ae::t_0663ea7b8e4159 7,266,268
+src/scene.rs
+  s_38439ae326f7ae::t_57df8c57136a1c 101-102,260-263,265,635-652
+tests/sequence_render.rs
+  s_38439ae326f7ae::t_497377649e5209 349-379
+tests/snapshots/sequence_render__amiga_preset_snapshot.snap
+  s_38439ae326f7ae::t_6203e8914c7422 6,31-32,34-35,40-41,46-47,52-53
+tests/snapshots/sequence_render__auto_preset_snapshot.snap
+  s_38439ae326f7ae::t_c0377381a1cdfc 6,31-32,34-35,40-41,46-47,52-53
+tests/snapshots/sequence_render__basic_snapshot.snap
+  s_38439ae326f7ae::t_a32da07b323be8 6,31-32,34-35,40-41,46-47,52-53
+tests/snapshots/sequence_render__box_snapshot.snap
+  s_38439ae326f7ae::t_4fcc42894c11cd 5,19,25,84-92,94-95,98,103-104,107,112-113,116,121-122,127-128,133-134,139-140,145-146,151-152,157-158,163-164,169-170,175-176
+tests/snapshots/sequence_render__dark_preset_snapshot.snap
+  s_38439ae326f7ae::t_e3ea0016e7c00b 6,31-32,34-35,40-41,46-47,52-53
+tests/snapshots/sequence_render__groups_snapshot.snap
+  s_38439ae326f7ae::t_24cee64ad26e76 6,31-32,34-36,39,42-43,48-50,53,58-59,64-65,70-71,76-77,82-83,88-89
+tests/snapshots/sequence_render__multiline_labels_snapshot.snap
+  s_38439ae326f7ae::t_62bfdb3ef76ac2 5,30-31,33-34,39-40,43,48-49,52,57-58
+tests/snapshots/sequence_render__nested_groups_snapshot.snap
+  s_38439ae326f7ae::t_32b38d6a8e2017 5,30-31,33-35,38,41-42,47-49,52,57-58,63-64,69-70,75-76,81-82,87-88
+tests/snapshots/sequence_render__note_over_snapshot.snap
+  s_38439ae326f7ae::t_f65bbafe4ca7db 6,31-32,34-35,40-42,45,50-51,56-57,62-63
+tests/snapshots/sequence_render__participants_snapshot.snap
+  s_38439ae326f7ae::t_f18de5f93be1f6 6,62-67,69-70,75-76,81-82,87-88,93-94,99-100,105-110,115-116,121-122,127-128,133-134,139-140
+tests/snapshots/sequence_render__reverse_arrows_snapshot.snap
+  s_38439ae326f7ae::t_4833a956f55aeb 6,31-32,34-35,40-41,46-47,52-53,58-59
+tests/snapshots/sequence_render__self_message_snapshot.snap
+  s_38439ae326f7ae::t_7ba21ee694822e 5,33-34,36-37,42-43,48-49,54-55,60-61,66-67
+tests/snapshots/sequence_render__themed_snapshot.snap
+  s_38439ae326f7ae::t_8df8006ead227c 6,31-32,34-35,40-41,46-47,52-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "622f61e3d7aec74e6a2edbb97f481bb4a1eae367",
+  "prompts": {},
+  "sessions": {
+    "s_38439ae326f7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e88d1d-b3bb-451e-9770-aa1214b3f499",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
