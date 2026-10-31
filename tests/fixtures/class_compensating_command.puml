@@ -1,0 +1,15 @@
+@startuml
+
+class Event {
+  EntityId
+}
+
+class Entity {
+      id
+   Event[] events
+    static apply(event)
+}
+
+Entity -- Event: accepts
+
+@enduml

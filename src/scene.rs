@@ -618,6 +618,24 @@ mod tests {
     }
 
     #[test]
+    fn class_relation_labels_and_cardinalities_become_edge_labels() {
+        let s = scene_of(
+            "@startuml\nclass Entity\nclass Event\nEntity \"1\" *-- \"many\" Event: accepts\n@enduml\n",
+        );
+        // The label rides on the edge; cardinalities are muted free text
+        // beside each end.
+        let edge = &s.edges[0];
+        assert!(edge
+            .labels
+            .iter()
+            .any(|l| l.lines.iter().any(|t| t.plain() == "accepts")));
+        let texts = s.texts();
+        for t in ["1", "many"] {
+            assert!(texts.iter().any(|x| x == t), "{t}: {texts:?}");
+        }
+    }
+
+    #[test]
     fn activities_and_states_route_their_edges() {
         let s = scene_of(
             "@startuml\nstart\n:Read;\nif (ok?) then (yes)\n  :Save;\nelse (no)\n  :Retry;\nendif\nstop\n@enduml\n",

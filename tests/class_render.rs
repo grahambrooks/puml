@@ -174,3 +174,64 @@ fn deployment_snapshot() {
     let svg = render_fixture("deployment_basic.puml");
     insta::assert_snapshot!(svg);
 }
+
+fn parse_class(src: &str) -> puml::ast::class::ClassDiagram {
+    let diagrams = puml::parser::preprocessor::preprocess(src, None);
+    match puml::parser::parse(&diagrams[0]).unwrap_or_else(|e| panic!("{src}: {e}")) {
+        puml::ast::DiagramAst::Class(d) => d,
+        other => panic!("not a class diagram: {other:?}"),
+    }
+}
+
+#[test]
+fn relation_label_after_name_with_or_without_space() {
+    // PlantUML allows the label colon to touch the target name. The name
+    // used to swallow the colon ("expected card_label or relation_arrow").
+    for (line, from, to, label, from_card, to_card) in [
+        ("A -- B : uses", "A", "B", "uses", None, None),
+        ("A -- B: uses", "A", "B", "uses", None, None),
+        ("A --> B:uses", "A", "B", "uses", None, None),
+        // `*--` puts the diamond on A, so the AST stores B -> A.
+        (
+            "A \"1\" *-- \"many\" B : contains",
+            "B",
+            "A",
+            "contains",
+            Some("1"),
+            Some("many"),
+        ),
+        (
+            "ns::A ..> ns::B: depends",
+            "ns::A",
+            "ns::B",
+            "depends",
+            None,
+            None,
+        ),
+    ] {
+        let d = parse_class(&format!("@startuml\nclass A\nclass B\n{line}\n@enduml\n"));
+        let r = &d.relations[0];
+        assert_eq!(
+            (r.from.as_str(), r.to.as_str()),
+            (from, to),
+            "{line}: endpoints"
+        );
+        assert_eq!(r.label.as_deref(), Some(label), "{line}: label");
+        assert_eq!(r.from_label.as_deref(), from_card, "{line}");
+        assert_eq!(r.to_label.as_deref(), to_card, "{line}");
+    }
+}
+
+#[test]
+fn inline_note_colon_may_touch_target() {
+    let d = parse_class("@startuml\nclass A\nnote right of A: hello\n@enduml\n");
+    assert_eq!(d.notes[0].target, "A");
+}
+
+#[test]
+fn compensating_command_diagram_renders_label() {
+    // From hugo-blog-migration _pages/event-driven-architecture/compensating-actions.adoc.
+    let svg = render_fixture("class_compensating_command.puml");
+    assert!(svg.contains("Entity") && svg.contains("Event"));
+    assert!(svg.contains("\naccepts\n"), "label missing: {svg}");
+}

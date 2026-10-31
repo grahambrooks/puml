@@ -91,7 +91,11 @@ relation_stmt = {
     ~ (" "* ~ ":" ~ " "* ~ rest_of_line)?
 }
 
-class_ref  = { quoted_string | bare_name }
+// A relation/note endpoint. Unlike `bare_name`, a colon is only part of the
+// name as the `::` package separator, so `A -- B: label` ends the name at the
+// colon instead of swallowing it.
+class_ref  = { quoted_string | ref_name }
+ref_name   = { (ASCII_ALPHANUMERIC | "_" | "." | "::" | "-")+ }
 card_label = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
 
 relation_arrow = {
