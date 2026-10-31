@@ -1,0 +1,25 @@
+src/parser/grammars/class.pest
+  s_38439ae326f7ae::t_131cb88f00c506 94-98
+src/scene.rs
+  s_38439ae326f7ae::t_421d62b4ccbd22 620-637
+tests/class_render.rs
+  s_38439ae326f7ae::t_6b2f8d8c212387 177-237
+tests/fixtures/class_compensating_command.puml
+  s_38439ae326f7ae::t_a9480815d0c3aa 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "972d6ca4012656fcd76fad5991d16aed963d4b11",
+  "prompts": {},
+  "sessions": {
+    "s_38439ae326f7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e88d1d-b3bb-451e-9770-aa1214b3f499",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
