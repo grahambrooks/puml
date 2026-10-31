@@ -1,0 +1,23 @@
+src/parser/grammars/sequence.pest
+  s_38439ae326f7ae::t_2fd04edc14fc80 103-107
+src/parser/sequence.rs
+  s_38439ae326f7ae::t_4a74bbc8038de2 99-115
+tests/sequence_render.rs
+  s_38439ae326f7ae::t_97bf6d3ca3fae3 233-251
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "78abc5863733d517f210cf90c92ad316d64799d3",
+  "prompts": {},
+  "sessions": {
+    "s_38439ae326f7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e88d1d-b3bb-451e-9770-aa1214b3f499",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
