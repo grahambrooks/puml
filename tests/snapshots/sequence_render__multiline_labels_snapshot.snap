@@ -1,0 +1,62 @@
+---
+source: tests/sequence_render.rs
+expression: svg
+---
+<svg height="292" viewBox="0 0 310 292" width="310" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<polygon fill="#181818" points="0 0, 10 5, 0 10"/>
+</marker>
+<marker id="arrowhead-open" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
+<path d="M0,0 L10,5 L0,10" fill="none" stroke="#181818" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+text{font-family:"Liberation Sans",Helvetica,Arial,sans-serif;font-size:13px;fill:#181818}.participant-box{fill:#dae8fc;stroke:#6c8ebf;stroke-width:1.5}.lifeline{stroke:#6c8ebf;stroke-width:1;stroke-dasharray:6,4}.activation{fill:#cce0ff;stroke:#6c8ebf;stroke-width:1}.arrow{stroke:#181818;stroke-width:1.5;fill:none}.arrow-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.note-box{fill:#ffffc0;stroke:#bbbb00;stroke-width:1}.divider-line{stroke:#888888;stroke-width:1.5;stroke-dasharray:8,3}.divider-label{font-weight:bold}.title{font-size:15px;font-weight:bold}.class-line{stroke:#181818;stroke-width:1.5;fill:none}.class-line-dashed{stroke:#181818;stroke-width:1.5;fill:none;stroke-dasharray:6,3}.bg{fill:#ffffff}@media (prefers-color-scheme:dark){text{fill:#e8e8e8}.bg{fill:#1e1e1e}.arrow,.class-line{stroke:#e8e8e8}.arrow-dashed,.class-line-dashed{stroke:#e8e8e8}.divider-line{stroke:#aaaaaa}}
+</style>
+<rect class="bg" fill="#ffffff" height="100%" width="100%"/>
+<g>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="20" y="20"/>
+<text text-anchor="middle" x="80" y="44.5">
+Sales
+</text>
+</g>
+<g>
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="170" y="20"/>
+<text text-anchor="middle" x="230" y="44.5">
+Shipping
+</text>
+</g>
+<line class="lifeline" x1="80" x2="80" y1="60" y2="272"/>
+<line class="lifeline" x1="230" x2="230" y1="60" y2="272"/>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="70" y2="70"/>
+<text text-anchor="middle" x="155" y="65">
+1: Subscribe (Orders)
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="126" y2="126"/>
+<text text-anchor="middle" x="155" y="105">
+2: New Order
+</text>
+<text text-anchor="middle" x="155" y="121">
+ http://sales/orders/1234
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="182" y2="182"/>
+<text text-anchor="middle" x="155" y="161">
+3: Get Order
+</text>
+<text text-anchor="middle" x="155" y="177">
+ http://sales/orders/1234
+</text>
+</g>
+<g>
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="222" y2="222"/>
+<text text-anchor="middle" x="155" y="217">
+4: Order details
+</text>
+</g>
+</svg>

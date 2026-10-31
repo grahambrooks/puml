@@ -8,11 +8,15 @@ const TOP_MARGIN: f64 = 20.0;
 const SIDE_MARGIN: f64 = 20.0;
 const FONT_SIZE: f64 = 13.0;
 const CHAR_WIDTH: f64 = 7.5; // approximate character width at default font size
+/// Baseline-to-baseline distance between the lines of a message label or
+/// a participant name.
+pub const LINE_HEIGHT: f64 = 16.0;
 
 pub struct ParticipantLayout {
     #[allow(dead_code)]
     pub name: String,
-    pub display: String,
+    /// The name shown in the header, one entry per line (`\n` breaks).
+    pub display: Vec<String>,
     pub x: f64,
     pub kind: ParticipantKind,
     pub color: Option<String>,
@@ -22,7 +26,8 @@ pub struct MessageLayout {
     pub from_x: f64,
     pub to_x: f64,
     pub y: f64,
-    pub label: String,
+    /// The label's lines, top to bottom (`\n` breaks); empty for none.
+    pub lines: Vec<String>,
     pub dashed: bool,
     pub self_msg: bool,
     #[allow(dead_code)]
@@ -93,6 +98,9 @@ pub struct SequenceLayout {
     /// Extra space above the participant header row, for box titles. The
     /// header row's top is `TOP_MARGIN + header_offset`.
     pub header_offset: f64,
+    /// Height of the participant header (and footer) boxes: the default
+    /// box, taller when a name runs to several lines.
+    pub participant_height: f64,
 }
 
 /// How far a box extends beyond its outermost participant boxes.
@@ -105,18 +113,24 @@ fn text_width(s: &str) -> f64 {
     s.len() as f64 * CHAR_WIDTH
 }
 
+/// Width of the widest of `lines`.
+pub fn lines_width(lines: &[String]) -> f64 {
+    lines.iter().map(|l| text_width(l)).fold(0.0, f64::max)
+}
+
 /// Display name shown inside the participant header box. PlantUML's
 /// convention is `participant "Display Name" as ALIAS` — the quoted name
 /// is the human-readable label, and the alias is just a short referent
 /// for messages. So always show `name`, falling back to alias only if
 /// the parser produced an aliased entry with no canonical name (rare but
 /// possible from forward declarations).
-fn participant_display(p: &Participant) -> String {
-    if !p.name.is_empty() {
+fn participant_display(p: &Participant) -> Vec<String> {
+    let name = if !p.name.is_empty() {
         p.name.clone()
     } else {
         p.alias.clone().unwrap_or_default()
-    }
+    };
+    super::text_lines(&name)
 }
 
 pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
@@ -126,7 +140,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     let mut col_widths: Vec<f64> = participants
         .iter()
         .map(|p| {
-            let w = text_width(&participant_display(p)) + 20.0;
+            let w = lines_width(&participant_display(p)) + 20.0;
             w.max(PARTICIPANT_WIDTH)
         })
         .collect();
@@ -158,6 +172,11 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         0.0
     };
 
+    let participant_height = participants
+        .iter()
+        .map(|p| participant_display(p).len() as f64 * LINE_HEIGHT + 14.0)
+        .fold(PARTICIPANT_HEIGHT, f64::max);
+
     let mut centers: Vec<f64> = Vec::with_capacity(n);
     let mut x = SIDE_MARGIN;
     for (i, w) in col_widths.iter().enumerate() {
@@ -188,7 +207,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         elements: Vec::new(),
         active_depth: vec![0; n],
         open_activations: Vec::new(),
-        y: header_offset + TOP_MARGIN + PARTICIPANT_HEIGHT + 10.0,
+        y: header_offset + TOP_MARGIN + participant_height + 10.0,
         autonumber: None,
     };
 
@@ -211,7 +230,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
     let footer_h = if diagram.hide_footbox {
         0.0
     } else {
-        PARTICIPANT_HEIGHT + 10.0
+        participant_height + 10.0
     };
     let total_height = lifeline_height + footer_h + TOP_MARGIN;
 
@@ -219,7 +238,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         + if diagram.hide_footbox {
             0.0
         } else {
-            PARTICIPANT_HEIGHT
+            participant_height
         }
         + BOX_PAD;
     let boxes = diagram
@@ -251,6 +270,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         hide_footbox: diagram.hide_footbox,
         boxes,
         header_offset,
+        participant_height,
     }
 }
 
@@ -319,22 +339,23 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
             let dashed = matches!(msg.arrow, ArrowStyle::Dashed);
             let self_msg = fi == ti;
 
-            let mut label = msg.label.clone();
+            let mut lines = super::text_lines(&msg.label);
             if let Some(ref mut n) = ctx.autonumber {
-                let prefix = format!("{}: ", n);
-                label = if label.is_empty() {
-                    prefix.trim_end().to_string()
-                } else {
-                    format!("{}{}", prefix, label)
-                };
+                match lines.first_mut() {
+                    Some(first) => *first = format!("{n}: {first}"),
+                    None => lines.push(n.to_string()),
+                }
                 *n += 1;
             }
+            // The label sits above its arrow, so each extra line pushes
+            // the arrow down to keep the label clear of the row above.
+            ctx.y += lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
 
             ctx.elements.push(LayoutElement::Message(MessageLayout {
                 from_x,
                 to_x,
                 y: ctx.y,
-                label,
+                lines,
                 dashed,
                 self_msg,
                 lost: matches!(msg.arrow, ArrowStyle::Lost),
@@ -355,13 +376,20 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
                 .first()
                 .and_then(|name| find_participant(ctx.participants, name).map(|i| ctx.centers[i]))
                 .unwrap_or(SIDE_MARGIN + 60.0);
-            let note_w = note
+            let lines: Vec<String> = note
                 .lines
                 .iter()
-                .map(|l| text_width(l))
-                .fold(120.0_f64, f64::max)
-                + 20.0;
-            let note_h = note.lines.len() as f64 * (FONT_SIZE + 4.0) + 12.0;
+                .flat_map(|l| {
+                    let split = super::text_lines(l);
+                    if split.is_empty() {
+                        vec![String::new()]
+                    } else {
+                        split
+                    }
+                })
+                .collect();
+            let note_w = lines_width(&lines).max(120.0) + 20.0;
+            let note_h = lines.len() as f64 * (FONT_SIZE + 4.0) + 12.0;
             let note_x = match note.position {
                 NotePosition::Left => anchor_x - note_w - 10.0,
                 NotePosition::Right => anchor_x + 10.0,
@@ -372,7 +400,7 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
                 y: ctx.y,
                 width: note_w,
                 height: note_h,
-                lines: note.lines.clone(),
+                lines,
             }));
             ctx.y += note_h + 10.0;
         }
@@ -510,7 +538,8 @@ fn widen_for_messages(
                 // wide enough that the loop's right edge stays inside the
                 // column (with a small buffer). Otherwise the loop
                 // crashes into the next participant's lifeline.
-                let loop_w = crate::render::sequence::self_loop_width(&msg.label);
+                let loop_w =
+                    crate::render::sequence::self_loop_width(&super::text_lines(&msg.label));
                 let needed_half = loop_w + 10.0;
                 let current_half = col_widths[fi] / 2.0;
                 if needed_half > current_half {
@@ -520,7 +549,7 @@ fn widen_for_messages(
                 let (lo, hi) = (fi.min(ti), fi.max(ti));
                 let span: f64 = col_widths[lo..=hi].iter().sum::<f64>()
                     + PARTICIPANT_H_PADDING * (hi - lo) as f64;
-                let needed = text_width(&msg.label) + 20.0;
+                let needed = lines_width(&super::text_lines(&msg.label)) + 20.0;
                 if needed > span && hi > lo {
                     let extra = (needed - span) / (hi - lo) as f64;
                     for w in &mut col_widths[lo..hi] {
@@ -536,4 +565,72 @@ fn find_participant(participants: &[&Participant], name: &str) -> Option<usize> 
     participants
         .iter()
         .position(|p| p.alias.as_deref().unwrap_or(&p.name) == name || p.name == name)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn layout_of(source: &str) -> SequenceLayout {
+        let diagrams = crate::parser::preprocessor::preprocess(source, None);
+        match crate::parser::parse(&diagrams[0]).expect("parses") {
+            crate::ast::DiagramAst::Sequence(seq) => layout(&seq),
+            _ => panic!("not a sequence diagram"),
+        }
+    }
+
+    fn messages(l: &SequenceLayout) -> Vec<&MessageLayout> {
+        l.elements
+            .iter()
+            .filter_map(|e| match e {
+                LayoutElement::Message(m) => Some(m),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn backslash_n_splits_a_message_label_and_pushes_its_arrow_down() {
+        let one = layout_of("@startuml\nA -> B: first\nA -> B: second\n@enduml\n");
+        let two = layout_of("@startuml\nA -> B: first\nA -> B: New Order\\n http://x/1\n@enduml\n");
+        let (m1, m2) = (messages(&one), messages(&two));
+        assert_eq!(m2[1].lines, vec!["New Order", " http://x/1"]);
+        assert_eq!(m2[1].y - m2[0].y, m1[1].y - m1[0].y + LINE_HEIGHT);
+    }
+
+    #[test]
+    fn autonumber_prefixes_the_first_line_only() {
+        let l = layout_of("@startuml\nautonumber\nA -> B: a\\nb\nA -> B\n@enduml\n");
+        let m = messages(&l);
+        assert_eq!(m[0].lines, vec!["1: a", "b"]);
+        assert_eq!(m[1].lines, vec!["2"]);
+    }
+
+    #[test]
+    fn columns_widen_for_the_widest_line_not_the_whole_label() {
+        let line = "x".repeat(40);
+        let split = layout_of(&format!("@startuml\nA -> B: {line}\\n{line}\n@enduml\n"));
+        let joined = layout_of(&format!("@startuml\nA -> B: {line}{line}\n@enduml\n"));
+        let single = layout_of(&format!("@startuml\nA -> B: {line}\n@enduml\n"));
+        assert_eq!(split.total_width, single.total_width);
+        assert!(joined.total_width > split.total_width);
+    }
+
+    #[test]
+    fn notes_and_participant_names_break_at_backslash_n() {
+        let l = layout_of(
+            "@startuml\nparticipant \"Order\\nService\" as S\nS -> S: x\nnote right of S: one\\ntwo\n@enduml\n",
+        );
+        assert_eq!(l.participants[0].display, vec!["Order", "Service"]);
+        assert!(l.participant_height > PARTICIPANT_HEIGHT);
+        let note = l
+            .elements
+            .iter()
+            .find_map(|e| match e {
+                LayoutElement::Note(n) => Some(n),
+                _ => None,
+            })
+            .expect("a note");
+        assert_eq!(note.lines, vec!["one", "two"]);
+    }
 }

@@ -3,14 +3,13 @@ use svg::Document;
 
 use crate::ast::sequence::ParticipantKind;
 use crate::layout::sequence::{
-    ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LayoutElement, MessageLayout,
-    NoteLayout, ParticipantLayout, SequenceLayout,
+    lines_width, ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LayoutElement,
+    MessageLayout, NoteLayout, ParticipantLayout, SequenceLayout, LINE_HEIGHT,
 };
 
 use super::primitives::{arrowhead_defs, background_rect, style_block};
 use super::theme::Theme;
 
-const PARTICIPANT_HEIGHT: f64 = 40.0;
 const PARTICIPANT_WIDTH: f64 = 120.0;
 const ACTIVATION_WIDTH: f64 = 10.0;
 const FONT_SIZE: f64 = 13.0;
@@ -18,7 +17,8 @@ const TOP_MARGIN: f64 = 20.0;
 const TITLE_HEIGHT: f64 = 30.0;
 const SELF_LOOP_MIN_W: f64 = 30.0;
 const SELF_LOOP_H: f64 = 20.0;
-const CHAR_WIDTH: f64 = 7.5;
+/// The stick figure's height; an actor's name goes underneath it.
+const ACTOR_HEIGHT: f64 = 40.0;
 
 pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     let title_offset = if layout.title.is_some() {
@@ -59,11 +59,11 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     // Header participant boxes
     let header_top = y_off + TOP_MARGIN + layout.header_offset;
     for p in &layout.participants {
-        doc = doc.add(participant_box(p, header_top, false));
+        doc = doc.add(participant_box(p, header_top, layout.participant_height));
     }
 
     // Lifelines
-    let lifeline_start = header_top + PARTICIPANT_HEIGHT;
+    let lifeline_start = header_top + layout.participant_height;
     for p in &layout.participants {
         let line = Line::new()
             .set("x1", p.x)
@@ -103,7 +103,7 @@ pub fn render(layout: &SequenceLayout, theme: &Theme) -> Document {
     if !layout.hide_footbox {
         let footer_y = y_off + layout.lifeline_height;
         for p in &layout.participants {
-            doc = doc.add(participant_box(p, footer_y, true));
+            doc = doc.add(participant_box(p, footer_y, layout.participant_height));
         }
     }
 
@@ -151,7 +151,22 @@ fn render_box(b: &BoxLayout, y_off: f64) -> Group {
     g
 }
 
-fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {
+/// `lines` as stacked `<text>` elements at `x`, the first baseline at
+/// `first_baseline` and each next one `LINE_HEIGHT` below it.
+fn text_lines(lines: &[String], x: f64, first_baseline: f64, anchor: &str) -> Vec<Text> {
+    lines
+        .iter()
+        .enumerate()
+        .map(|(i, line)| {
+            Text::new(line.clone())
+                .set("x", x)
+                .set("y", first_baseline + i as f64 * LINE_HEIGHT)
+                .set("text-anchor", anchor)
+        })
+        .collect()
+}
+
+fn participant_box(p: &ParticipantLayout, y: f64, height: f64) -> Group {
     let x = p.x - PARTICIPANT_WIDTH / 2.0;
     // Per-participant colour (from `skinparam`/`color` in the source) still
     // overrides the default — users who ask for a coloured box get one. The
@@ -166,16 +181,18 @@ fn participant_box(p: &ParticipantLayout, y: f64, _is_footer: bool) -> Group {
                 .set("x", x)
                 .set("y", y)
                 .set("width", PARTICIPANT_WIDTH)
-                .set("height", PARTICIPANT_HEIGHT)
+                .set("height", height)
                 .set("rx", "4")
                 .set("fill", fill)
                 .set("stroke", border)
                 .set("stroke-width", "1.5");
-            let text = Text::new(p.display.clone())
-                .set("x", p.x)
-                .set("y", y + PARTICIPANT_HEIGHT / 2.0 + FONT_SIZE / 2.0 - 2.0)
-                .set("text-anchor", "middle");
-            Group::new().add(rect).add(text)
+            // The block of lines is centred vertically in the box; one
+            // line sits where it always has.
+            let n = p.display.len().max(1) as f64;
+            let first = y + height / 2.0 + FONT_SIZE / 2.0 - 2.0 - (n - 1.0) * LINE_HEIGHT / 2.0;
+            text_lines(&p.display, p.x, first, "middle")
+                .into_iter()
+                .fold(Group::new().add(rect), |g, t| g.add(t))
         }
     }
 }
@@ -186,7 +203,7 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
     let head_r = 8.0;
     let head_cy = y + head_r + 2.0;
     let body_top = head_cy + head_r;
-    let body_bot = y + PARTICIPANT_HEIGHT - 10.0;
+    let body_bot = y + ACTOR_HEIGHT - 10.0;
     let arm_y = body_top + (body_bot - body_top) * 0.4;
 
     let head = Circle::new()
@@ -214,28 +231,25 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
         .set("x1", cx)
         .set("y1", body_bot)
         .set("x2", cx - 10.0)
-        .set("y2", y + PARTICIPANT_HEIGHT)
+        .set("y2", y + ACTOR_HEIGHT)
         .set("stroke", "#6c8ebf")
         .set("stroke-width", "1.5");
     let leg_r = Line::new()
         .set("x1", cx)
         .set("y1", body_bot)
         .set("x2", cx + 10.0)
-        .set("y2", y + PARTICIPANT_HEIGHT)
+        .set("y2", y + ACTOR_HEIGHT)
         .set("stroke", "#6c8ebf")
         .set("stroke-width", "1.5");
-    let label = Text::new(p.display.clone())
-        .set("x", cx)
-        .set("y", y + PARTICIPANT_HEIGHT + FONT_SIZE)
-        .set("text-anchor", "middle");
-
-    Group::new()
+    let figure = Group::new()
         .add(head)
         .add(body)
         .add(arms)
         .add(leg_l)
-        .add(leg_r)
-        .add(label)
+        .add(leg_r);
+    text_lines(&p.display, cx, y + ACTOR_HEIGHT + FONT_SIZE, "middle")
+        .into_iter()
+        .fold(figure, |g, t| g.add(t))
 }
 
 /// Width of the right-angle loop arc for a self-message — sized so the
@@ -243,14 +257,22 @@ fn render_actor(p: &ParticipantLayout, y: f64) -> Group {
 /// formula is used in `layout::sequence::widen_for_messages` so the
 /// participant column is always wide enough to hold the loop without
 /// bleeding into the next column.
-pub fn self_loop_width(label: &str) -> f64 {
-    let label_pixels = label.chars().count() as f64 * CHAR_WIDTH;
-    (label_pixels + 16.0).max(SELF_LOOP_MIN_W)
+pub fn self_loop_width(lines: &[String]) -> f64 {
+    (lines_width(lines) + 16.0).max(SELF_LOOP_MIN_W)
 }
 
 fn render_message(m: &MessageLayout, y_off: f64) -> Group {
     let y = m.y + y_off;
-    let label_y = y - 5.0;
+    // The last line's baseline sits just above the arrow; earlier lines
+    // stack upwards from it.
+    let label_y = y - 5.0 - m.lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
+    // An unlabelled message keeps its (empty) text element.
+    let no_label = [String::new()];
+    let lines: &[String] = if m.lines.is_empty() {
+        &no_label
+    } else {
+        &m.lines
+    };
 
     let (class, marker) = if m.dashed {
         ("arrow-dashed", "url(#arrowhead)")
@@ -266,7 +288,7 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
         // column with the same formula, so the loop always fits inside
         // its column with room to spare.
         let x = m.from_x;
-        let loop_w = self_loop_width(&m.label);
+        let loop_w = self_loop_width(&m.lines);
         let path = svg::node::element::Path::new()
             .set(
                 "d",
@@ -283,11 +305,9 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
         // Label centred above the top arc — same convention as a
         // cross-participant message label, just relative to the loop's
         // bounding box instead of the line itself.
-        let label = Text::new(m.label.clone())
-            .set("x", x + loop_w / 2.0)
-            .set("y", label_y)
-            .set("text-anchor", "middle");
-        return Group::new().add(path).add(label);
+        return text_lines(lines, x + loop_w / 2.0, label_y, "middle")
+            .into_iter()
+            .fold(Group::new().add(path), |g, t| g.add(t));
     }
 
     let line = Line::new()
@@ -299,12 +319,9 @@ fn render_message(m: &MessageLayout, y_off: f64) -> Group {
         .set("marker-end", marker);
 
     let text_x = (m.from_x + m.to_x) / 2.0;
-    let label = Text::new(m.label.clone())
-        .set("x", text_x)
-        .set("y", label_y)
-        .set("text-anchor", "middle");
-
-    Group::new().add(line).add(label)
+    text_lines(lines, text_x, label_y, "middle")
+        .into_iter()
+        .fold(Group::new().add(line), |g, t| g.add(t))
 }
 
 fn render_note(n: &NoteLayout, y_off: f64) -> Group {

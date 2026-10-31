@@ -330,3 +330,19 @@ fn box_snapshot() {
     let svg = render_fixture("sequence_box_regions.puml");
     insta::assert_snapshot!(svg);
 }
+
+/// From the notification-event-pattern article: labels such as
+/// `New Order\n http://sales/orders/1234` break into two lines.
+#[test]
+fn backslash_n_in_labels_renders_stacked_lines() {
+    let svg = render_fixture("sequence_notification_multiline.puml");
+    assert!(!svg.contains("\\n"), "literal \\n left in the SVG");
+    assert!(svg.contains(">\n2: New Order\n</text>"), "{svg}");
+    assert!(svg.contains(">\n http://sales/orders/1234\n</text>"));
+}
+
+#[test]
+fn multiline_labels_snapshot() {
+    let svg = render_fixture("sequence_notification_multiline.puml");
+    insta::assert_snapshot!(svg);
+}

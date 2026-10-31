@@ -8,8 +8,8 @@
 //! fall back on SVG.
 
 use diagram_scene::{
-    route, Anchor, Container, ContainerKind, Dash, Edge, EdgeLabel, Estimate, Font, Marker, Node,
-    Paint, Pen, Point, Rect, Role, Scene, Seg, Shape, Style, Text, TextLine, Weight,
+    route, shape, Anchor, Container, ContainerKind, Dash, Edge, EdgeLabel, Estimate, Font, Marker,
+    Node, Paint, Pen, Point, Rect, Role, Scene, Seg, Shape, Style, Text, TextLine, Weight,
 };
 
 use crate::ast::class::{ClassKind, RelationKind};
@@ -17,6 +17,7 @@ use crate::ast::sequence::ParticipantKind;
 use crate::ast::state::StateKind;
 use crate::ast::DiagramAst;
 use crate::layout;
+use crate::layout::sequence::LINE_HEIGHT;
 
 /// puml lays text out for 13 px type.
 const FONT_SIZE: f32 = 13.0;
@@ -66,9 +67,13 @@ fn color(text: &str) -> Option<Paint> {
 }
 
 fn lines(text: &str, font: Font) -> Vec<TextLine> {
-    text.split("\\n")
-        .flat_map(|l| l.lines())
-        .map(|l| TextLine::new(l.to_string(), font))
+    text_lines(&layout::text_lines(text), font)
+}
+
+fn text_lines(lines: &[String], font: Font) -> Vec<TextLine> {
+    lines
+        .iter()
+        .map(|l| TextLine::new(l.clone(), font))
         .collect()
 }
 
@@ -92,7 +97,6 @@ fn line(a: Point, b: Point) -> Vec<Seg> {
 
 /// Participant boxes, as the renderer sizes them.
 const PARTICIPANT_W: f32 = 120.0;
-const PARTICIPANT_H: f32 = 40.0;
 const SEQ_TOP: f32 = 20.0;
 
 fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
@@ -100,8 +104,9 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
     let (mut scene, dy) = new_scene(l.total_width, l.total_height, &l.title);
     let top = dy + SEQ_TOP + l.header_offset as f32;
     let bottom = dy + l.lifeline_height as f32;
+    let participant_h = l.participant_height as f32;
     // Room for the actors' names under the bottom row.
-    scene.height = scene.height.max(bottom + PARTICIPANT_H + 22.0);
+    scene.height = scene.height.max(bottom + participant_h + 22.0);
 
     // Participant boxes first, so they sit behind the lifelines.
     for b in &l.boxes {
@@ -127,9 +132,9 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
         scene.containers.push(Container {
             rect: Rect::new(
                 x - 1.0,
-                top + PARTICIPANT_H,
+                top + participant_h,
                 2.0,
-                bottom - top - PARTICIPANT_H,
+                bottom - top - participant_h,
             ),
             kind: ContainerKind::Lifeline,
             label: Vec::new(),
@@ -144,7 +149,7 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
             let (shape, rect) = match p.kind {
                 ParticipantKind::Actor => (
                     Shape::Actor,
-                    Rect::new(x - 30.0, y, 60.0, PARTICIPANT_H + 18.0),
+                    Rect::new(x - 30.0, y, 60.0, participant_h + 18.0),
                 ),
                 ParticipantKind::Database => (
                     Shape::Cylinder,
@@ -152,32 +157,34 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                         x - PARTICIPANT_W / 2.0,
                         y - 6.0,
                         PARTICIPANT_W,
-                        PARTICIPANT_H + 12.0,
+                        participant_h + 12.0,
                     ),
                 ),
                 ParticipantKind::Queue => (
                     Shape::Queue,
-                    Rect::new(x - PARTICIPANT_W / 2.0, y, PARTICIPANT_W, PARTICIPANT_H),
+                    Rect::new(x - PARTICIPANT_W / 2.0, y, PARTICIPANT_W, participant_h),
                 ),
                 _ => (
                     Shape::Rounded,
-                    Rect::new(x - PARTICIPANT_W / 2.0, y, PARTICIPANT_W, PARTICIPANT_H),
+                    Rect::new(x - PARTICIPANT_W / 2.0, y, PARTICIPANT_W, participant_h),
                 ),
             };
             let mut node = Node::new(format!("participant:{i}:{r}"), shape, rect);
             if shape == Shape::Actor {
                 // Under the figure, on the page's colour: the first message
                 // can run just below the box.
-                scene.texts.push(Text {
-                    backed: true,
-                    ..Text::new(
-                        Point::new(x, rect.bottom() - 3.0),
-                        Anchor::Middle,
-                        TextLine::new(p.display.clone(), Font::Body),
-                    )
-                });
+                for (k, name) in p.display.iter().enumerate() {
+                    scene.texts.push(Text {
+                        backed: true,
+                        ..Text::new(
+                            Point::new(x, rect.bottom() - 3.0 + k as f32 * LINE_HEIGHT as f32),
+                            Anchor::Middle,
+                            TextLine::new(name.clone(), Font::Body),
+                        )
+                    });
+                }
             } else {
-                node.label = lines(&p.display, Font::Body);
+                node.label = text_lines(&p.display, Font::Body);
             }
             if let Some(fill) = p.color.as_deref().and_then(color) {
                 node.style.fill = fill;
@@ -221,7 +228,7 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                 let y = m.y as f32 + dy;
                 let (a, b) = (m.from_x as f32, m.to_x as f32);
                 let path = if m.self_msg {
-                    let w = crate::render::sequence::self_loop_width(&m.label) as f32;
+                    let w = crate::render::sequence::self_loop_width(&m.lines) as f32;
                     route::rounded_polyline(
                         &[
                             Point::new(a, y),
@@ -241,13 +248,24 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                 if m.lost {
                     edge.end = Marker::Cross;
                 }
-                if !m.label.is_empty() {
+                if !m.lines.is_empty() {
                     let mid = if m.self_msg {
-                        a + crate::render::sequence::self_loop_width(&m.label) as f32 / 2.0
+                        a + crate::render::sequence::self_loop_width(&m.lines) as f32 / 2.0
                     } else {
                         (a + b) / 2.0
                     };
-                    let mut l = label(Point::new(mid, y - 10.0), &m.label);
+                    let block = text_lines(&m.lines, Font::Small);
+                    // The block is centred on `pos`: keep its last line
+                    // where a one-line label sits and stack the rest above.
+                    let extra =
+                        (block.len() - 1) as f32 * shape::line_height(Font::Small.size(FONT_SIZE));
+                    let mut l = EdgeLabel::new(
+                        Point::new(mid, y - 10.0 - extra / 2.0),
+                        block,
+                        true,
+                        &Estimate,
+                        FONT_SIZE,
+                    );
                     l.pill = false;
                     edge.labels.push(l);
                 }
@@ -256,11 +274,7 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
             LayoutElement::Note(n) => {
                 let rect = Rect::new(n.x as f32, n.y as f32 + dy, n.width as f32, n.height as f32);
                 let mut node = Node::new(format!("note:{}", scene.nodes.len()), Shape::Note, rect);
-                node.label = n
-                    .lines
-                    .iter()
-                    .map(|t| TextLine::new(t.clone(), Font::Body))
-                    .collect();
+                node.label = text_lines(&n.lines, Font::Body);
                 scene.nodes.push(node);
             }
             LayoutElement::Activation(a) => {
@@ -598,6 +612,21 @@ mod tests {
         assert!(s.edges.iter().any(|e| e.pen.dash == Dash::Dashed));
         assert!(s.edges.iter().any(|e| e.end == Marker::Cross));
         assert_eq!(s.accessibility.title.as_deref(), Some("Checkout"));
+        inside(&s);
+    }
+
+    #[test]
+    fn sequence_labels_keep_their_line_breaks() {
+        let s = scene_of(
+            "@startuml\nparticipant \"Order\\nService\" as S\nparticipant T\nS -> T: New Order\\n http://x/1\nnote right of S: a\\nb\n@enduml\n",
+        );
+        let label = &s.edges[0].labels[0];
+        let plain: Vec<String> = label.lines.iter().map(|l| l.plain()).collect();
+        assert_eq!(plain, vec!["New Order", " http://x/1"]);
+        let header = s.nodes.iter().find(|n| n.id == "participant:0:0").unwrap();
+        assert_eq!(header.label.len(), 2);
+        let note = s.nodes.iter().find(|n| n.shape == Shape::Note).unwrap();
+        assert_eq!(note.label.len(), 2);
         inside(&s);
     }
 
