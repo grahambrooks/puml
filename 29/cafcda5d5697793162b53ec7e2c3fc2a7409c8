@@ -1,0 +1,37 @@
+src/ast/sequence.rs
+  s_38439ae326f7ae::t_2b6bbe2aff6ca5 88-97,105
+src/layout/sequence.rs
+  s_38439ae326f7ae::t_2fb41559e91bf0 64-75,92-95,98-103,136-160,191,218-243,252-283,285-288
+src/parser/grammars/sequence.pest
+  s_38439ae326f7ae::t_7164a14061c073 3-8,29-34,95
+src/parser/sequence.rs
+  s_38439ae326f7ae::t_55e145983b3c9f 27-28,33-61,70-72,90-92,169-175
+src/render/sequence.rs
+  s_38439ae326f7ae::t_c98d2483d1657c 6-7,54-58,60,62,66,113-153
+src/scene.rs
+  s_38439ae326f7ae::t_8de2b90717b710 101,106-124,604-639
+tests/fixtures/sequence_box_event_sourcing.puml
+  s_38439ae326f7ae::t_0b26504c066972 1-55
+tests/fixtures/sequence_box_regions.puml
+  s_38439ae326f7ae::t_a604a71b18da04 1-53
+tests/sequence_render.rs
+  s_38439ae326f7ae::t_e85753c265af0a 252-332
+tests/snapshots/sequence_render__box_snapshot.snap
+  s_38439ae326f7ae::t_fcc157b4d2df8e 1-171
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "29cafcda5d5697793162b53ec7e2c3fc2a7409c8",
+  "prompts": {},
+  "sessions": {
+    "s_38439ae326f7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5e88d1d-b3bb-451e-9770-aa1214b3f499",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
