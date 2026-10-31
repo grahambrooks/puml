@@ -2,7 +2,7 @@
 source: tests/sequence_render.rs
 expression: svg
 ---
-<svg height="372" viewBox="0 0 414 372" width="414" xmlns="http://www.w3.org/2000/svg">
+<svg height="375" viewBox="0 0 414 375" width="414" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -30,41 +30,41 @@ Alice
 Bob
 </text>
 </g>
-<line class="lifeline" x1="98.5" x2="98.5" y1="90" y2="302"/>
-<line class="lifeline" x1="300.5" x2="300.5" y1="90" y2="302"/>
+<line class="lifeline" x1="98.5" x2="98.5" y1="90" y2="305"/>
+<line class="lifeline" x1="300.5" x2="300.5" y1="90" y2="305"/>
 <g>
-<path class="arrow" d="M 98.5 100 L 167 100 L 167 120 L 98.5 120" marker-end="url(#arrowhead)"/>
-<text text-anchor="middle" x="132.75" y="95">
+<path class="arrow" d="M 98.5 121 L 167 121 L 167 141 L 98.5 141" marker-end="url(#arrowhead)"/>
+<text text-anchor="middle" x="132.75" y="112">
 reflect
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="98.5" x2="300.5" y1="156" y2="156"/>
-<text text-anchor="middle" x="199.5" y="151">
+<line class="arrow" marker-end="url(#arrowhead)" x1="98.5" x2="300.5" y1="181" y2="181"/>
+<text text-anchor="middle" x="199.5" y="172">
 hello
 </text>
 </g>
 <g>
-<path class="arrow" d="M 300.5 196 L 384 196 L 384 216 L 300.5 216" marker-end="url(#arrowhead)"/>
-<text text-anchor="middle" x="342.25" y="191">
+<path class="arrow" d="M 300.5 221 L 384 221 L 384 241 L 300.5 241" marker-end="url(#arrowhead)"/>
+<text text-anchor="middle" x="342.25" y="212">
 recompute
 </text>
 </g>
 <g>
-<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="300.5" x2="98.5" y1="252" y2="252"/>
-<text text-anchor="middle" x="199.5" y="247">
+<line class="arrow-dashed" marker-end="url(#arrowhead)" x1="300.5" x2="98.5" y1="281" y2="281"/>
+<text text-anchor="middle" x="199.5" y="272">
 done
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="38.5" y="302"/>
-<text text-anchor="middle" x="98.5" y="326.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="38.5" y="305"/>
+<text text-anchor="middle" x="98.5" y="329.5">
 Alice
 </text>
 </g>
 <g>
-<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="240.5" y="302"/>
-<text text-anchor="middle" x="300.5" y="326.5">
+<rect fill="none" height="40" rx="4" stroke="#6c8ebf" stroke-width="1.5" width="120" x="240.5" y="305"/>
+<text text-anchor="middle" x="300.5" y="329.5">
 Bob
 </text>
 </g>

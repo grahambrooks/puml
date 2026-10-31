@@ -98,6 +98,8 @@ fn line(a: Point, b: Point) -> Vec<Seg> {
 /// Participant boxes, as the renderer sizes them.
 const PARTICIPANT_W: f32 = 120.0;
 const SEQ_TOP: f32 = 20.0;
+/// Space between a message label's bottom and its arrow.
+const SCENE_LABEL_GAP: f32 = 5.0;
 
 fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
     use layout::sequence::LayoutElement;
@@ -255,12 +257,12 @@ fn sequence(l: &layout::sequence::SequenceLayout) -> Scene {
                         (a + b) / 2.0
                     };
                     let block = text_lines(&m.lines, Font::Small);
-                    // The block is centred on `pos`: keep its last line
-                    // where a one-line label sits and stack the rest above.
-                    let extra =
-                        (block.len() - 1) as f32 * shape::line_height(Font::Small.size(FONT_SIZE));
+                    // The block is centred on `pos`; its bottom sits a
+                    // clear gap above the arrow, as the SVG's does.
+                    let total =
+                        block.len() as f32 * shape::line_height(Font::Small.size(FONT_SIZE));
                     let mut l = EdgeLabel::new(
-                        Point::new(mid, y - 10.0 - extra / 2.0),
+                        Point::new(mid, y - SCENE_LABEL_GAP - total / 2.0),
                         block,
                         true,
                         &Estimate,
@@ -628,6 +630,24 @@ mod tests {
         let note = s.nodes.iter().find(|n| n.shape == Shape::Note).unwrap();
         assert_eq!(note.label.len(), 2);
         inside(&s);
+    }
+
+    #[test]
+    fn sequence_labels_sit_clear_above_their_arrows() {
+        let s = scene_of("@startuml\nA -> B: one\nA -> B: two\\nlines\n@enduml\n");
+        for e in &s.edges {
+            let Some(Seg::Move(start)) = e.path.first() else {
+                panic!("an arrow")
+            };
+            let l = &e.labels[0];
+            let total = l.lines.len() as f32 * shape::line_height(Font::Small.size(FONT_SIZE));
+            let bottom = l.pos.y + total / 2.0;
+            assert!(
+                bottom <= start.y - 4.0,
+                "label bottom {bottom} vs arrow {}",
+                start.y
+            );
+        }
     }
 
     #[test]

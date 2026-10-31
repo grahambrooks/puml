@@ -2,7 +2,7 @@
 source: tests/sequence_render.rs
 expression: svg
 ---
-<svg height="292" viewBox="0 0 310 292" width="310" xmlns="http://www.w3.org/2000/svg">
+<svg height="287" viewBox="0 0 310 287" width="310" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <marker id="arrowhead" markerHeight="10" markerWidth="10" orient="auto" refX="9" refY="5">
 <polygon fill="#181818" points="0 0, 10 5, 0 10"/>
@@ -27,35 +27,35 @@ Sales
 Shipping
 </text>
 </g>
-<line class="lifeline" x1="80" x2="80" y1="60" y2="272"/>
-<line class="lifeline" x1="230" x2="230" y1="60" y2="272"/>
+<line class="lifeline" x1="80" x2="80" y1="60" y2="267"/>
+<line class="lifeline" x1="230" x2="230" y1="60" y2="267"/>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="70" y2="70"/>
-<text text-anchor="middle" x="155" y="65">
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="91" y2="91"/>
+<text text-anchor="middle" x="155" y="82">
 1: Subscribe (Orders)
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="126" y2="126"/>
-<text text-anchor="middle" x="155" y="105">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="147" y2="147"/>
+<text text-anchor="middle" x="155" y="122">
 2: New Order
 </text>
-<text text-anchor="middle" x="155" y="121">
+<text text-anchor="middle" x="155" y="138">
  http://sales/orders/1234
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="182" y2="182"/>
-<text text-anchor="middle" x="155" y="161">
+<line class="arrow" marker-end="url(#arrowhead)" x1="230" x2="80" y1="203" y2="203"/>
+<text text-anchor="middle" x="155" y="178">
 3: Get Order
 </text>
-<text text-anchor="middle" x="155" y="177">
+<text text-anchor="middle" x="155" y="194">
  http://sales/orders/1234
 </text>
 </g>
 <g>
-<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="222" y2="222"/>
-<text text-anchor="middle" x="155" y="217">
+<line class="arrow" marker-end="url(#arrowhead)" x1="80" x2="230" y1="243" y2="243"/>
+<text text-anchor="middle" x="155" y="234">
 4: Order details
 </text>
 </g>

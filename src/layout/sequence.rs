@@ -11,6 +11,17 @@ const CHAR_WIDTH: f64 = 7.5; // approximate character width at default font size
 /// Baseline-to-baseline distance between the lines of a message label or
 /// a participant name.
 pub const LINE_HEIGHT: f64 = 16.0;
+/// How far a message label's last baseline sits above its arrow: enough
+/// that descenders stay clear of the line.
+pub const LABEL_BASELINE: f64 = 9.0;
+/// A message row, top to bottom: padding, the label (one line's ascent
+/// here, each further line `LINE_HEIGHT` more), the gap down to the
+/// arrow, then room below the arrow before the next row. One-line rows
+/// are `ROW_HEIGHT` tall.
+const ROW_TOP: f64 = 5.0 + 12.0 + LABEL_BASELINE;
+const ROW_BOTTOM: f64 = ROW_HEIGHT - ROW_TOP;
+/// A self-message's loop drops this far below its arrow.
+const SELF_LOOP_DROP: f64 = 20.0;
 
 pub struct ParticipantLayout {
     #[allow(dead_code)]
@@ -207,7 +218,7 @@ pub fn layout(diagram: &SequenceDiagram) -> SequenceLayout {
         elements: Vec::new(),
         active_depth: vec![0; n],
         open_activations: Vec::new(),
-        y: header_offset + TOP_MARGIN + participant_height + 10.0,
+        y: header_offset + TOP_MARGIN + participant_height + 5.0,
         autonumber: None,
     };
 
@@ -347,28 +358,23 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
                 }
                 *n += 1;
             }
-            // The label sits above its arrow, so each extra line pushes
-            // the arrow down to keep the label clear of the row above.
-            ctx.y += lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
+            // The label sits in its own row above the arrow, so it can't
+            // run into the row before; each extra line pushes the arrow
+            // down by a line.
+            let arrow_y = ctx.y + ROW_TOP + lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
 
             ctx.elements.push(LayoutElement::Message(MessageLayout {
                 from_x,
                 to_x,
-                y: ctx.y,
+                y: arrow_y,
                 lines,
                 dashed,
                 self_msg,
                 lost: matches!(msg.arrow, ArrowStyle::Lost),
             }));
-            // Self-messages occupy ~20px more vertical space than a
-            // straight cross-participant arrow because of the loop's
-            // bottom arc; without the bump the next message's label can
-            // sit on top of the loop's lower edge.
-            ctx.y += if self_msg {
-                ROW_HEIGHT + 16.0
-            } else {
-                ROW_HEIGHT
-            };
+            // A self-message's loop drops below its arrow; the next row
+            // starts below the loop.
+            ctx.y = arrow_y + ROW_BOTTOM + if self_msg { SELF_LOOP_DROP } else { 0.0 };
         }
         SequenceElement::Note(note) => {
             let anchor_x = note
@@ -430,8 +436,9 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
             }
         }
         SequenceElement::Divider(div) => {
+            // The label sits above the line, so the line goes mid-row.
             ctx.elements.push(LayoutElement::Divider(DividerLayout {
-                y: ctx.y,
+                y: ctx.y + ROW_HEIGHT / 2.0,
                 label: div.label.clone(),
                 total_width: ctx.total_width,
             }));
@@ -441,12 +448,18 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
             ctx.y += *px as f64;
         }
         SequenceElement::Delay(label) => {
+            // A labelled delay needs room above its line for the label.
+            let above = if label.is_empty() {
+                ROW_HEIGHT / 4.0
+            } else {
+                ROW_HEIGHT / 2.0
+            };
             ctx.elements.push(LayoutElement::Divider(DividerLayout {
-                y: ctx.y,
+                y: ctx.y + above,
                 label: label.clone(),
                 total_width: ctx.total_width,
             }));
-            ctx.y += ROW_HEIGHT / 2.0;
+            ctx.y += above + ROW_HEIGHT / 4.0;
         }
         SequenceElement::Autonumber(start) => {
             ctx.autonumber = Some(start.unwrap_or(1));
@@ -596,6 +609,32 @@ mod tests {
         let (m1, m2) = (messages(&one), messages(&two));
         assert_eq!(m2[1].lines, vec!["New Order", " http://x/1"]);
         assert_eq!(m2[1].y - m2[0].y, m1[1].y - m1[0].y + LINE_HEIGHT);
+    }
+
+    #[test]
+    fn labels_sit_in_their_own_row_clear_of_the_one_above() {
+        let l = layout_of(
+            "@startuml\nA -> B: one\nA -> B: two\\nlines\nB -> B: self\nA -> B: after\n@enduml\n",
+        );
+        let m = messages(&l);
+        // A label's top: its first baseline less a line's ascent.
+        let top = |m: &MessageLayout| {
+            m.y - LABEL_BASELINE - (m.lines.len() - 1) as f64 * LINE_HEIGHT - 12.0
+        };
+        let header_bottom = TOP_MARGIN + l.participant_height;
+        assert!(
+            top(m[0]) >= header_bottom + 4.0,
+            "first label under the header"
+        );
+        // Clear of the previous arrow and its arrowhead (7.5 px each side).
+        for pair in m.windows(2) {
+            let prev_bottom = if pair[0].self_msg {
+                pair[0].y + SELF_LOOP_DROP
+            } else {
+                pair[0].y + 7.5
+            };
+            assert!(top(pair[1]) >= prev_bottom + 4.0, "{:?}", pair[1].lines);
+        }
     }
 
     #[test]

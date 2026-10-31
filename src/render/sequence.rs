@@ -4,7 +4,7 @@ use svg::Document;
 use crate::ast::sequence::ParticipantKind;
 use crate::layout::sequence::{
     lines_width, ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LayoutElement,
-    MessageLayout, NoteLayout, ParticipantLayout, SequenceLayout, LINE_HEIGHT,
+    MessageLayout, NoteLayout, ParticipantLayout, SequenceLayout, LABEL_BASELINE, LINE_HEIGHT,
 };
 
 use super::primitives::{arrowhead_defs, background_rect, style_block};
@@ -263,9 +263,9 @@ pub fn self_loop_width(lines: &[String]) -> f64 {
 
 fn render_message(m: &MessageLayout, y_off: f64) -> Group {
     let y = m.y + y_off;
-    // The last line's baseline sits just above the arrow; earlier lines
+    // The last line's baseline sits clear above the arrow; earlier lines
     // stack upwards from it.
-    let label_y = y - 5.0 - m.lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
+    let label_y = y - LABEL_BASELINE - m.lines.len().saturating_sub(1) as f64 * LINE_HEIGHT;
     // An unlabelled message keeps its (empty) text element.
     let no_label = [String::new()];
     let lines: &[String] = if m.lines.is_empty() {

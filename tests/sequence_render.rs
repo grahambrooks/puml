@@ -346,3 +346,34 @@ fn multiline_labels_snapshot() {
     let svg = render_fixture("sequence_notification_multiline.puml");
     insta::assert_snapshot!(svg);
 }
+
+/// A label's baseline sits clear above its arrow rather than on it.
+#[test]
+fn message_labels_leave_a_gap_above_the_arrow() {
+    let ast = puml::parser::parse(
+        &puml::parser::preprocessor::preprocess("@startuml\nA -> B: hello\n@enduml\n", None)[0],
+    )
+    .expect("parse");
+    let svg = puml::render::render(&ast).to_string();
+    let attr = |tag: &str, name: &str| -> f64 {
+        let at = svg.find(tag).expect(tag);
+        let rest = &svg[at..];
+        let key = format!(" {name}=\"");
+        let start = rest.find(&key).expect(name) + key.len();
+        rest[start..start + rest[start..].find('"').unwrap()]
+            .parse()
+            .unwrap()
+    };
+    let line_y = attr("<line class=\"arrow\"", "y1");
+    let text_at = svg.find(">\nhello\n</text>").expect("label");
+    let open = svg[..text_at].rfind("<text").unwrap();
+    let text = &svg[open..text_at];
+    let y_start = text.find(" y=\"").unwrap() + 4;
+    let text_y: f64 = text[y_start..y_start + text[y_start..].find('"').unwrap()]
+        .parse()
+        .unwrap();
+    assert!(
+        line_y - text_y >= 8.0,
+        "baseline {text_y} vs arrow {line_y}"
+    );
+}
