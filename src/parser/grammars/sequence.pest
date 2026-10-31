@@ -106,7 +106,7 @@ autonumber_stmt = { ^"autonumber" ~ (" "+ ~ ASCII_DIGIT+)? ~ (" "* ~ NEWLINE) }
 hide_footbox_stmt = { ^"hide" ~ " "+ ~ ^"footbox" }
 skinparam_stmt = { ^"skinparam" ~ " "+ ~ skinparam_body }
 skinparam_body = { skinparam_block | skinparam_pair }
-skinparam_block = { bare_name ~ " "* ~ "{" ~ (!" }" ~ ANY)* ~ "}" }
+skinparam_block = { bare_name ~ " "* ~ "{" ~ (!"}" ~ ANY)* ~ "}" }
 skinparam_pair  = { rest_of_line }
 
 // ── Primitives ───────────────────────────────────────────────────────────────

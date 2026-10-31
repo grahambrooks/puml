@@ -210,3 +210,23 @@ fn auto_preset_snapshot() {
     let svg = render_fixture("sequence_auto_theme.puml");
     insta::assert_snapshot!(svg);
 }
+
+#[test]
+fn skinparam_block_form_parses() {
+    // `skinparam <element> { ... }` is standard PlantUML. The block's closing
+    // brace may be indented or in column 0; both used to fail with
+    // "expected arrow" on the block's first line.
+    for close in ["}", " }", "   }"] {
+        let src = format!(
+            "@startuml\nskinparam sequence {{\n   ArrowColor blue\n  ParticipantBorderColor #BAE4B3\n{close}\nAlice -> Bob: hello\n@enduml\n"
+        );
+        let diagrams = puml::parser::preprocessor::preprocess(&src, None);
+        let ast = puml::parser::parse(&diagrams[0])
+            .unwrap_or_else(|e| panic!("closing brace {close:?}: {e}"));
+        let svg = puml::render::render(&ast).to_string();
+        assert!(
+            svg.contains("Alice") && svg.contains("hello"),
+            "closing brace {close:?}"
+        );
+    }
+}
