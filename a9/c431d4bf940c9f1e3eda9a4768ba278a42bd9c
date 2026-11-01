@@ -1,0 +1,23 @@
+CLAUDE.md
+  s_36b2e98a3f5e7f::t_6ee2c016bd3727 132-133
+Makefile
+  s_36b2e98a3f5e7f::t_7990ee4bb5dacb 17-18,21-63
+README.md
+  s_36b2e98a3f5e7f::t_6c32a8d012aa2e 233-234
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a9c431d4bf940c9f1e3eda9a4768ba278a42bd9c",
+  "prompts": {},
+  "sessions": {
+    "s_36b2e98a3f5e7f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "s_36b2e98a3f5e7f",
+        "model": "unknown"
+      },
+      "human_author": "Graham Brooks <graham@grahambrooks.com>"
+    }
+  }
+}
