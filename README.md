@@ -230,7 +230,8 @@ cargo insta review
 
 ## Releases
 
-Releases are cut by pushing a CalVer tag (`vYYYY.M.N`). The `release` workflow
+Releases are cut by pushing a CalVer tag (`vYYYY.M.D`); `make release` checks
+the tree, runs `make check`, then tags today's date and pushes it. The `release` workflow
 (release-kit v2, configured by `.release.env`):
 
 1. Stamps the tag's version into `Cargo.toml` and builds `puml-<tag>-<target>.tar.gz` for macOS and Linux

@@ -129,7 +129,8 @@ make test           # cargo test
 make check          # fmt-check + clippy + test (use this before declaring done)
 make snapshots      # update insta snapshots (INSTA_UPDATE=always)
 make run            # render examples/sequence.puml to out.svg
-make release        # cargo build --release
+make build-release  # cargo build --release
+make release        # check, tag v<today> and push; CI builds and publishes
 make clean          # cargo clean + remove out.svg
 ```
 
