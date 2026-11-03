@@ -7,7 +7,7 @@ skinparam sequence {
    ArrowColor blue
    ParticipantBorderColor #BAE4B3
    ParticipantBackgroundColor #BAE4B3
-   
+
   DefaultFontName "Helvetica Neue"
   DefaultFontSize 13
   DefaultFontStyle UltaLight

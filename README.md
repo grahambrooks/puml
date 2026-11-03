@@ -217,7 +217,7 @@ inside each.
 make             # list available targets
 make build       # fmt + clippy + cargo build
 make test        # cargo test
-make check       # fmt-check + clippy + test (pre-commit)
+make check       # fmt-check + clippy + test, same as CI (pre-push hook)
 make snapshots   # update insta snapshots
 make run         # render examples/sequence.puml to out.svg
 ```

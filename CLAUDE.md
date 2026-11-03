@@ -126,11 +126,13 @@ Prefer the `Makefile` targets over raw `cargo` invocations — they're the same 
 ```bash
 make build          # fmt + clippy + cargo build
 make test           # cargo test
-make check          # fmt-check + clippy + test (use this before declaring done)
+make check          # fmt-check + clippy + test, exactly CI's check job (use this before declaring done)
+make hooks          # install the prek git hooks (make check runs before push)
 make snapshots      # update insta snapshots (INSTA_UPDATE=always)
 make run            # render examples/sequence.puml to out.svg
 make build-release  # cargo build --release
-make release        # check, tag v<today> and push; CI builds and publishes
+make release        # tag origin/main with the next CalVer and push the tag; CI builds and publishes
+make release-dry    # show what make release would do
 make clean          # cargo clean + remove out.svg
 ```
 
