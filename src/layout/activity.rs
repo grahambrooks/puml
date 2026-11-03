@@ -164,10 +164,10 @@ impl Builder {
             }
             ActivityElement::Arrow(lbl) => {
                 // Arrows between actions — just tag the edge
-                if let (Some(p), Some(lbl)) = (prev, lbl) {
-                    if let Some(last_edge) = self.edges.iter_mut().rev().find(|e| e.from == p) {
-                        last_edge.label = Some(lbl.clone());
-                    }
+                if let (Some(p), Some(lbl)) = (prev, lbl)
+                    && let Some(last_edge) = self.edges.iter_mut().rev().find(|e| e.from == p)
+                {
+                    last_edge.label = Some(lbl.clone());
                 }
                 prev
             }

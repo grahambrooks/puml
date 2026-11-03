@@ -1,11 +1,11 @@
-use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
+use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 
 use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
 use crate::layout::activity::{ActivityLayout, LayoutEdge, LayoutNode, Shape};
 use crate::layout::ports::pick_port as pick_port_bbox;
-use crate::layout::sugiyama::{nudge_overlapping_segments, orthogonal_through_ports, Side};
+use crate::layout::sugiyama::{Side, nudge_overlapping_segments, orthogonal_through_ports};
 
 const EDGE_NUDGE_GAP: f64 = 6.0;
 
@@ -311,16 +311,16 @@ fn render_edge(edge: &LayoutEdge, points: &[(f64, f64)]) -> Group {
         .set("marker-end", "url(#act-arrow)");
     g = g.add(path);
 
-    if let Some(ref lbl) = edge.label {
-        if !lbl.is_empty() {
-            let (lx, ly, anchor) = label_perpendicular(points, 8.0);
-            let text = Text::new(lbl.clone())
-                .set("x", lx)
-                .set("y", ly)
-                .set("text-anchor", anchor)
-                .set("font-size", 11.0);
-            g = g.add(text);
-        }
+    if let Some(ref lbl) = edge.label
+        && !lbl.is_empty()
+    {
+        let (lx, ly, anchor) = label_perpendicular(points, 8.0);
+        let text = Text::new(lbl.clone())
+            .set("x", lx)
+            .set("y", ly)
+            .set("text-anchor", anchor)
+            .set("font-size", 11.0);
+        g = g.add(text);
     }
 
     g

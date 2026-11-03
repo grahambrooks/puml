@@ -11,9 +11,9 @@
 //! probably wants to fix them in the next save rather than have the watcher
 //! die on the first typo.
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use notify_debouncer_mini::notify::{RecommendedWatcher, RecursiveMode};
-use notify_debouncer_mini::{new_debouncer, DebounceEventResult, Debouncer};
+use notify_debouncer_mini::{DebounceEventResult, Debouncer, new_debouncer};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc;

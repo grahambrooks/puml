@@ -1,5 +1,5 @@
-use svg::node::element::{Ellipse, Group, Line, Path, Polygon, Rectangle, Text};
 use svg::Document;
+use svg::node::element::{Ellipse, Group, Line, Path, Polygon, Rectangle, Text};
 
 use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
@@ -629,16 +629,16 @@ fn render_node(node: &NodeLayout, y_off: f64) -> Group {
         0.0
     };
 
-    if let Some(kl) = kind_label {
-        if node.stereotype.is_none() {
-            let kl_el = Text::new(kl)
-                .set("x", x + w / 2.0)
-                .set("y", y + 12.0)
-                .set("text-anchor", "middle")
-                .set("font-size", "10")
-                .set("fill", "#555");
-            g = g.add(kl_el);
-        }
+    if let Some(kl) = kind_label
+        && node.stereotype.is_none()
+    {
+        let kl_el = Text::new(kl)
+            .set("x", x + w / 2.0)
+            .set("y", y + 12.0)
+            .set("text-anchor", "middle")
+            .set("font-size", "10")
+            .set("fill", "#555");
+        g = g.add(kl_el);
     }
 
     let mut name_el = Text::new(node.display_name.clone())

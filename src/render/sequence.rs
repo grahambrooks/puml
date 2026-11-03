@@ -1,10 +1,10 @@
-use svg::node::element::{Circle, Group, Line, Rectangle, Text};
 use svg::Document;
+use svg::node::element::{Circle, Group, Line, Rectangle, Text};
 
 use crate::ast::sequence::ParticipantKind;
 use crate::layout::sequence::{
-    lines_width, ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LayoutElement,
-    MessageLayout, NoteLayout, ParticipantLayout, SequenceLayout, LABEL_BASELINE, LINE_HEIGHT,
+    ActivationLayout, BoxLayout, DividerLayout, GroupLayout, LABEL_BASELINE, LINE_HEIGHT,
+    LayoutElement, MessageLayout, NoteLayout, ParticipantLayout, SequenceLayout, lines_width,
 };
 
 use super::primitives::{arrowhead_defs, background_rect, style_block};

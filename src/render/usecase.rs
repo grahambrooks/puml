@@ -1,5 +1,5 @@
-use svg::node::element::{Circle, Definitions, Ellipse, Group, Line, Marker, Polygon, Text};
 use svg::Document;
+use svg::node::element::{Circle, Definitions, Ellipse, Group, Line, Marker, Polygon, Text};
 
 use super::primitives::{background_rect, style_block};
 use super::theme::Theme;
@@ -185,15 +185,15 @@ fn render_edge(
 
     let mut g = Group::new().add(line);
 
-    if let Some(ref lbl) = edge.label {
-        if !lbl.is_empty() {
-            let t = Text::new(lbl.clone())
-                .set("x", (x1 + x2) / 2.0)
-                .set("y", (y1 + y2) / 2.0 - 4.0)
-                .set("text-anchor", "middle")
-                .set("font-size", 11.0);
-            g = g.add(t);
-        }
+    if let Some(ref lbl) = edge.label
+        && !lbl.is_empty()
+    {
+        let t = Text::new(lbl.clone())
+            .set("x", (x1 + x2) / 2.0)
+            .set("y", (y1 + y2) / 2.0 - 4.0)
+            .set("text-anchor", "middle")
+            .set("font-size", 11.0);
+        g = g.add(t);
     }
     g
 }

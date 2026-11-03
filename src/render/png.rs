@@ -4,7 +4,7 @@
 //! the SVG with `usvg`, render to a `tiny_skia::Pixmap`, encode as PNG.
 //! No system fonts, no Cairo, no librsvg.
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 
 /// Rasterise an SVG document string to PNG bytes.
 ///

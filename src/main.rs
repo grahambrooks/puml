@@ -7,7 +7,7 @@ mod parser;
 mod render;
 mod watch;
 
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use clap::Parser as ClapParser;
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};

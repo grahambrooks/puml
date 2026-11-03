@@ -1,5 +1,5 @@
-use pest::iterators::Pair;
 use pest::Parser;
+use pest::iterators::Pair;
 use pest_derive::Parser;
 
 use crate::ast::activity::*;
@@ -136,12 +136,11 @@ fn parse_if(pair: Pair<Rule>) -> ActivityElement {
                 else_body = body;
             }
             _ => {
-                if in_then {
-                    if let Some(e) = parse_element(inner) {
-                        if !is_title_marker(&e) {
-                            then_body.push(e);
-                        }
-                    }
+                if in_then
+                    && let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    then_body.push(e);
                 }
             }
         }
@@ -166,10 +165,10 @@ fn parse_elseif(pair: Pair<Rule>) -> ElseIfBranch {
             Rule::condition => condition = inner.as_str().trim().to_string(),
             Rule::branch_label => label = Some(inner.as_str().trim().to_string()),
             _ => {
-                if let Some(e) = parse_element(inner) {
-                    if !is_title_marker(&e) {
-                        body.push(e);
-                    }
+                if let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    body.push(e);
                 }
             }
         }
@@ -188,10 +187,10 @@ fn parse_else(pair: Pair<Rule>) -> (Option<String>, Vec<ActivityElement>) {
         match inner.as_rule() {
             Rule::branch_label => label = Some(inner.as_str().trim().to_string()),
             _ => {
-                if let Some(e) = parse_element(inner) {
-                    if !is_title_marker(&e) {
-                        body.push(e);
-                    }
+                if let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    body.push(e);
                 }
             }
         }
@@ -210,10 +209,10 @@ fn parse_while(pair: Pair<Rule>) -> ActivityElement {
             Rule::condition => condition = inner.as_str().trim().to_string(),
             Rule::branch_label => labels.push(inner.as_str().trim().to_string()),
             _ => {
-                if let Some(e) = parse_element(inner) {
-                    if !is_title_marker(&e) {
-                        body.push(e);
-                    }
+                if let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    body.push(e);
                 }
             }
         }
@@ -240,10 +239,10 @@ fn parse_repeat(pair: Pair<Rule>) -> ActivityElement {
             Rule::condition => condition = inner.as_str().trim().to_string(),
             Rule::branch_label => label = Some(inner.as_str().trim().to_string()),
             _ => {
-                if let Some(e) = parse_element(inner) {
-                    if !is_title_marker(&e) {
-                        body.push(e);
-                    }
+                if let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    body.push(e);
                 }
             }
         }
@@ -265,10 +264,10 @@ fn parse_fork(pair: Pair<Rule>) -> ActivityElement {
             Rule::fork_first_branch | Rule::fork_more_branch => {
                 let mut branch = Vec::new();
                 for elem in inner.into_inner() {
-                    if let Some(e) = parse_element(elem) {
-                        if !is_title_marker(&e) {
-                            branch.push(e);
-                        }
+                    if let Some(e) = parse_element(elem)
+                        && !is_title_marker(&e)
+                    {
+                        branch.push(e);
                     }
                 }
                 branches.push(branch);
@@ -294,10 +293,10 @@ fn parse_partition(pair: Pair<Rule>) -> ActivityElement {
                 name = inner.as_str().trim_matches('"').trim().to_string();
             }
             _ => {
-                if let Some(e) = parse_element(inner) {
-                    if !is_title_marker(&e) {
-                        body.push(e);
-                    }
+                if let Some(e) = parse_element(inner)
+                    && !is_title_marker(&e)
+                {
+                    body.push(e);
                 }
             }
         }
@@ -364,19 +363,21 @@ mod tests {
     fn parses_while_loop() {
         let src = "start\nwhile (more data?) is (yes)\n  :process;\nendwhile (no)\nstop\n";
         let d = parse(src).unwrap();
-        assert!(d
-            .elements
-            .iter()
-            .any(|e| matches!(e, ActivityElement::While(_))));
+        assert!(
+            d.elements
+                .iter()
+                .any(|e| matches!(e, ActivityElement::While(_)))
+        );
     }
 
     #[test]
     fn parses_fork() {
         let src = "start\nfork\n  :branch A;\nfork again\n  :branch B;\nend fork\nstop\n";
         let d = parse(src).unwrap();
-        assert!(d
-            .elements
-            .iter()
-            .any(|e| matches!(e, ActivityElement::Fork(_))));
+        assert!(
+            d.elements
+                .iter()
+                .any(|e| matches!(e, ActivityElement::Fork(_)))
+        );
     }
 }

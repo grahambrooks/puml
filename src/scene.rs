@@ -8,14 +8,14 @@
 //! fall back on SVG.
 
 use diagram_scene::{
-    route, shape, Anchor, Container, ContainerKind, Dash, Edge, EdgeLabel, Estimate, Font, Marker,
-    Node, Paint, Pen, Point, Rect, Role, Scene, Seg, Shape, Style, Text, TextLine, Weight,
+    Anchor, Container, ContainerKind, Dash, Edge, EdgeLabel, Estimate, Font, Marker, Node, Paint,
+    Pen, Point, Rect, Role, Scene, Seg, Shape, Style, Text, TextLine, Weight, route, shape,
 };
 
+use crate::ast::DiagramAst;
 use crate::ast::class::{ClassKind, RelationKind};
 use crate::ast::sequence::ParticipantKind;
 use crate::ast::state::StateKind;
-use crate::ast::DiagramAst;
 use crate::layout;
 use crate::layout::sequence::LINE_HEIGHT;
 
@@ -693,11 +693,13 @@ mod tests {
         );
         let circle = s.nodes.iter().find(|n| n.id.ends_with(":Circle")).unwrap();
         assert_eq!(circle.shape, Shape::Class);
-        assert!(circle
-            .compartments
-            .iter()
-            .flatten()
-            .any(|l| l.plain().contains("r: f64")));
+        assert!(
+            circle
+                .compartments
+                .iter()
+                .flatten()
+                .any(|l| l.plain().contains("r: f64"))
+        );
         let ends: Vec<Marker> = s.edges.iter().map(|e| e.end).collect();
         for m in [
             Marker::HollowTriangle,
@@ -729,10 +731,11 @@ mod tests {
         // The label rides on the edge; cardinalities are muted free text
         // beside each end.
         let edge = &s.edges[0];
-        assert!(edge
-            .labels
-            .iter()
-            .any(|l| l.lines.iter().any(|t| t.plain() == "accepts")));
+        assert!(
+            edge.labels
+                .iter()
+                .any(|l| l.lines.iter().any(|t| t.plain() == "accepts"))
+        );
         let texts = s.texts();
         for t in ["1", "many"] {
             assert!(texts.iter().any(|x| x == t), "{t}: {texts:?}");

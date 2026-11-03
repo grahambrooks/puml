@@ -192,12 +192,12 @@ fn split_diagrams(source: &str) -> Vec<DiagramSource> {
 
     for line in cleaned.lines() {
         let trimmed = line.trim();
-        if let Some((hint, is_start)) = parse_start_marker(trimmed) {
-            if is_start {
-                has_markers = true;
-                current = Some((hint, String::new()));
-                continue;
-            }
+        if let Some((hint, is_start)) = parse_start_marker(trimmed)
+            && is_start
+        {
+            has_markers = true;
+            current = Some((hint, String::new()));
+            continue;
         }
         if is_end_marker(trimmed) {
             if let Some((hint, content)) = current.take() {

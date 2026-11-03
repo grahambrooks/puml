@@ -1,5 +1,5 @@
-use svg::node::element::{Group, Line, Rectangle, Text};
 use svg::Document;
+use svg::node::element::{Group, Line, Rectangle, Text};
 
 use super::primitives::{background_rect, style_block};
 use super::theme::Theme;

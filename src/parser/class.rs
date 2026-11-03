@@ -1,5 +1,5 @@
-use pest::iterators::Pair;
 use pest::Parser;
+use pest::iterators::Pair;
 use pest_derive::Parser;
 
 use crate::ast::class::*;
@@ -207,9 +207,9 @@ fn parse_class(pair: Pair<Rule>) -> ClassNode {
                 };
             }
             Rule::class_name => {
-                let (bare, gen) = parse_class_name(inner);
+                let (bare, parsed_generics) = parse_class_name(inner);
                 name = bare;
-                generics = gen;
+                generics = parsed_generics;
             }
             Rule::stereotype => {
                 let raw = inner.as_str();

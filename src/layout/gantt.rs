@@ -60,14 +60,13 @@ pub fn layout(diagram: &GanttDiagram) -> GanttLayout {
             if starts.contains_key(&task.name) {
                 continue;
             }
-            if let Some(ref dep) = task.depends_on {
-                if let Some(dep_task) = diagram.tasks.iter().find(|t| &t.name == dep) {
-                    if let Some(&dep_start) = starts.get(&dep_task.name) {
-                        let dep_end = dep_start + dep_task.duration;
-                        starts.insert(task.name.clone(), dep_end);
-                        made_progress = true;
-                    }
-                }
+            if let Some(ref dep) = task.depends_on
+                && let Some(dep_task) = diagram.tasks.iter().find(|t| &t.name == dep)
+                && let Some(&dep_start) = starts.get(&dep_task.name)
+            {
+                let dep_end = dep_start + dep_task.duration;
+                starts.insert(task.name.clone(), dep_end);
+                made_progress = true;
             }
         }
         if !made_progress {

@@ -428,21 +428,21 @@ fn layout_one(ctx: &mut LayoutCtx, elem: &SequenceElement) {
             }
         }
         SequenceElement::Deactivate(name) => {
-            if let Some(i) = find_participant(ctx.participants, name) {
-                if ctx.active_depth[i] > 0 {
-                    ctx.active_depth[i] -= 1;
-                    if let Some(pos) = ctx.open_activations.iter().rposition(|(idx, _)| *idx == i) {
-                        let (_, y_start) = ctx.open_activations.remove(pos);
-                        let depth = ctx.active_depth[i];
-                        let cx = ctx.centers[i];
-                        ctx.elements
-                            .push(LayoutElement::Activation(ActivationLayout {
-                                participant_x: cx,
-                                y_start,
-                                y_end: ctx.y,
-                                depth,
-                            }));
-                    }
+            if let Some(i) = find_participant(ctx.participants, name)
+                && ctx.active_depth[i] > 0
+            {
+                ctx.active_depth[i] -= 1;
+                if let Some(pos) = ctx.open_activations.iter().rposition(|(idx, _)| *idx == i) {
+                    let (_, y_start) = ctx.open_activations.remove(pos);
+                    let depth = ctx.active_depth[i];
+                    let cx = ctx.centers[i];
+                    ctx.elements
+                        .push(LayoutElement::Activation(ActivationLayout {
+                            participant_x: cx,
+                            y_start,
+                            y_end: ctx.y,
+                            depth,
+                        }));
                 }
             }
         }

@@ -1,5 +1,5 @@
-use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 use svg::Document;
+use svg::node::element::{Circle, Definitions, Group, Marker, Path, Polygon, Rectangle, Text};
 
 use super::primitives::{background_rect, label_perpendicular, style_block};
 use super::theme::Theme;
@@ -239,16 +239,16 @@ fn render_edge(edge: &StateLayoutEdge, points: &[(f64, f64)]) -> Group {
         .set("marker-end", "url(#state-arrow)");
     g = g.add(path);
 
-    if let Some(ref lbl) = edge.label {
-        if !lbl.is_empty() {
-            let (lx, ly, anchor) = label_perpendicular(points, 8.0);
-            let text = Text::new(lbl.clone())
-                .set("x", lx)
-                .set("y", ly)
-                .set("text-anchor", anchor)
-                .set("font-size", 11.0);
-            g = g.add(text);
-        }
+    if let Some(ref lbl) = edge.label
+        && !lbl.is_empty()
+    {
+        let (lx, ly, anchor) = label_perpendicular(points, 8.0);
+        let text = Text::new(lbl.clone())
+            .set("x", lx)
+            .set("y", ly)
+            .set("text-anchor", anchor)
+            .set("font-size", 11.0);
+        g = g.add(text);
     }
 
     g

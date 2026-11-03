@@ -12,6 +12,8 @@ on:
       - '.idea/**'
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1" # weekly, so new RustSec advisories surface without a push
 
 permissions:
   contents: read
@@ -20,16 +22,52 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   check:
     name: Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
+      # Installs the toolchain (and rustfmt/clippy) pinned in rust-toolchain.toml.
+      - run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
-      - run: cargo fmt --all -- --check
-      - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo test
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+      - run: cargo test --workspace --all-features --locked
+
+  msrv:
+    name: msrv — rust-version is the toolchain we build with
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: rust-version and rust-toolchain.toml agree
+        id: floor
+        run: |
+          set -euo pipefail
+          declared=$(grep -m1 -E '^rust-version *=' Cargo.toml | cut -d'"' -f2)
+          pinned=$(grep -m1 -E '^channel *=' rust-toolchain.toml | cut -d'"' -f2)
+          echo "rust-version=$declared  channel=$pinned"
+          if [ "$declared" != "$pinned" ]; then
+            echo "::error::rust-version ($declared) and rust-toolchain.toml channel ($pinned) have drifted"
+            exit 1
+          fi
+          echo "version=$declared" >> "$GITHUB_OUTPUT"
+      - run: rustup toolchain install ${{ steps.floor.outputs.version }} --profile minimal
+      - uses: Swatinem/rust-cache@v2
+      # `cargo +<floor>` explicitly, not bare `cargo`: rust-toolchain.toml would
+      # otherwise override whatever was installed and the job would test nothing.
+      - run: cargo +${{ steps.floor.outputs.version }} check --workspace --all-targets --all-features --locked
+
+  audit:
+    name: cargo audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      # Honors .cargo/audit.toml (justified ignores only).
+      - run: cargo audit
