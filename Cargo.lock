@@ -718,7 +718,7 @@ dependencies = [
 
 [[package]]
 name = "puml"
-version = "2026.11.3"
+version = "2026.11.9"
 dependencies = [
  "anyhow",
  "clap",
