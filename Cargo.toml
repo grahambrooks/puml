@@ -1,6 +1,6 @@
 [package]
 name = "puml"
-version = "2026.11.3"
+version = "2026.11.9"
 edition = "2024"
 rust-version = "1.99.1"
 
